@@ -25,7 +25,7 @@ private slots:
     void changePenColor();
     void changePenWidth();
     void clearScreen();
-    void createRectangle();
+    void createLine();
 };
 
 #endif // SUBMENU_H

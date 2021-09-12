@@ -14,16 +14,12 @@
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_StaticContents);
-    // setAttribute(Qt::WA_Hover, true);
-
-    // QObject::connect(this, &ScribbleArea::Mouse_Pressed, this, &ScribbleArea::Mouse_Pressed_slot);
 
     modified = false;
     scribbling = false;
     myPenWidth = 1;
     myPenColor = Qt::black;
-    drawLine = false;
-    firstClick = true;
+
     m_x1, m_x2, m_y1, m_y2 = 0;
     drawLineBool = false;
 }
@@ -35,36 +31,6 @@ ScribbleArea::~ScribbleArea() {
 void ScribbleArea::setDrawLineBool() {
     drawLineBool = true;
 }
-
-/* void ScribbleArea::keyPressEvent(QKeyEvent *event) {
-    qDebug() << "inside keyPressEvent() \n";
-    if(event->key() == Qt::Key_1) {
-        // QMouseEvent *curEvent = QMouseEvent(this);
-        // m_x1 = curEvent->x();
-        // m_y1 = curEvent->y();
-        // delete curEvent;
-    }
-    if(event->key() == Qt::Key_A) {
-        // QMouseEvent *curEvent = QMouseEvent(this);
-        // m_x2 = curEvent->x();
-        // m_y2 = curEvent->y();
-        m_x1 = 100;
-        m_y1 = 100;
-        qDebug() << "A key \n";
-        m_x2 = 300;
-        m_y2 = 300;
-        // delete curEvent;
-        // emit Mouse_Pressed();
-        QPainter painter(&image);
-        QPoint pointOne(m_x1, m_y1);
-        QPoint pointTwo(m_x2, m_y2);
-
-        painter.drawEllipse(pointOne, 2, 2);
-        painter.drawEllipse(pointTwo, 2, 2);
-
-        painter.drawLine(pointOne, pointTwo);
-    }
-} */
 
 bool ScribbleArea::openImage(const QString &fileName) {
     QImage loadedImage;

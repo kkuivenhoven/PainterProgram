@@ -23,7 +23,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
 
     QPushButton *createRectBtn = new QPushButton();
     createRectBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
-    connect(createRectBtn, SIGNAL(clicked(bool)), this, SLOT(createRectangle()));
+    connect(createRectBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
 
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(penColorBtn);
@@ -65,7 +65,7 @@ void SubMenu::clearScreen() {
     _scribbleArea.clearImage();
 }
 
-void SubMenu::createRectangle() {
+void SubMenu::createLine() {
     // _scribbleArea.addRectangle();
     _scribbleArea.setDrawLineBool();
 }
