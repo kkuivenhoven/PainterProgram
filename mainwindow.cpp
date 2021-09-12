@@ -196,4 +196,3 @@ bool MainWindow::saveFile(const QByteArray &fileFormat) {
     }
 }
 
-

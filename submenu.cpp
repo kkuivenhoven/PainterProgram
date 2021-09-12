@@ -22,7 +22,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     connect(clearScreenBtn, SIGNAL(clicked(bool)), this, SLOT(clearScreen()));
 
     QPushButton *createRectBtn = new QPushButton();
-    createRectBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBrush.png"));
+    createRectBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
     connect(createRectBtn, SIGNAL(clicked(bool)), this, SLOT(createRectangle()));
 
     gridLayout->addWidget(fillEaselBtn);

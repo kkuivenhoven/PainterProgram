@@ -172,6 +172,7 @@ void ScribbleArea::drawLineTo(const QPoint &endPoint) {
     lastPoint = endPoint;
 }
 
+
 void ScribbleArea::resizeImage(QImage *image, const QSize &newSize) {
     if(image->size() == newSize) { return; }
     QImage newImage(newSize, QImage::Format_RGB32);
@@ -193,6 +194,9 @@ void ScribbleArea::drawRectangle() {
 
     painter.drawEllipse(pointOne, 2, 2);
     painter.drawEllipse(pointTwo, 2, 2);
+
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
 
     painter.drawLine(pointOne, pointTwo);
 
