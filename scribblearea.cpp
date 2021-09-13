@@ -32,6 +32,10 @@ void ScribbleArea::setDrawLineBool() {
     drawLineBool = true;
 }
 
+void ScribbleArea::setDrawTextBool() {
+    drawTextBool = true;
+}
+
 bool ScribbleArea::openImage(const QString &fileName) {
     QImage loadedImage;
     if(!loadedImage.load(fileName)) {
@@ -85,6 +89,12 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(drawTextBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+            getUserInput();
+            drawTextBool = false;
+        }
     }
 }
 
@@ -106,7 +116,7 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             drawLineBool = false;
             m_x2 = event->x();
             m_y2 = event->y();
-            drawRectangle();
+            drawLine();
         }
     }
 }
@@ -149,17 +159,18 @@ void ScribbleArea::resizeImage(QImage *image, const QSize &newSize) {
 }
 
 
-void ScribbleArea::drawRectangle() {
-    QPainter painter(&image);
+void ScribbleArea::drawLine() {
     if((m_x1 == 0 ) && (m_x2 == 0) && (m_y1 == 0) && (m_y2 == 0)) {
-        qDebug() << "member x,y values not set for drawing a rectangle";
+        qDebug() << "member x,y values not set for drawing a line.";
         return;
     }
+
+    QPainter painter(&image);
     QPoint pointOne(m_x1, m_y1);
     QPoint pointTwo(m_x2, m_y2);
 
-    painter.drawEllipse(pointOne, 2, 2);
-    painter.drawEllipse(pointTwo, 2, 2);
+    painter.drawEllipse(pointOne, 1, 1);
+    painter.drawEllipse(pointTwo, 1, 1);
 
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
@@ -167,6 +178,50 @@ void ScribbleArea::drawRectangle() {
     painter.drawLine(pointOne, pointTwo);
 
     update();
+}
+
+void ScribbleArea::setTextPointBool() {
+    drawTextBool = true;
+}
+
+void ScribbleArea::getUserInput() {
+    if((m_x1 == 0) && (m_y1 == 0)) {
+        qDebug() << "Member x,y values not set for drawing text.";
+        return;
+    }
+    bool okay;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("Text to display:"), QLineEdit::Normal,
+                                         QDir::home().dirName(), &okay);
+    if(okay && !text.isEmpty()) {
+        curText = text;
+    }
+    setTextBlurbBtn();
+}
+
+void ScribbleArea::setTextBlurbBtn() {
+    if((m_x1 == 0) && (m_y1 == 0)) {
+        qDebug() << "Member x,y values not set for drawing text.";
+        return;
+    }
+    QPainter painter(&image);
+    QPointF topLeftPos(m_x1, m_y1);
+    // const QStaticText staticTxt("Shalom world!");
+    const QStaticText staticTxt(curText);
+    painter.drawStaticText(topLeftPos, staticTxt);
+
+    update();
+
+    /* QLabel *label = new QLabel(this);
+    label->setText("TESTING OF THIS LABEL"); */
+
+    /* QTextEdit *txt = new QTextEdit(this);
+    // txt->setGeometry(m_x1, m_y1);
+    QPoint pointOne(m_x1, m_y1);
+    txt->anchorAt(pointOne);
+    txt->setText("Hello, world!");
+    txt->append("Appending some text...");
+    txt->show(); */
 }
 
 

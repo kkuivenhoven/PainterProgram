@@ -21,15 +21,20 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     clearScreenBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/clear-screen.jpg"));
     connect(clearScreenBtn, SIGNAL(clicked(bool)), this, SLOT(clearScreen()));
 
-    QPushButton *createRectBtn = new QPushButton();
-    createRectBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
-    connect(createRectBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
+    QPushButton *createLineBtn = new QPushButton();
+    createLineBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
+    connect(createLineBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
+
+    QPushButton *createTextBlurbBtn = new QPushButton();
+    createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
+    connect(createTextBlurbBtn, SIGNAL(clicked(bool)), this, SLOT(createTextBlurb()));
 
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
     gridLayout->addWidget(clearScreenBtn);
-    gridLayout->addWidget(createRectBtn);
+    gridLayout->addWidget(createLineBtn);
+    gridLayout->addWidget(createTextBlurbBtn);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -51,12 +56,12 @@ void SubMenu::changePenColor() {
 }
 
 void SubMenu::changePenWidth() {
-    bool ok;
+    bool okay;
     int newWidth = QInputDialog::getInt(this, tr("Scribble"),
                                         tr("Select pen width : "),
                                         _scribbleArea.penWidth(),
-                                        1, 50, 1, &ok);
-    if(ok) {
+                                        1, 50, 1, &okay);
+    if(okay) {
         _scribbleArea.setPenWidth(newWidth);
     }
 }
@@ -66,6 +71,11 @@ void SubMenu::clearScreen() {
 }
 
 void SubMenu::createLine() {
-    // _scribbleArea.addRectangle();
     _scribbleArea.setDrawLineBool();
+}
+
+void SubMenu::createTextBlurb() {
+    // _scribbleArea.setTextBlurbBtn();
+    // _scribbleArea.getUserInput();
+    _scribbleArea.setTextPointBool();
 }

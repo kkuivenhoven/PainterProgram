@@ -29,11 +29,7 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::keyPressEvent(QKeyEvent *event) {
-    qDebug() << "inside keyPressEvent() \n";
-    if(event->key() == Qt::Key_1) {
-        qDebug() << "inside key one \n";
-        scribblearea->drawRectangle();
-    }
+    Q_UNUSED(event);
 }
 
 

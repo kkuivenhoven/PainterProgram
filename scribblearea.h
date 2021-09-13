@@ -10,6 +10,9 @@
 #include <QRectF>
 #include <QPainterPath>
 #include <QKeyEvent>
+#include <QTextEdit>
+#include <QInputDialog>
+#include <QDir>
 
 class ScribbleArea : public QWidget
 {
@@ -27,14 +30,20 @@ public:
     bool isModified() const { return modified; }
     QColor penColor() const { return myPenColor; }
     int penWidth() const { return myPenWidth; }
-    void addRectangle();
 
-    void drawRectangle();
     void setMx1(int x1);
     void setMy1(int x1);
     void setMx2(int x1);
     void setMy2(int x1);
+
     void setDrawLineBool();
+    void drawLine();
+
+    void setDrawTextBool();
+    void setTextBlurbBtn();
+    void drawText();
+    void getUserInput();
+    void setTextPointBool();
 
 public slots:
     void clearImage();
@@ -65,6 +74,9 @@ private:
     int m_x2;
     int m_y1;
     int m_y2;
+
+    bool drawTextBool;
+    QString curText;
 };
 
 #endif // SCRIBBLEAREA_H

@@ -26,6 +26,7 @@ private slots:
     void changePenWidth();
     void clearScreen();
     void createLine();
+    void createTextBlurb();
 };
 
 #endif // SUBMENU_H
