@@ -77,6 +77,9 @@ private:
 
     bool drawTextBool;
     QString curText;
+    int inputDiagFontSize;
+    bool textSettingSet;
+
 };
 
 #endif // SCRIBBLEAREA_H

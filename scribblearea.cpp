@@ -22,6 +22,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 
     m_x1, m_x2, m_y1, m_y2 = 0;
     drawLineBool = false;
+    textSettingSet = false;
 }
 
 ScribbleArea::~ScribbleArea() {
@@ -89,10 +90,17 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(drawTextBool && this->underMouse()) {
+        /* if(drawTextBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
             getUserInput();
+            drawTextBool = false;
+        } */
+        if(textSettingSet && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+            setTextBlurbBtn();
+            textSettingSet = false;
             drawTextBool = false;
         }
     }
@@ -185,18 +193,35 @@ void ScribbleArea::setTextPointBool() {
 }
 
 void ScribbleArea::getUserInput() {
-    if((m_x1 == 0) && (m_y1 == 0)) {
-        qDebug() << "Member x,y values not set for drawing text.";
-        return;
-    }
     bool okay;
-    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                         tr("Text to display:"), QLineEdit::Normal,
-                                         QDir::home().dirName(), &okay);
-    if(okay && !text.isEmpty()) {
-        curText = text;
+    QDialog *d = new QDialog();
+    QVBoxLayout *vbox = new QVBoxLayout();
+    QLabel *labelA = new QLabel("Select font size:");
+    QComboBox *textSizeOptions = new QComboBox();
+    textSizeOptions->addItems(QStringList() << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22");
+    QLabel *labelB = new QLabel("Enter text:");
+    QLineEdit *lineEditB = new QLineEdit();
+
+    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
+                                                       QDialogButtonBox::Cancel);
+    QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
+    QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
+
+    vbox->addWidget(labelA);
+    vbox->addWidget(textSizeOptions);
+    vbox->addWidget(labelB);
+    vbox->addWidget(lineEditB);
+    vbox->addWidget(buttonBox);
+
+    d->setLayout(vbox);
+
+    int result = d->exec();
+    if(result == QDialog::Accepted) {
+        // handle values from d
+        inputDiagFontSize = textSizeOptions->currentText().toInt();
+        curText = lineEditB->text();
     }
-    setTextBlurbBtn();
+    textSettingSet = true;
 }
 
 void ScribbleArea::setTextBlurbBtn() {
@@ -206,22 +231,16 @@ void ScribbleArea::setTextBlurbBtn() {
     }
     QPainter painter(&image);
     QPointF topLeftPos(m_x1, m_y1);
-    // const QStaticText staticTxt("Shalom world!");
+    QFont font("times", inputDiagFontSize);
+    painter.setFont(font);
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
+
     const QStaticText staticTxt(curText);
+
     painter.drawStaticText(topLeftPos, staticTxt);
 
     update();
-
-    /* QLabel *label = new QLabel(this);
-    label->setText("TESTING OF THIS LABEL"); */
-
-    /* QTextEdit *txt = new QTextEdit(this);
-    // txt->setGeometry(m_x1, m_y1);
-    QPoint pointOne(m_x1, m_y1);
-    txt->anchorAt(pointOne);
-    txt->setText("Hello, world!");
-    txt->append("Appending some text...");
-    txt->show(); */
 }
 
 

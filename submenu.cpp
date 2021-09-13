@@ -75,7 +75,6 @@ void SubMenu::createLine() {
 }
 
 void SubMenu::createTextBlurb() {
-    // _scribbleArea.setTextBlurbBtn();
-    // _scribbleArea.getUserInput();
     _scribbleArea.setTextPointBool();
+    _scribbleArea.getUserInput();
 }
