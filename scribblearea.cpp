@@ -23,6 +23,12 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     m_x1, m_x2, m_y1, m_y2 = 0;
     drawLineBool = false;
     textSettingSet = false;
+
+    fontSizeSet = false;
+    currentlyTyping = false;
+    secondTextBool = false;
+
+    setFocusPolicy(Qt::StrongFocus);
 }
 
 ScribbleArea::~ScribbleArea() {
@@ -35,6 +41,10 @@ void ScribbleArea::setDrawLineBool() {
 
 void ScribbleArea::setDrawTextBool() {
     drawTextBool = true;
+}
+
+void ScribbleArea::setSecondTextBlurb() {
+    secondTextBool = true;
 }
 
 bool ScribbleArea::openImage(const QString &fileName) {
@@ -82,11 +92,35 @@ void ScribbleArea::clearImage() {
     update();
 }
 
+void ScribbleArea::keyPressEvent(QKeyEvent *event) {
+    qDebug() << "inside keyPressEvent()";
+    if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
+        qDebug() << "Key press event -- currently typing\n";
+        /* QString tmpCurText = labelOne->text();
+        // tmpCurText += QString::number(event->key());
+        tmpCurText += event->text();
+        labelOne->setText(tmpCurText);
+        labelOne->show(); */
+
+        QString tmpCurTextTwo = textEditOne->toPlainText();
+        tmpCurTextTwo += event->text();
+        textEditOne->setText(tmpCurTextTwo);
+        textEditOne->show();
+
+        update();
+    }
+    if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
+        currentlyTyping = false;
+        fontSizeSet = false;
+    }
+}
+
 void ScribbleArea::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
         lastPoint = event->pos();
         scribbling = true;
         if(drawLineBool && this->underMouse()) {
+            qDebug() << " drawLineBool is true and under mouse";
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -96,12 +130,23 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             getUserInput();
             drawTextBool = false;
         } */
-        if(textSettingSet && this->underMouse()) {
+        /* if(textSettingSet && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
             setTextBlurbBtn();
             textSettingSet = false;
             drawTextBool = false;
+        } */
+        if(fontSizeSet && this->underMouse()) {
+            qDebug() << " font size set and under mouse";
+            m_x1 = event->x();
+            m_y1 = event->y();
+            setUpActiveText();
+        }
+        if(secondTextBool && this->underMouse()) {
+            qDebug() << " second bool is true ";
+            m_x1 = event->x();
+            m_y1 = event->y();
         }
     }
 }
@@ -111,6 +156,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
         if(drawLineBool == false) {
            drawLineTo(event->pos());
         }
+        // can add functionality for straight line tool here
     }
 }
 
@@ -126,14 +172,22 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             drawLine();
         }
+        if(secondTextBool) {
+            qDebug() << "inside second text bool";
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createSecondTextBlurb();
+        }
     }
 }
+
 
 void ScribbleArea::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QRect dirtyRect = event->rect(); // ? was this always here?
     painter.drawImage(dirtyRect, image, dirtyRect); // this too?
 }
+
 
 void ScribbleArea::resizeEvent(QResizeEvent *event) {
     if(width() > image.width() || height() > image.height()) {
@@ -144,6 +198,7 @@ void ScribbleArea::resizeEvent(QResizeEvent *event) {
     }
     QWidget::resizeEvent(event);
 }
+
 
 void ScribbleArea::drawLineTo(const QPoint &endPoint) {
     QPainter painter(&image);
@@ -188,17 +243,25 @@ void ScribbleArea::drawLine() {
     update();
 }
 
+
 void ScribbleArea::setTextPointBool() {
     drawTextBool = true;
 }
 
+
 void ScribbleArea::getUserInput() {
+    QStringList fontSizes;
+    for(int i = 8; i < 85; i++) {
+        fontSizes << QString::number(i);
+    }
+
     bool okay;
     QDialog *d = new QDialog();
     QVBoxLayout *vbox = new QVBoxLayout();
     QLabel *labelA = new QLabel("Select font size:");
     QComboBox *textSizeOptions = new QComboBox();
-    textSizeOptions->addItems(QStringList() << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22");
+    // textSizeOptions->addItems(QStringList() << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22");
+    textSizeOptions->addItems(fontSizes);
     QLabel *labelB = new QLabel("Enter text:");
     QLineEdit *lineEditB = new QLineEdit();
 
@@ -224,22 +287,70 @@ void ScribbleArea::getUserInput() {
     textSettingSet = true;
 }
 
+
 void ScribbleArea::setTextBlurbBtn() {
-    if((m_x1 == 0) && (m_y1 == 0)) {
-        qDebug() << "Member x,y values not set for drawing text.";
-        return;
-    }
+    bool ok;
+    // QFont font = QFontDialog::getFont(
+    curFont = QFontDialog::getFont(
+                &ok, QFont("Helvetica [Cronyx]", 10), this);
     QPainter painter(&image);
-    QPointF topLeftPos(m_x1, m_y1);
-    QFont font("times", inputDiagFontSize);
-    painter.setFont(font);
+    // QPointF topLeftPos(m_x1, m_y1);
+    // QFont font("times", inputDiagFontSize);
+    painter.setFont(curFont);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
 
-    const QStaticText staticTxt(curText);
+    fontSizeSet = true;
+    qDebug() << " font size set is true";
+}
 
-    painter.drawStaticText(topLeftPos, staticTxt);
 
+void ScribbleArea::setUpActiveText() {
+    currentlyTyping = true;
+    /* labelOne = new QLabel(this);
+    labelOne->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    labelOne->setText("");
+    labelOne->setAlignment(Qt::AlignBottom | Qt::AlignRight);
+    labelOne->setGeometry(m_x1,m_y1,100,100);
+    labelOne->show(); */
+
+    textEditOne = new QTextEdit(this);
+    textEditOne->setCurrentFont(curFont);
+    textEditOne->setText("");
+    textEditOne->setGeometry(m_x1, m_y1, 200, 200);
+    textEditOne->show();
+}
+
+
+void ScribbleArea::createSecondTextBlurb() {
+    qDebug() << "inside createSecondTextBlurb()";
+    textEditTwo = new QTextEdit(this);
+    textEditTwo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    textEditTwo->setCurrentFont(curFont);
+    textEditTwo->setText("testing");
+    int diff_x = (m_x2 - m_x1);
+    int diff_y;//  = (m_y2 - m_y1);
+    if(m_y1 > m_y2) {
+        diff_y = (m_y1 - m_y2);
+    }
+    if(m_y2 > m_y1) {
+        diff_y = (m_y2 - m_y1);
+    }
+    if(m_y2 == m_y1) {
+        diff_y = 1;
+    }
+    qDebug() << "m_x1: " << QString::number(m_x1);
+    qDebug() << "m_y1: " << QString::number(m_y1);
+    qDebug() << "m_x2: " << QString::number(m_x2);
+    qDebug() << "m_y2: " << QString::number(m_y2);
+    qDebug() << "diff_x: " << QString::number(diff_x);
+    qDebug() << "diff_y: " << QString::number(diff_y);
+    if(m_y1 > m_y2) {
+        textEditTwo->setGeometry(m_x1, m_y2, diff_x, diff_y);
+    } else {
+        textEditTwo->setGeometry(m_x1, m_y1, diff_x, diff_y);
+    }
+    textEditTwo->show();
     update();
 }
 
@@ -259,3 +370,4 @@ void ScribbleArea::print() {
     }
 #endif // QT_CONFIG(printdialog)
 }
+

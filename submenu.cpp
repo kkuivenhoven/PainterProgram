@@ -29,12 +29,17 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
     connect(createTextBlurbBtn, SIGNAL(clicked(bool)), this, SLOT(createTextBlurb()));
 
+    QPushButton *createTextBlurbBtnTwo = new QPushButton();
+    createTextBlurbBtnTwo->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBrush.png"));
+    connect(createTextBlurbBtnTwo, SIGNAL(clicked(bool)), this, SLOT(createTextTwoBlurb()));
+
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(createLineBtn);
     gridLayout->addWidget(createTextBlurbBtn);
+    gridLayout->addWidget(createTextBlurbBtnTwo);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -76,5 +81,10 @@ void SubMenu::createLine() {
 
 void SubMenu::createTextBlurb() {
     _scribbleArea.setTextPointBool();
-    _scribbleArea.getUserInput();
+    // _scribbleArea.getUserInput();
+    _scribbleArea.setTextBlurbBtn();
+}
+
+void SubMenu::createTextTwoBlurb() {
+    _scribbleArea.setSecondTextBlurb();
 }

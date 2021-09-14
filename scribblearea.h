@@ -13,6 +13,8 @@
 #include <QTextEdit>
 #include <QInputDialog>
 #include <QDir>
+#include <QLabel>
+#include <QLineEdit>
 
 class ScribbleArea : public QWidget
 {
@@ -41,9 +43,14 @@ public:
 
     void setDrawTextBool();
     void setTextBlurbBtn();
+    // bool setTextBlurbBtn();
     void drawText();
     void getUserInput();
     void setTextPointBool();
+    void setUpActiveText();
+
+    void createSecondTextBlurb();
+    void setSecondTextBlurb();
 
 public slots:
     void clearImage();
@@ -56,6 +63,7 @@ protected:
 
     void paintEvent(QPaintEvent *event) override;
     void resizeEvent(QResizeEvent *event) override;
+    void keyPressEvent(QKeyEvent *event) override;
 
 private:
     void drawLineTo(const QPoint &endPoint);
@@ -80,6 +88,16 @@ private:
     int inputDiagFontSize;
     bool textSettingSet;
 
+    bool fontSizeSet;
+
+    QLabel *labelOne;
+    bool currentlyTyping;
+
+    QTextEdit *textEditOne;
+    QFont curFont;
+
+    QTextEdit *textEditTwo;
+    bool secondTextBool;
 };
 
 #endif // SCRIBBLEAREA_H
