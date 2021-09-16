@@ -27,6 +27,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     fontSizeSet = false;
     currentlyTyping = false;
     secondTextBool = false;
+    currentlyTypingTwo = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -112,6 +113,22 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
     if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
         currentlyTyping = false;
         fontSizeSet = false;
+        textEditOne->setReadOnly(true);
+    }
+    if(currentlyTypingTwo && (event->key() != Qt::Key_Escape)) {
+        QString tmpCurText = textEditTwo->toPlainText();
+        tmpCurText += event->text();
+        textEditTwo->setText(tmpCurText);
+        textEditTwo->show();
+    }
+    if(currentlyTypingTwo && (event->key() == Qt::Key_Escape)) {
+        currentlyTypingTwo = false;
+        fontSizeSet = false;
+        textEditTwo->setReadOnly(true);
+    }
+    if(currentlyTypingTwo && (event->key() == Qt::Key_Delete)) {
+        QString curText = textEditTwo->toPlainText();
+        curText.remove(curText.length()-1, 1);
     }
 }
 
@@ -124,19 +141,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        /* if(drawTextBool && this->underMouse()) {
-            m_x1 = event->x();
-            m_y1 = event->y();
-            getUserInput();
-            drawTextBool = false;
-        } */
-        /* if(textSettingSet && this->underMouse()) {
-            m_x1 = event->x();
-            m_y1 = event->y();
-            setTextBlurbBtn();
-            textSettingSet = false;
-            drawTextBool = false;
-        } */
         if(fontSizeSet && this->underMouse()) {
             qDebug() << " font size set and under mouse";
             m_x1 = event->x();
@@ -323,11 +327,12 @@ void ScribbleArea::setUpActiveText() {
 
 
 void ScribbleArea::createSecondTextBlurb() {
+    currentlyTypingTwo = true;
     qDebug() << "inside createSecondTextBlurb()";
     textEditTwo = new QTextEdit(this);
-    textEditTwo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    // textEditTwo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
     textEditTwo->setCurrentFont(curFont);
-    textEditTwo->setText("testing");
+    // textEditTwo->setText("testing");
     int diff_x = (m_x2 - m_x1);
     int diff_y;//  = (m_y2 - m_y1);
     if(m_y1 > m_y2) {
@@ -351,7 +356,7 @@ void ScribbleArea::createSecondTextBlurb() {
         textEditTwo->setGeometry(m_x1, m_y1, diff_x, diff_y);
     }
     textEditTwo->show();
-    update();
+    // update();
 }
 
 

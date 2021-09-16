@@ -92,6 +92,7 @@ private:
 
     QLabel *labelOne;
     bool currentlyTyping;
+    bool currentlyTypingTwo;
 
     QTextEdit *textEditOne;
     QFont curFont;
