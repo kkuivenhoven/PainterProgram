@@ -25,9 +25,6 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     textSettingSet = false;
 
     fontSizeSet = false;
-    currentlyTyping = false;
-    secondTextBool = false;
-    currentlyTypingTwo = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -38,14 +35,6 @@ ScribbleArea::~ScribbleArea() {
 
 void ScribbleArea::setDrawLineBool() {
     drawLineBool = true;
-}
-
-void ScribbleArea::setDrawTextBool() {
-    drawTextBool = true;
-}
-
-void ScribbleArea::setSecondTextBlurb() {
-    secondTextBool = true;
 }
 
 void ScribbleArea::setThirdTextBlurb() {
@@ -98,49 +87,6 @@ void ScribbleArea::clearImage() {
 }
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
-    qDebug() << "event number code: " << event->key();
-    if(event->key() == Qt::Key_Delete) {
-        qDebug() << " delete key is true";
-    }
-    if(event->key() == Qt::Key_Return) {
-        qDebug() << " return key is true";
-    }
-    if(event->key() == Qt::Key_Backspace) {
-        qDebug() << " backspace key is true";
-    }
-    // if(currentlyTypingTwo && (event->key() == Qt::Key_Delete)) {
-    if(currentlyTypingTwo && (event->key() == Qt::Key_Backspace)) {
-        qDebug() << "currently typing two is true && should be deleted \n";
-        QString curText = textEditTwo->toPlainText();
-        curText.remove(curText.length()-1, 1);
-        textEditTwo->setText(curText);
-        textEditTwo->show();
-    }
-    qDebug() << "inside keyPressEvent()";
-    if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
-        QString tmpCurTextTwo = textEditOne->toPlainText();
-        tmpCurTextTwo += event->text();
-        textEditOne->setText(tmpCurTextTwo);
-        textEditOne->show();
-        update();
-    }
-    if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
-        currentlyTyping = false;
-        fontSizeSet = false;
-        textEditOne->setReadOnly(true);
-    }
-    if(currentlyTypingTwo && (event->key() != Qt::Key_Escape)) {
-        qDebug() << " not key escape and currently typing";
-        QString tmpCurText = textEditTwo->toPlainText();
-        tmpCurText += event->text();
-        textEditTwo->setText(tmpCurText);
-        textEditTwo->show();
-    }
-    if(currentlyTypingTwo && (event->key() == Qt::Key_Escape)) {
-        // currentlyTypingTwo = false;
-        fontSizeSet = false;
-        textEditTwo->setReadOnly(true);
-    }
     if(currentlyTypingThree && (event->key() != Qt::Key_Escape)) {
         QString tmpCurTextThree = textEditThree->toPlainText();
         tmpCurTextThree += event->text();
@@ -164,17 +110,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
         scribbling = true;
         if(drawLineBool && this->underMouse()) {
             qDebug() << " drawLineBool is true and under mouse";
-            m_x1 = event->x();
-            m_y1 = event->y();
-        }
-        if(fontSizeSet && this->underMouse()) {
-            qDebug() << " font size set and under mouse";
-            m_x1 = event->x();
-            m_y1 = event->y();
-            setUpActiveText();
-        }
-        if(secondTextBool && this->underMouse()) {
-            qDebug() << " second bool is true ";
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -207,12 +142,6 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             drawLine();
-        }
-        if(secondTextBool) {
-            qDebug() << "inside second text bool";
-            m_x2 = event->x();
-            m_y2 = event->y();
-            createSecondTextBlurb();
         }
         if(thirdTextBool) {
             m_x2 = event->x();
@@ -344,63 +273,6 @@ void ScribbleArea::setTextBlurbBtn() {
     fontSizeSet = true;
     qDebug() << " font size set is true";
 }
-
-
-void ScribbleArea::setUpActiveText() {
-    currentlyTyping = true;
-    /* labelOne = new QLabel(this);
-    labelOne->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    labelOne->setText("");
-    labelOne->setAlignment(Qt::AlignBottom | Qt::AlignRight);
-    labelOne->setGeometry(m_x1,m_y1,100,100);
-    labelOne->show(); */
-
-    textEditOne = new QTextEdit(this);
-    textEditOne->setCurrentFont(curFont);
-    textEditOne->setText("");
-    textEditOne->setGeometry(m_x1, m_y1, 200, 200);
-    textEditOne->show();
-}
-
-
-void ScribbleArea::createSecondTextBlurb() {
-    currentlyTypingTwo = true;
-    qDebug() << "inside createSecondTextBlurb()";
-    textEditTwo = new QTextEdit(this);
-    // textEditTwo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
-    textEditTwo->setFrameStyle(QFrame::NoFrame);
-    textEditTwo->setCurrentFont(curFont);
-    // textEditTwo->viewport()->setAutoFillBackground(false);
-    setFocusPolicy(Qt::StrongFocus);
-    // const QColor color(121, 188, 255);
-    // textEditTwo->setTextBackgroundColor(color);
-    int diff_x = (m_x2 - m_x1);
-    int diff_y;
-    if(m_y1 > m_y2) {
-        diff_y = (m_y1 - m_y2);
-    }
-    if(m_y2 > m_y1) {
-        diff_y = (m_y2 - m_y1);
-    }
-    if(m_y2 == m_y1) {
-        diff_y = 1;
-    }
-    qDebug() << "currentlyTypingTwo: " << currentlyTypingTwo << endl;
-    qDebug() << "m_x1: " << QString::number(m_x1);
-    qDebug() << "m_y1: " << QString::number(m_y1);
-    qDebug() << "m_x2: " << QString::number(m_x2);
-    qDebug() << "m_y2: " << QString::number(m_y2);
-    qDebug() << "diff_x: " << QString::number(diff_x);
-    qDebug() << "diff_y: " << QString::number(diff_y);
-    if(m_y1 > m_y2) {
-        textEditTwo->setGeometry(m_x1, m_y2, diff_x, diff_y);
-    } else {
-        textEditTwo->setGeometry(m_x1, m_y1, diff_x, diff_y);
-    }
-    textEditTwo->show();
-    // update();
-}
-
 
 void ScribbleArea::createThirdTextBlurb() {
     qDebug() << " create third text blurb \n";

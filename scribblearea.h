@@ -41,16 +41,16 @@ public:
     void setDrawLineBool();
     void drawLine();
 
-    void setDrawTextBool();
+    // void setDrawTextBool();
     void setTextBlurbBtn();
     // bool setTextBlurbBtn();
     void drawText();
     void getUserInput();
     void setTextPointBool();
-    void setUpActiveText();
+    // void setUpActiveText();
 
-    void createSecondTextBlurb();
-    void setSecondTextBlurb();
+    // void createSecondTextBlurb();
+    // void setSecondTextBlurb();
 
     void setThirdTextBlurb();
     void createThirdTextBlurb();
@@ -92,16 +92,7 @@ private:
     bool textSettingSet;
 
     bool fontSizeSet;
-
-    QLabel *labelOne;
-    bool currentlyTyping;
-
-    QTextEdit *textEditOne;
     QFont curFont;
-
-    QTextEdit *textEditTwo;
-    bool secondTextBool;
-    bool currentlyTypingTwo;
 
     QTextEdit *textEditThree;
     bool thirdTextBool;

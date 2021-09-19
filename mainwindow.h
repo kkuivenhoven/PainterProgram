@@ -72,8 +72,6 @@ private:
     QAction *openAct;
     QAction *fillEaselAct;
 
-    // QMdiSubWindow *subWindow;
-    // QWidget *subWidget;
     SubMenu *subMenu;
 
 };

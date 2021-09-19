@@ -26,8 +26,6 @@ private slots:
     void changePenWidth();
     void clearScreen();
     void createLine();
-    void createTextBlurb();
-    void createTextTwoBlurb();
     void createTextThreeBlurb();
 };
 

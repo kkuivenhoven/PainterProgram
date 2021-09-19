@@ -7,9 +7,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    // QKeyEvent *keyEvent = new QKeyEvent(this);
-
-
     scribblearea = new ScribbleArea;
     setCentralWidget(scribblearea);
     createActions();
