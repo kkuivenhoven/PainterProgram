@@ -41,19 +41,13 @@ public:
     void setDrawLineBool();
     void drawLine();
 
-    // void setDrawTextBool();
     void setTextBlurbBtn();
-    // bool setTextBlurbBtn();
-    void drawText();
     void getUserInput();
-    void setTextPointBool();
-    // void setUpActiveText();
-
-    // void createSecondTextBlurb();
-    // void setSecondTextBlurb();
 
     void setThirdTextBlurb();
     void createThirdTextBlurb();
+
+    void setPenUp();
 
 public slots:
     void clearImage();
@@ -86,7 +80,6 @@ private:
     int m_y1;
     int m_y2;
 
-    bool drawTextBool;
     QString curText;
     int inputDiagFontSize;
     bool textSettingSet;

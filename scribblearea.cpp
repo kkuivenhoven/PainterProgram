@@ -109,7 +109,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
         lastPoint = event->pos();
         scribbling = true;
         if(drawLineBool && this->underMouse()) {
-            qDebug() << " drawLineBool is true and under mouse";
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -214,11 +213,6 @@ void ScribbleArea::drawLine() {
 }
 
 
-void ScribbleArea::setTextPointBool() {
-    drawTextBool = true;
-}
-
-
 void ScribbleArea::getUserInput() {
     QStringList fontSizes;
     for(int i = 8; i < 85; i++) {
@@ -271,11 +265,9 @@ void ScribbleArea::setTextBlurbBtn() {
                         Qt::RoundCap, Qt::RoundJoin));
 
     fontSizeSet = true;
-    qDebug() << " font size set is true";
 }
 
 void ScribbleArea::createThirdTextBlurb() {
-    qDebug() << " create third text blurb \n";
     currentlyTypingThree = true;
     textEditThree = new QTextEdit(this);
     textEditThree->setFrameStyle(QFrame::NoFrame);
