@@ -52,6 +52,9 @@ public:
     void createSecondTextBlurb();
     void setSecondTextBlurb();
 
+    void setThirdTextBlurb();
+    void createThirdTextBlurb();
+
 public slots:
     void clearImage();
     void print();
@@ -92,13 +95,17 @@ private:
 
     QLabel *labelOne;
     bool currentlyTyping;
-    bool currentlyTypingTwo;
 
     QTextEdit *textEditOne;
     QFont curFont;
 
     QTextEdit *textEditTwo;
     bool secondTextBool;
+    bool currentlyTypingTwo;
+
+    QTextEdit *textEditThree;
+    bool thirdTextBool;
+    bool currentlyTypingThree;
 };
 
 #endif // SCRIBBLEAREA_H

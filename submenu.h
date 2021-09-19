@@ -28,6 +28,7 @@ private slots:
     void createLine();
     void createTextBlurb();
     void createTextTwoBlurb();
+    void createTextThreeBlurb();
 };
 
 #endif // SUBMENU_H

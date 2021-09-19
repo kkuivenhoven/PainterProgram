@@ -48,6 +48,10 @@ void ScribbleArea::setSecondTextBlurb() {
     secondTextBool = true;
 }
 
+void ScribbleArea::setThirdTextBlurb() {
+    thirdTextBool = true;
+}
+
 bool ScribbleArea::openImage(const QString &fileName) {
     QImage loadedImage;
     if(!loadedImage.load(fileName)) {
@@ -94,20 +98,30 @@ void ScribbleArea::clearImage() {
 }
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
+    qDebug() << "event number code: " << event->key();
+    if(event->key() == Qt::Key_Delete) {
+        qDebug() << " delete key is true";
+    }
+    if(event->key() == Qt::Key_Return) {
+        qDebug() << " return key is true";
+    }
+    if(event->key() == Qt::Key_Backspace) {
+        qDebug() << " backspace key is true";
+    }
+    // if(currentlyTypingTwo && (event->key() == Qt::Key_Delete)) {
+    if(currentlyTypingTwo && (event->key() == Qt::Key_Backspace)) {
+        qDebug() << "currently typing two is true && should be deleted \n";
+        QString curText = textEditTwo->toPlainText();
+        curText.remove(curText.length()-1, 1);
+        textEditTwo->setText(curText);
+        textEditTwo->show();
+    }
     qDebug() << "inside keyPressEvent()";
     if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
-        qDebug() << "Key press event -- currently typing\n";
-        /* QString tmpCurText = labelOne->text();
-        // tmpCurText += QString::number(event->key());
-        tmpCurText += event->text();
-        labelOne->setText(tmpCurText);
-        labelOne->show(); */
-
         QString tmpCurTextTwo = textEditOne->toPlainText();
         tmpCurTextTwo += event->text();
         textEditOne->setText(tmpCurTextTwo);
         textEditOne->show();
-
         update();
     }
     if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
@@ -116,21 +130,33 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
         textEditOne->setReadOnly(true);
     }
     if(currentlyTypingTwo && (event->key() != Qt::Key_Escape)) {
+        qDebug() << " not key escape and currently typing";
         QString tmpCurText = textEditTwo->toPlainText();
         tmpCurText += event->text();
         textEditTwo->setText(tmpCurText);
         textEditTwo->show();
     }
     if(currentlyTypingTwo && (event->key() == Qt::Key_Escape)) {
-        currentlyTypingTwo = false;
+        // currentlyTypingTwo = false;
         fontSizeSet = false;
         textEditTwo->setReadOnly(true);
     }
-    if(currentlyTypingTwo && (event->key() == Qt::Key_Delete)) {
-        QString curText = textEditTwo->toPlainText();
-        curText.remove(curText.length()-1, 1);
+    if(currentlyTypingThree && (event->key() != Qt::Key_Escape)) {
+        QString tmpCurTextThree = textEditThree->toPlainText();
+        tmpCurTextThree += event->text();
+        textEditThree->setText(tmpCurTextThree);
+        textEditThree->show();
+        update();
+    }
+    if(currentlyTypingThree && (event->key() == Qt::Key_Backspace)) {
+        QString tmpCurText = textEditThree->toPlainText();
+        tmpCurText.remove(tmpCurText.length()-2, 2);
+        textEditThree->setText(tmpCurText);
+        textEditThree->show();
+        update();
     }
 }
+
 
 void ScribbleArea::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
@@ -152,8 +178,13 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(thirdTextBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
     }
 }
+
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if((event->buttons() & Qt::LeftButton) && scribbling) {
@@ -163,6 +194,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
         // can add functionality for straight line tool here
     }
 }
+
 
 void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton && scribbling) {
@@ -182,14 +214,19 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             createSecondTextBlurb();
         }
+        if(thirdTextBool) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createThirdTextBlurb();
+        }
     }
 }
 
 
 void ScribbleArea::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
-    QRect dirtyRect = event->rect(); // ? was this always here?
-    painter.drawImage(dirtyRect, image, dirtyRect); // this too?
+    QRect dirtyRect = event->rect();
+    painter.drawImage(dirtyRect, image, dirtyRect);
 }
 
 
@@ -331,10 +368,14 @@ void ScribbleArea::createSecondTextBlurb() {
     qDebug() << "inside createSecondTextBlurb()";
     textEditTwo = new QTextEdit(this);
     // textEditTwo->setFrameStyle(QFrame::Panel | QFrame::Sunken);
+    textEditTwo->setFrameStyle(QFrame::NoFrame);
     textEditTwo->setCurrentFont(curFont);
-    // textEditTwo->setText("testing");
+    // textEditTwo->viewport()->setAutoFillBackground(false);
+    setFocusPolicy(Qt::StrongFocus);
+    // const QColor color(121, 188, 255);
+    // textEditTwo->setTextBackgroundColor(color);
     int diff_x = (m_x2 - m_x1);
-    int diff_y;//  = (m_y2 - m_y1);
+    int diff_y;
     if(m_y1 > m_y2) {
         diff_y = (m_y1 - m_y2);
     }
@@ -344,6 +385,7 @@ void ScribbleArea::createSecondTextBlurb() {
     if(m_y2 == m_y1) {
         diff_y = 1;
     }
+    qDebug() << "currentlyTypingTwo: " << currentlyTypingTwo << endl;
     qDebug() << "m_x1: " << QString::number(m_x1);
     qDebug() << "m_y1: " << QString::number(m_y1);
     qDebug() << "m_x2: " << QString::number(m_x2);
@@ -357,6 +399,19 @@ void ScribbleArea::createSecondTextBlurb() {
     }
     textEditTwo->show();
     // update();
+}
+
+
+void ScribbleArea::createThirdTextBlurb() {
+    qDebug() << " create third text blurb \n";
+    currentlyTypingThree = true;
+    textEditThree = new QTextEdit(this);
+    textEditThree->setFrameStyle(QFrame::NoFrame);
+    textEditThree->viewport()->setAutoFillBackground(false);
+    int diff_x = (m_x2 - m_x1);
+    int diff_y = (m_y2 - m_y1);
+    textEditThree->setGeometry(m_x1, m_y1, diff_x, diff_y);
+    textEditThree->show();
 }
 
 

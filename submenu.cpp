@@ -25,21 +25,27 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     createLineBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
     connect(createLineBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
 
-    QPushButton *createTextBlurbBtn = new QPushButton();
+    /* QPushButton *createTextBlurbBtn = new QPushButton();
     createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
     connect(createTextBlurbBtn, SIGNAL(clicked(bool)), this, SLOT(createTextBlurb()));
 
     QPushButton *createTextBlurbBtnTwo = new QPushButton();
     createTextBlurbBtnTwo->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBrush.png"));
     connect(createTextBlurbBtnTwo, SIGNAL(clicked(bool)), this, SLOT(createTextTwoBlurb()));
+    */
+
+    QPushButton *createTextBlurbBtnThree = new QPushButton();
+    createTextBlurbBtnThree->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
+    connect(createTextBlurbBtnThree, SIGNAL(clicked(bool)), this, SLOT(createTextThreeBlurb()));
 
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(createLineBtn);
-    gridLayout->addWidget(createTextBlurbBtn);
-    gridLayout->addWidget(createTextBlurbBtnTwo);
+    // gridLayout->addWidget(createTextBlurbBtn);
+    // gridLayout->addWidget(createTextBlurbBtnTwo);
+    gridLayout->addWidget(createTextBlurbBtnThree);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -87,4 +93,8 @@ void SubMenu::createTextBlurb() {
 
 void SubMenu::createTextTwoBlurb() {
     _scribbleArea.setSecondTextBlurb();
+}
+
+void SubMenu::createTextThreeBlurb() {
+    _scribbleArea.setThirdTextBlurb();
 }
