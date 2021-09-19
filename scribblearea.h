@@ -90,6 +90,8 @@ private:
     QTextEdit *textEditThree;
     bool thirdTextBool;
     bool currentlyTypingThree;
+
+    bool turnBoolOn;
 };
 
 #endif // SCRIBBLEAREA_H

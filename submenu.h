@@ -27,6 +27,7 @@ private slots:
     void clearScreen();
     void createLine();
     void createTextThreeBlurb();
+    void setUpPaintBrush();
 };
 
 #endif // SUBMENU_H

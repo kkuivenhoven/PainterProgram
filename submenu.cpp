@@ -29,12 +29,17 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     createTextBlurbBtnThree->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
     connect(createTextBlurbBtnThree, SIGNAL(clicked(bool)), this, SLOT(createTextThreeBlurb()));
 
+    QPushButton *paintBrush = new QPushButton();
+    paintBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/paintBrushTwo.png"));
+    connect(paintBrush, SIGNAL(clicked(bool)), this, SLOT(setUpPaintBrush()));
+
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(createLineBtn);
     gridLayout->addWidget(createTextBlurbBtnThree);
+    gridLayout->addWidget(paintBrush);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -76,4 +81,8 @@ void SubMenu::createLine() {
 
 void SubMenu::createTextThreeBlurb() {
     _scribbleArea.setThirdTextBlurb();
+}
+
+void SubMenu::setUpPaintBrush() {
+    _scribbleArea.setPenUp();
 }

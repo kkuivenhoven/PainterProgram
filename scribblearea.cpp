@@ -25,20 +25,28 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     textSettingSet = false;
 
     fontSizeSet = false;
+    turnBoolOn = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
+
 
 ScribbleArea::~ScribbleArea() {
 
 }
 
+
 void ScribbleArea::setDrawLineBool() {
     drawLineBool = true;
 }
 
+
 void ScribbleArea::setThirdTextBlurb() {
     thirdTextBool = true;
+}
+
+void ScribbleArea::setPenUp() {
+    turnBoolOn = true;
 }
 
 bool ScribbleArea::openImage(const QString &fileName) {
@@ -54,6 +62,7 @@ bool ScribbleArea::openImage(const QString &fileName) {
     return true;
 }
 
+
 bool ScribbleArea::saveImage(const QString &fileName, const char *fileFormat) {
     QImage visibleImage = image;
     resizeImage(&visibleImage, size());
@@ -66,13 +75,16 @@ bool ScribbleArea::saveImage(const QString &fileName, const char *fileFormat) {
     }
 }
 
+
 void ScribbleArea::setPenColor(const QColor &newColor) {
     myPenColor = newColor;
 }
 
+
 void ScribbleArea::setPenWidth(int newWidth) {
     myPenWidth = newWidth;
 }
+
 
 void ScribbleArea::setEasel(const QColor &fillColor) {
     image.fill(fillColor);
@@ -80,11 +92,13 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
     update();
 }
 
+
 void ScribbleArea::clearImage() {
     image.fill(qRgb(255,255,255));
     modified = true;
     update();
 }
+
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
     if(currentlyTypingThree && (event->key() != Qt::Key_Escape)) {
@@ -106,8 +120,11 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
 
 void ScribbleArea::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        lastPoint = event->pos();
-        scribbling = true;
+        if(turnBoolOn) {
+            lastPoint = event->pos();
+        }
+        // lastPoint = event->pos();
+        // scribbling = true;
         if(drawLineBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
@@ -121,9 +138,13 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
 
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
-    if((event->buttons() & Qt::LeftButton) && scribbling) {
-        if(drawLineBool == false) {
-           drawLineTo(event->pos());
+    // if((event->buttons() & Qt::LeftButton) && scribbling) {
+    if(event->buttons() & Qt::LeftButton) {
+        // if(drawLineBool == false) {
+           // drawLineTo(event->pos());
+        // }
+        if(turnBoolOn) {
+            drawLineTo(event->pos());
         }
         // can add functionality for straight line tool here
     }
@@ -131,11 +152,16 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
 
 
 void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
-    if(event->button() == Qt::LeftButton && scribbling) {
-        if(drawLineBool == false) {
+    // if(event->button() == Qt::LeftButton && scribbling) {
+    if(event->button() == Qt::LeftButton) {
+        // if(drawLineBool == false) {
+            // drawLineTo(event->pos());
+        // }
+        // scribbling = false;
+        if(turnBoolOn) {
             drawLineTo(event->pos());
+            turnBoolOn = false;
         }
-        scribbling = false;
         if(drawLineBool) {
             drawLineBool = false;
             m_x2 = event->x();
@@ -266,6 +292,7 @@ void ScribbleArea::setTextBlurbBtn() {
 
     fontSizeSet = true;
 }
+
 
 void ScribbleArea::createThirdTextBlurb() {
     currentlyTypingThree = true;
