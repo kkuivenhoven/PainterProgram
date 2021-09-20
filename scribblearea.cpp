@@ -26,6 +26,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 
     fontSizeSet = false;
     turnBoolOn = false;
+    setUpSquareBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -47,6 +48,14 @@ void ScribbleArea::setThirdTextBlurb() {
 
 void ScribbleArea::setPenUp() {
     turnBoolOn = true;
+}
+
+void ScribbleArea::setUpSquare() {
+    setUpSquareBool = true;
+}
+
+void ScribbleArea::setUpEllipse() {
+    setUpEllipseBool = true;
 }
 
 bool ScribbleArea::openImage(const QString &fileName) {
@@ -131,6 +140,14 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(setUpSquareBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
+        if(setUpEllipseBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
     }
 }
 
@@ -160,6 +177,16 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             createThirdTextBlurb();
+        }
+        if(setUpSquareBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createSquare();
+        }
+        if(setUpEllipseBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createEllipse();
         }
     }
 }
@@ -291,6 +318,32 @@ void ScribbleArea::createThirdTextBlurb() {
     int diff_y = (m_y2 - m_y1);
     textEditThree->setGeometry(m_x1, m_y1, diff_x, diff_y);
     textEditThree->show();
+}
+
+
+void ScribbleArea::createSquare() {
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rect(m_x1, m_y1, width, height);
+    QPainter painter(&image);
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
+    painter.drawRect(rect);
+    setUpSquareBool = false;
+    update();
+}
+
+
+void ScribbleArea::createEllipse() {
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rect(m_x1, m_y1, width, height);
+    QPainter painter(&image);
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
+    painter.drawEllipse(rect);
+    setUpEllipseBool = false;
+    update();
 }
 
 

@@ -28,6 +28,8 @@ private slots:
     void createLine();
     void createTextThreeBlurb();
     void setUpPaintBrush();
+    void setUpSquare();
+    void setUpEllipse();
 };
 
 #endif // SUBMENU_H

@@ -8,6 +8,7 @@
 #include <QLinearGradient>
 #include <QPen>
 #include <QRectF>
+#include <QRect>
 #include <QPainterPath>
 #include <QKeyEvent>
 #include <QTextEdit>
@@ -48,6 +49,12 @@ public:
     void createThirdTextBlurb();
 
     void setPenUp();
+
+    void setUpSquare();
+    void createSquare();
+
+    void setUpEllipse();
+    void createEllipse();
 
 public slots:
     void clearImage();
@@ -92,6 +99,8 @@ private:
     bool currentlyTypingThree;
 
     bool turnBoolOn;
+    bool setUpSquareBool;
+    bool setUpEllipseBool;
 };
 
 #endif // SCRIBBLEAREA_H
