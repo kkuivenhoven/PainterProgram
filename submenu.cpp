@@ -115,6 +115,5 @@ void SubMenu::setUpEllipse() {
 }
 
 void SubMenu::setUpConvexPolygon() {
-    qDebug() << " SubMenu::setUpConvexPolygon()";
     _scribbleArea.setReadyToDrawConvaxPolygonBool();
 }
