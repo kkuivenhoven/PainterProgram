@@ -169,14 +169,12 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
                 m_y1 = event->y();
                 QPointF tmpPoint(m_x1, m_y1);
                 secondCoordSet.append(tmpPoint);
-                qDebug() << " just appended another point to secondCoordSet list";
                 secondNumberOfPointsDrawn++;
                 if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
                     return;
                 }
             }
             if(secondNumberOfPointsDrawn >= secondTotalNumNeedToDraw) {
-                qDebug() << " about to call secondDrawConvexPolygon()";
                 secondDrawConvexPolygon();
             }
         }
