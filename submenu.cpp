@@ -49,6 +49,10 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/convexIcon.png"));
     connect(convexPolygonBrush, SIGNAL(clicked(bool)), this, SLOT(setUpConvexPolygon()));
 
+    QPushButton *roundSquareBrush = new QPushButton();
+    roundSquareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+    connect(roundSquareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpRoundEdgeSquare()));
+
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
@@ -59,6 +63,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(squareBrush);
     gridLayout->addWidget(ellipseBrush);
     gridLayout->addWidget(convexPolygonBrush);
+    gridLayout->addWidget(roundSquareBrush);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -116,4 +121,9 @@ void SubMenu::setUpEllipse() {
 
 void SubMenu::setUpConvexPolygon() {
     _scribbleArea.setReadyToDrawConvaxPolygonBool();
+}
+
+void SubMenu::setUpRoundEdgeSquare() {
+    qDebug() << " SubMenu::setUpRoundEdgeSquare()";
+    _scribbleArea.setUpRoundSquare();
 }

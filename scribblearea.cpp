@@ -36,6 +36,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     fontSizeSet = false;
     turnBoolOn = false;
     setUpSquareBool = false;
+    setUpRoundSquareBool = false;
 
     secondConvaxReadyToDraw = true;
     setFocusPolicy(Qt::StrongFocus);
@@ -76,6 +77,10 @@ void ScribbleArea::setReadyToDrawConvaxPolygonBool() {
      secondConvaxReadyToDraw = true;
      secondNumberOfPointsDrawn = 0;
      secondTotalNumNeedToDraw = text.toInt();
+}
+
+void ScribbleArea::setUpRoundSquare() {
+    setUpRoundSquareBool = true;
 }
 
 
@@ -161,7 +166,7 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpSquareBool && this->underMouse()) {
+        if((setUpSquareBool || setUpRoundSquareBool) && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -220,6 +225,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             createSquare();
+        }
+        if(setUpRoundSquareBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createRoundSquare();
         }
         if(setUpEllipseBool && this->underMouse()) {
             m_x2 = event->x();
@@ -341,6 +351,19 @@ void ScribbleArea::secondDrawConvexPolygon() {
     painter.drawConvexPolygon(points, arrSize);
     secondConvaxReadyToDraw = false;
     secondCoordSet.clear();
+    update();
+}
+
+
+void ScribbleArea::createRoundSquare() {
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rect(m_x1, m_y1, width, height);
+    QPainter painter(&image);
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
+    painter.drawRoundedRect(rect, 20.0, 15.0);
+    setUpSquareBool = false;
     update();
 }
 

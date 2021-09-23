@@ -110,9 +110,6 @@ void MainWindow::createActions() {
     penColorAct = new QAction(tr("&Pen color..."), this);
     connect(penColorAct, SIGNAL(triggered()), this, SLOT(penColor()));
 
-    fillEaselAct = new QAction(tr("&Fill easel..."), this);
-    connect(fillEaselAct, SIGNAL(triggered()), this, SLOT(fillEasel()));
-
     penWidthAct = new QAction(tr("Pen &Width..."), this);
     connect(penColorAct, SIGNAL(triggered()), this, SLOT(penWidth()));
 
@@ -142,7 +139,6 @@ void MainWindow::createMenus() {
     optionMenu = new QMenu(tr("&Options"), this);
     optionMenu->addAction(penColorAct);
     optionMenu->addAction(penWidthAct);
-    optionMenu->addAction(fillEaselAct);
     optionMenu->addSeparator();
     optionMenu->addAction(clearScreenAct);
 

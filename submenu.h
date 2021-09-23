@@ -36,6 +36,7 @@ private slots:
     void setUpSquare();
     void setUpEllipse();
     void setUpConvexPolygon();
+    void setUpRoundEdgeSquare();
 };
 
 #endif // SUBMENU_H

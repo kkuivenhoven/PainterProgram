@@ -58,6 +58,9 @@ public:
     void setReadyToDrawConvaxPolygonBool();
     void secondDrawConvexPolygon();
 
+    void setUpRoundSquare();
+    void createRoundSquare();
+
 public slots:
     void clearImage();
     void print();
@@ -109,6 +112,8 @@ private:
     int secondNumberOfPointsDrawn;
     int secondTotalNumNeedToDraw;
     QList<QPointF> secondCoordSet;
+
+    bool setUpRoundSquareBool;
 };
 
 #endif // SCRIBBLEAREA_H
