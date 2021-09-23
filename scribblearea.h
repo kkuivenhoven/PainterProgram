@@ -93,11 +93,6 @@ private:
     int m_y1;
     int m_y2;
 
-    int m_x3;
-    int m_x4;
-    int m_y3;
-    int m_y4;
-
     QString curText;
     int inputDiagFontSize;
     bool textSettingSet;
@@ -113,18 +108,10 @@ private:
     bool setUpSquareBool;
     bool setUpEllipseBool;
 
-    bool boolGatherPoint;
-    bool setUpConvexPolygonBool;
-    int gatheringPoints;
-    int coordPairsCount;
-    QList<QPair<int,int>> convexPolygonList;
-    int howManySetOfPoints;
-
     bool secondConvaxReadyToDraw;
     int secondNumberOfPointsDrawn;
     int secondTotalNumNeedToDraw;
     QList<QPointF> secondCoordSet;
-
 };
 
 #endif // SCRIBBLEAREA_H
