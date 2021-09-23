@@ -99,7 +99,7 @@ void SubMenu::createLine() {
 }
 
 void SubMenu::createTextThreeBlurb() {
-    _scribbleArea.setThirdTextBlurb();
+    _scribbleArea.setTextBlurb();
 }
 
 void SubMenu::setUpPaintBrush() {

@@ -44,11 +44,8 @@ public:
     void setDrawLineBool();
     void drawLine();
 
-    void setTextBlurbBtn();
-    void getUserInput();
-
-    void setThirdTextBlurb();
-    void createThirdTextBlurb();
+    void setTextBlurb();
+    void createTextBlurb();
 
     void setPenUp();
 
@@ -100,9 +97,9 @@ private:
     bool fontSizeSet;
     QFont curFont;
 
-    QTextEdit *textEditThree;
-    bool thirdTextBool;
-    bool currentlyTypingThree;
+    QTextEdit *textEdit;
+    bool textBool;
+    bool currentlyTyping;
 
     bool turnBoolOn;
     bool setUpSquareBool;

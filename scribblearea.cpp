@@ -9,13 +9,16 @@
 #endif
 #endif
 
-
 #include "scribblearea.h"
+
+// for when want to build "set font" tool
+    // curFont = QFontDialog::getFont(
+                // &ok, QFont("Helvetica [Cronyx]", 10), this);
+    // painter.setFont(curFont);
 
 
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 {
-
     setAttribute(Qt::WA_StaticContents);
 
     modified = false;
@@ -23,7 +26,10 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     myPenWidth = 1;
     myPenColor = Qt::black;
 
-    m_x1, m_x2, m_y1, m_y2 = 0;
+    m_x1 = 0;
+    m_x2 = 0;
+    m_y1 = 0;
+    m_y2 = 0;
     drawLineBool = false;
     textSettingSet = false;
 
@@ -46,8 +52,8 @@ void ScribbleArea::setDrawLineBool() {
 }
 
 
-void ScribbleArea::setThirdTextBlurb() {
-    thirdTextBool = true;
+void ScribbleArea::setTextBlurb() {
+    textBool = true;
 }
 
 void ScribbleArea::setPenUp() {
@@ -125,18 +131,18 @@ void ScribbleArea::clearImage() {
 
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
-    if(currentlyTypingThree && (event->key() != Qt::Key_Escape)) {
-        QString tmpCurTextThree = textEditThree->toPlainText();
-        tmpCurTextThree += event->text();
-        textEditThree->setText(tmpCurTextThree);
-        textEditThree->show();
+    if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
+        QString tmpCurText = textEdit->toPlainText();
+        tmpCurText += event->text();
+        textEdit->setText(tmpCurText);
+        textEdit->show();
         update();
     }
-    if(currentlyTypingThree && (event->key() == Qt::Key_Backspace)) {
-        QString tmpCurText = textEditThree->toPlainText();
+    if(currentlyTyping && (event->key() == Qt::Key_Backspace)) {
+        QString tmpCurText = textEdit->toPlainText();
         tmpCurText.remove(tmpCurText.length()-2, 2);
-        textEditThree->setText(tmpCurText);
-        textEditThree->show();
+        textEdit->setText(tmpCurText);
+        textEdit->show();
         update();
     }
 }
@@ -151,7 +157,7 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(thirdTextBool && this->underMouse()) {
+        if(textBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -205,10 +211,10 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             drawLine();
         }
-        if(thirdTextBool) {
+        if(textBool) {
             m_x2 = event->x();
             m_y2 = event->y();
-            createThirdTextBlurb();
+            createTextBlurb();
         }
         if(setUpSquareBool && this->underMouse()) {
             m_x2 = event->x();
@@ -285,71 +291,15 @@ void ScribbleArea::drawLine() {
     update();
 }
 
-
-void ScribbleArea::getUserInput() {
-    QStringList fontSizes;
-    for(int i = 8; i < 85; i++) {
-        fontSizes << QString::number(i);
-    }
-
-    bool okay;
-    QDialog *d = new QDialog();
-    QVBoxLayout *vbox = new QVBoxLayout();
-    QLabel *labelA = new QLabel("Select font size:");
-    QComboBox *textSizeOptions = new QComboBox();
-    // textSizeOptions->addItems(QStringList() << "12" << "13" << "14" << "15" << "16" << "17" << "18" << "19" << "20" << "21" << "22");
-    textSizeOptions->addItems(fontSizes);
-    QLabel *labelB = new QLabel("Enter text:");
-    QLineEdit *lineEditB = new QLineEdit();
-
-    QDialogButtonBox *buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok |
-                                                       QDialogButtonBox::Cancel);
-    QObject::connect(buttonBox, SIGNAL(accepted()), d, SLOT(accept()));
-    QObject::connect(buttonBox, SIGNAL(rejected()), d, SLOT(reject()));
-
-    vbox->addWidget(labelA);
-    vbox->addWidget(textSizeOptions);
-    vbox->addWidget(labelB);
-    vbox->addWidget(lineEditB);
-    vbox->addWidget(buttonBox);
-
-    d->setLayout(vbox);
-
-    int result = d->exec();
-    if(result == QDialog::Accepted) {
-        // handle values from d
-        inputDiagFontSize = textSizeOptions->currentText().toInt();
-        curText = lineEditB->text();
-    }
-    textSettingSet = true;
-}
-
-
-void ScribbleArea::setTextBlurbBtn() {
-    bool ok;
-    // QFont font = QFontDialog::getFont(
-    curFont = QFontDialog::getFont(
-                &ok, QFont("Helvetica [Cronyx]", 10), this);
-    QPainter painter(&image);
-    // QPointF topLeftPos(m_x1, m_y1);
-    // QFont font("times", inputDiagFontSize);
-    painter.setFont(curFont);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        Qt::RoundCap, Qt::RoundJoin));
-
-    fontSizeSet = true;
-}
-
-
-void ScribbleArea::createThirdTextBlurb() {
-    currentlyTypingThree = true;
-    textEditThree = new QTextEdit(this);
-    textEditThree->setFrameStyle(QFrame::NoFrame);
-    textEditThree->viewport()->setAutoFillBackground(false);
+void ScribbleArea::createTextBlurb() {
+    currentlyTyping = true;
+    textEdit = new QTextEdit(this);
+    textEdit->setFrameStyle(QFrame::NoFrame);
+    textEdit->viewport()->setAutoFillBackground(false);
     int diff_x = (m_x2 - m_x1);
     int diff_y = (m_y2 - m_y1);
-    textEditThree->setGeometry(m_x1, m_y1, diff_x, diff_y);
-    textEditThree->show();
+    textEdit->setGeometry(m_x1, m_y1, diff_x, diff_y);
+    textEdit->show();
 }
 
 
@@ -386,7 +336,6 @@ void ScribbleArea::secondDrawConvexPolygon() {
     int arrSize = secondCoordSet.size();
     QPointF points[arrSize];
     for(int i = 0; i < secondCoordSet.size(); i++) {
-        QPointF tmpCoord = secondCoordSet.at(i);
         points[i] = secondCoordSet.at(i);
     }
     painter.drawConvexPolygon(points, arrSize);
