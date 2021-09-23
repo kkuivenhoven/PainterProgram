@@ -31,7 +31,7 @@ private slots:
     void setUpPaintBrush();
 
     void createLine();
-    void createTextThreeBlurb();
+    void createTextBlurb();
 
     void setUpSquare();
     void setUpEllipse();

@@ -10,46 +10,57 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     QGridLayout *gridLayout = new QGridLayout();
 
     QPushButton *fillEaselBtn = new QPushButton();
+    fillEaselBtn->setToolTip("Fill the canvas with current paint color");
     fillEaselBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBucket.png"));
     connect(fillEaselBtn, SIGNAL(clicked(bool)), this, SLOT(fillEasel()));
 
     QPushButton *penColorBtn = new QPushButton();
+    penColorBtn->setToolTip("Change paint color");
     penColorBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBrush.png"));
     connect(penColorBtn, SIGNAL(clicked(bool)), this, SLOT(changePenColor()));
 
     QPushButton *penWidthBtn = new QPushButton();
+    penWidthBtn->setToolTip("Change the width of the pen");
     penWidthBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/3366100-200.png"));
     connect(penWidthBtn, SIGNAL(clicked(bool)), this, SLOT(changePenWidth()));
 
     QPushButton *clearScreenBtn = new QPushButton();
+    clearScreenBtn->setToolTip("Clear the canvas");
     clearScreenBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/clear-screen.jpg"));
     connect(clearScreenBtn, SIGNAL(clicked(bool)), this, SLOT(clearScreen()));
 
     QPushButton *createLineBtn = new QPushButton();
+    createLineBtn->setToolTip("Draw a straight line");
     createLineBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
     connect(createLineBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
 
-    QPushButton *createTextBlurbBtnThree = new QPushButton();
-    createTextBlurbBtnThree->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
-    connect(createTextBlurbBtnThree, SIGNAL(clicked(bool)), this, SLOT(createTextThreeBlurb()));
+    QPushButton *createTextBlurbBtn = new QPushButton();
+    createTextBlurbBtn->setToolTip("Draw text area");
+    createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
+    connect(createTextBlurbBtn, SIGNAL(clicked(bool)), this, SLOT(createTextBlurb()));
 
     QPushButton *paintBrush = new QPushButton();
+    paintBrush->setToolTip("Paint brush tool");
     paintBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/paintBrushTwo.png"));
     connect(paintBrush, SIGNAL(clicked(bool)), this, SLOT(setUpPaintBrush()));
 
     QPushButton *squareBrush = new QPushButton();
+    squareBrush->setToolTip("Draw a square or rectangle");
     squareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/squareIcon.png"));
     connect(squareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpSquare()));
 
     QPushButton *ellipseBrush = new QPushButton();
+    ellipseBrush->setToolTip("Draw an ellipse");
     ellipseBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/circleIcon.png"));
     connect(ellipseBrush, SIGNAL(clicked(bool)), this, SLOT(setUpEllipse()));
 
     QPushButton *convexPolygonBrush = new QPushButton();
+    convexPolygonBrush->setToolTip("Draw a convex polygon");
     convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/convexIcon.png"));
     connect(convexPolygonBrush, SIGNAL(clicked(bool)), this, SLOT(setUpConvexPolygon()));
 
     QPushButton *roundSquareBrush = new QPushButton();
+    roundSquareBrush->setToolTip("Draw a square with rounded edges");
     roundSquareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
     connect(roundSquareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpRoundEdgeSquare()));
 
@@ -58,7 +69,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(penWidthBtn);
     gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(createLineBtn);
-    gridLayout->addWidget(createTextBlurbBtnThree);
+    gridLayout->addWidget(createTextBlurbBtn);
     gridLayout->addWidget(paintBrush);
     gridLayout->addWidget(squareBrush);
     gridLayout->addWidget(ellipseBrush);
@@ -103,7 +114,7 @@ void SubMenu::createLine() {
     _scribbleArea.setDrawLineBool();
 }
 
-void SubMenu::createTextThreeBlurb() {
+void SubMenu::createTextBlurb() {
     _scribbleArea.setTextBlurb();
 }
 
