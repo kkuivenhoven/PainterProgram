@@ -9,10 +9,13 @@
 #endif
 #endif
 
+
 #include "scribblearea.h"
+
 
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 {
+
     setAttribute(Qt::WA_StaticContents);
 
     modified = false;
@@ -28,6 +31,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     turnBoolOn = false;
     setUpSquareBool = false;
 
+    secondConvaxReadyToDraw = true;
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -57,6 +61,17 @@ void ScribbleArea::setUpSquare() {
 void ScribbleArea::setUpEllipse() {
     setUpEllipseBool = true;
 }
+
+void ScribbleArea::setReadyToDrawConvaxPolygonBool() {
+     bool okay;
+     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                          tr("Polygon points:"), QLineEdit::Normal,
+                                          "enter", &okay);
+     secondConvaxReadyToDraw = true;
+     secondNumberOfPointsDrawn = 0;
+     secondTotalNumNeedToDraw = text.toInt();
+}
+
 
 bool ScribbleArea::openImage(const QString &fileName) {
     QImage loadedImage;
@@ -148,6 +163,23 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(secondConvaxReadyToDraw) {
+            if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
+                m_x1 = event->x();
+                m_y1 = event->y();
+                QPointF tmpPoint(m_x1, m_y1);
+                secondCoordSet.append(tmpPoint);
+                qDebug() << " just appended another point to secondCoordSet list";
+                secondNumberOfPointsDrawn++;
+                if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
+                    return;
+                }
+            }
+            if(secondNumberOfPointsDrawn >= secondTotalNumNeedToDraw) {
+                qDebug() << " about to call secondDrawConvexPolygon()";
+                secondDrawConvexPolygon();
+            }
+        }
     }
 }
 
@@ -156,6 +188,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
+        }
+        if(setUpSquareBool && this->underMouse()) {
         }
     }
 }
@@ -343,6 +377,23 @@ void ScribbleArea::createEllipse() {
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(rect);
     setUpEllipseBool = false;
+    update();
+}
+
+
+void ScribbleArea::secondDrawConvexPolygon() {
+    qDebug() << "QList coord set size: " << secondCoordSet.size();
+    int arrSize = secondCoordSet.size();
+    QPointF points[arrSize];
+    for(int i = 0; i < secondCoordSet.size(); i++) {
+        QPointF tmpCoord = secondCoordSet.at(i);
+        qDebug() << i << ". (x, y) --> (" << tmpCoord.x() << ", " << tmpCoord.y() << ")";
+        points[i] = secondCoordSet.at(i);
+    }
+    QPainter painter(&image);
+    painter.drawConvexPolygon(points, arrSize);
+    secondConvaxReadyToDraw = false;
+    secondCoordSet.clear();
     update();
 }
 

@@ -1,6 +1,5 @@
 #ifndef SCRIBBLEAREA_H
 #define SCRIBBLEAREA_H
-
 #include <QColor>
 #include <QImage>
 #include <QPoint>
@@ -16,6 +15,9 @@
 #include <QDir>
 #include <QLabel>
 #include <QLineEdit>
+#include <QPair>
+#include <QList>
+#include <QPointF>
 
 class ScribbleArea : public QWidget
 {
@@ -56,6 +58,9 @@ public:
     void setUpEllipse();
     void createEllipse();
 
+    void setReadyToDrawConvaxPolygonBool();
+    void secondDrawConvexPolygon();
+
 public slots:
     void clearImage();
     void print();
@@ -82,10 +87,16 @@ private:
     QPoint lastPoint;
 
     bool drawLineBool;
+
     int m_x1;
     int m_x2;
     int m_y1;
     int m_y2;
+
+    int m_x3;
+    int m_x4;
+    int m_y3;
+    int m_y4;
 
     QString curText;
     int inputDiagFontSize;
@@ -101,6 +112,19 @@ private:
     bool turnBoolOn;
     bool setUpSquareBool;
     bool setUpEllipseBool;
+
+    bool boolGatherPoint;
+    bool setUpConvexPolygonBool;
+    int gatheringPoints;
+    int coordPairsCount;
+    QList<QPair<int,int>> convexPolygonList;
+    int howManySetOfPoints;
+
+    bool secondConvaxReadyToDraw;
+    int secondNumberOfPointsDrawn;
+    int secondTotalNumNeedToDraw;
+    QList<QPointF> secondCoordSet;
+
 };
 
 #endif // SCRIBBLEAREA_H

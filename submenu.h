@@ -8,6 +8,8 @@
 #include <QColor>
 #include <QColorDialog>
 #include <QInputDialog>
+#include <QStyle>
+#include <QQuickView>
 
 #include "scribblearea.h"
 
@@ -21,15 +23,19 @@ public:
     ~SubMenu();
 
 private slots:
+    void clearScreen();
     void fillEasel();
+
     void changePenColor();
     void changePenWidth();
-    void clearScreen();
+    void setUpPaintBrush();
+
     void createLine();
     void createTextThreeBlurb();
-    void setUpPaintBrush();
+
     void setUpSquare();
     void setUpEllipse();
+    void setUpConvexPolygon();
 };
 
 #endif // SUBMENU_H

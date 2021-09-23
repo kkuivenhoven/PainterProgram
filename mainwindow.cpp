@@ -18,6 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
     resize(500, 500);
 }
 
+
 MainWindow::~MainWindow()
 {
     delete ui;

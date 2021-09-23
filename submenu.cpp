@@ -3,6 +3,10 @@
 SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(scribbleArea), QWidget(parent) {
     QWidget *subMenu = new QWidget();
 
+    // subMenu->setStyleSheet("QWidget { background-color:salmon; border-radius:20%; }");
+    // subMenu->setStyleSheet("QWidget { background-color: #A9ADB4; } ");
+                           // "QPushButton { background-color: #FFFFFF; box-shadow: none; border-radius: 2 px; border-color: #FFFFFF; }");
+
     QGridLayout *gridLayout = new QGridLayout();
 
     QPushButton *fillEaselBtn = new QPushButton();
@@ -41,15 +45,20 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     ellipseBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/circleIcon.png"));
     connect(ellipseBrush, SIGNAL(clicked(bool)), this, SLOT(setUpEllipse()));
 
-    gridLayout->addWidget(fillEaselBtn);
+    QPushButton *convexPolygonBrush = new QPushButton();
+    convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/convexIcon.png"));
+    connect(convexPolygonBrush, SIGNAL(clicked(bool)), this, SLOT(setUpConvexPolygon()));
+
+    gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
-    gridLayout->addWidget(clearScreenBtn);
+    gridLayout->addWidget(fillEaselBtn);
     gridLayout->addWidget(createLineBtn);
     gridLayout->addWidget(createTextBlurbBtnThree);
     gridLayout->addWidget(paintBrush);
     gridLayout->addWidget(squareBrush);
     gridLayout->addWidget(ellipseBrush);
+    gridLayout->addWidget(convexPolygonBrush);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -103,4 +112,9 @@ void SubMenu::setUpSquare() {
 
 void SubMenu::setUpEllipse() {
     _scribbleArea.setUpEllipse();
+}
+
+void SubMenu::setUpConvexPolygon() {
+    qDebug() << " SubMenu::setUpConvexPolygon()";
+    _scribbleArea.setReadyToDrawConvaxPolygonBool();
 }

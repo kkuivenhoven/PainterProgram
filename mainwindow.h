@@ -11,6 +11,8 @@
 #include <QMenu>
 #include <QMdiSubWindow>
 #include <QKeyEvent>
+#include <QQuickView>
+#include <QtQml>
 
 #include "scribblearea.h"
 #include "submenu.h"
