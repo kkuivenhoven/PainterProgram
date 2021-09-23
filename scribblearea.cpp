@@ -382,15 +382,15 @@ void ScribbleArea::createEllipse() {
 
 
 void ScribbleArea::secondDrawConvexPolygon() {
-    qDebug() << "QList coord set size: " << secondCoordSet.size();
+    QPainter painter(&image);
+    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
     int arrSize = secondCoordSet.size();
     QPointF points[arrSize];
     for(int i = 0; i < secondCoordSet.size(); i++) {
         QPointF tmpCoord = secondCoordSet.at(i);
-        qDebug() << i << ". (x, y) --> (" << tmpCoord.x() << ", " << tmpCoord.y() << ")";
         points[i] = secondCoordSet.at(i);
     }
-    QPainter painter(&image);
     painter.drawConvexPolygon(points, arrSize);
     secondConvaxReadyToDraw = false;
     secondCoordSet.clear();
