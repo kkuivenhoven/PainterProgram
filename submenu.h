@@ -39,6 +39,7 @@ private slots:
     void setUpRoundEdgeSquare();
 
     void setUpLinearGradient();
+    void userChooseGradientPaintColors();
 };
 
 #endif // SUBMENU_H

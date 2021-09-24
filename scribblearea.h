@@ -19,6 +19,7 @@
 #include <QList>
 #include <QPointF>
 #include <QGradient>
+#include <QPixmap>
 
 class ScribbleArea : public QWidget
 {
@@ -64,6 +65,9 @@ public:
 
     void setUpLinearGradient();
     void createLinearGradient();
+
+    void setUpGradientPaints();
+    void inputDialogForGradientPaints();
 
 public slots:
     void clearImage();
@@ -120,6 +124,7 @@ private:
     bool setUpRoundSquareBool;
 
     bool setUpLinearGradientBool;
+
 };
 
 #endif // SCRIBBLEAREA_H

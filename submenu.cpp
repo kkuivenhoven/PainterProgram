@@ -69,6 +69,11 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gradientBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
     connect(gradientBrush, SIGNAL(clicked(bool)), this, SLOT(setUpLinearGradient()));
 
+    QPushButton *setUpGradientPaints = new QPushButton();
+    setUpGradientPaints->setToolTip("Draw a square with rounded edges");
+    setUpGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+    connect(setUpGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
+
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
@@ -81,6 +86,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(convexPolygonBrush);
     gridLayout->addWidget(roundSquareBrush);
     gridLayout->addWidget(gradientBrush);
+    gridLayout->addWidget(setUpGradientPaints);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -147,4 +153,8 @@ void SubMenu::setUpRoundEdgeSquare() {
 void SubMenu::setUpLinearGradient() {
     qDebug() << "SubMenu::setUpGradient()";
     _scribbleArea.setUpLinearGradient();
+}
+
+void SubMenu::userChooseGradientPaintColors() {
+    _scribbleArea.setUpGradientPaints();
 }

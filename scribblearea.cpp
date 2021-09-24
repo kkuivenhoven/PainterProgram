@@ -72,14 +72,15 @@ void ScribbleArea::setUpEllipse() {
 }
 
 void ScribbleArea::setReadyToDrawConvexPolygonBool() {
-     bool okay;
-     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+    bool okay;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                           tr("Polygon points:"), QLineEdit::Normal,
                                           "enter", &okay);
-     secondConvexReadyToDraw = true;
-     secondNumberOfPointsDrawn = 0;
-     secondTotalNumNeedToDraw = text.toInt();
+    secondConvexReadyToDraw = true;
+    secondNumberOfPointsDrawn = 0;
+    secondTotalNumNeedToDraw = text.toInt();
 }
+
 
 void ScribbleArea::setUpRoundSquare() {
     setUpRoundSquareBool = true;
@@ -89,6 +90,11 @@ void ScribbleArea::setUpRoundSquare() {
 void ScribbleArea::setUpLinearGradient() {
     qDebug() << "ScribbleArea::setUpLinearGradient()";
     setUpLinearGradientBool = true;
+}
+
+
+void ScribbleArea::setUpGradientPaints() {
+    inputDialogForGradientPaints();
 }
 
 
@@ -393,13 +399,98 @@ void ScribbleArea::createLinearGradient() {
     QRect rectLinear(m_x1, m_y1, width, height);
 
     QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-    gradient.setColorAt(0, Qt::white);
-    gradient.setColorAt(0.5, Qt::green);
+    // gradient.setColorAt(0, Qt::white);
+    // gradient.setColorAt(0.5, Qt::green);
+    // gradient.setColorAt(1, Qt::black);
+
+    // gradient.setColorAt(0, Qt::gray);
+    gradient.setColorAt(0, myPenColor);
     gradient.setColorAt(1, Qt::black);
 
     painter.fillRect(rectLinear, gradient);
     setUpLinearGradientBool = false;
     update();
+}
+
+void ScribbleArea::inputDialogForGradientPaints() {
+    QDialog dialog(this);
+    // the below line allows there to be a label next to each field
+    QFormLayout form(&dialog);
+
+    form.addRow(new QLabel("Pick two colors for your gradients, please."));
+    // QList<QLineEdit *> fields;
+    QList<QPixmap *> fields;
+    for(int i = 0; i < 2; i++) {
+        QLineEdit *lineEdit = new QLineEdit(&dialog);
+        QString label = QString("Value %1").arg(i + 1);
+        // form.addRow(label, lineEdit);
+        QPixmap *pixMap = new QPixmap(16, 16);
+        pixMap->fill("#ffff45");
+        /* form.addRow(label, pixMap);
+
+        // fields << lineEdit;
+        fields << pixMap;
+        */
+    }
+
+    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
+                               Qt::Horizontal, &dialog);
+    form.addRow(&buttonBox);
+    QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+
+    /* if(dialog.exec() == QDialog::Accepted) {
+        foreach(QLineEdit *lineEdit, fields) {
+            qDebug() << lineEdit->text();
+        }
+    } */
+    QList<QPair<QString, QColor>> list;
+    list << QPair<QString,QColor>(tr("Color #1"), QColor("green")) <<
+            QPair<QString,QColor>(tr("Color #2"), QColor("red"));
+
+    QTableWidget *table = new QTableWidget(3, 2);
+    table->setHorizontalHeaderLabels(QStringList() << tr("Color placement")
+                                                   << tr("Color chosen"));
+    table->verticalHeader()->setVisible(false);
+    table->resize(150,150);
+    QTableWidgetItem *nameItem = new QTableWidgetItem("1");
+    table->setItem(0, 0, nameItem);
+    QTableWidgetItem *colorItem = new QTableWidgetItem(0);
+    table->setItem(0, 1, colorItem);
+
+    QTableWidgetItem *nameItemTwo = new QTableWidgetItem("2");
+    table->setItem(1, 0, nameItemTwo);
+    QTableWidgetItem *colorItemTwo = new QTableWidgetItem(0);
+    table->setItem(1, 1, colorItemTwo);
+
+    QWidget* newWidget = new QWidget();
+
+    table->resizeColumnsToContents();
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(table, 0, 0);
+
+    newWidget->setLayout(layout);
+    newWidget->setWindowTitle(tr("Color Edit"));
+    newWidget->show();
+
+        // QPair<QString, QColor> pair = list.takeAt(i);
+        // QTableWidgetItem *colorNum = new QTableWidgetItem(pair.first);
+        // QTableWidgetItem *colorItem = new QTableWidgetItem;
+        // colorItem->setData(Qt::DisplayRole, pair.second);
+
+        // table->setItem(i, 0, colorNum);
+        // table->setItem(i, 1, colorItem);
+    // table->resizeColumnsToContents(0);
+    /* table->resizeColumnsToContents();
+    table->horizontalHeader()->setStretchLastSection(true);
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget(table, 0, 0);
+
+    setLayout(layout);
+
+    setWindowTitle(tr("Color Edit"));
+    */
 }
 
 
