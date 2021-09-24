@@ -37,6 +37,8 @@ private slots:
     void setUpEllipse();
     void setUpConvexPolygon();
     void setUpRoundEdgeSquare();
+
+    void setUpLinearGradient();
 };
 
 #endif // SUBMENU_H

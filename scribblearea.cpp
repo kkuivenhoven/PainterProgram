@@ -38,7 +38,9 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     setUpSquareBool = false;
     setUpRoundSquareBool = false;
 
-    secondConvaxReadyToDraw = true;
+    secondConvexReadyToDraw = false;
+    setUpLinearGradientBool = false;
+
     setFocusPolicy(Qt::StrongFocus);
 }
 
@@ -69,18 +71,24 @@ void ScribbleArea::setUpEllipse() {
     setUpEllipseBool = true;
 }
 
-void ScribbleArea::setReadyToDrawConvaxPolygonBool() {
+void ScribbleArea::setReadyToDrawConvexPolygonBool() {
      bool okay;
      QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                           tr("Polygon points:"), QLineEdit::Normal,
                                           "enter", &okay);
-     secondConvaxReadyToDraw = true;
+     secondConvexReadyToDraw = true;
      secondNumberOfPointsDrawn = 0;
      secondTotalNumNeedToDraw = text.toInt();
 }
 
 void ScribbleArea::setUpRoundSquare() {
     setUpRoundSquareBool = true;
+}
+
+
+void ScribbleArea::setUpLinearGradient() {
+    qDebug() << "ScribbleArea::setUpLinearGradient()";
+    setUpLinearGradientBool = true;
 }
 
 
@@ -174,7 +182,7 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(secondConvaxReadyToDraw) {
+        if(secondConvexReadyToDraw && this->underMouse()) {
             if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
                 m_x1 = event->x();
                 m_y1 = event->y();
@@ -188,6 +196,10 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             if(secondNumberOfPointsDrawn >= secondTotalNumNeedToDraw) {
                 secondDrawConvexPolygon();
             }
+        }
+        if(setUpLinearGradientBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
         }
     }
 }
@@ -235,6 +247,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             createEllipse();
+        }
+        if(setUpLinearGradientBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            createLinearGradient();
         }
     }
 }
@@ -301,6 +318,7 @@ void ScribbleArea::drawLine() {
     update();
 }
 
+
 void ScribbleArea::createTextBlurb() {
     currentlyTyping = true;
     textEdit = new QTextEdit(this);
@@ -349,7 +367,7 @@ void ScribbleArea::secondDrawConvexPolygon() {
         points[i] = secondCoordSet.at(i);
     }
     painter.drawConvexPolygon(points, arrSize);
-    secondConvaxReadyToDraw = false;
+    secondConvexReadyToDraw = false;
     secondCoordSet.clear();
     update();
 }
@@ -363,7 +381,24 @@ void ScribbleArea::createRoundSquare() {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRoundedRect(rect, 20.0, 15.0);
-    setUpSquareBool = false;
+    setUpRoundSquareBool = false;
+    update();
+}
+
+
+void ScribbleArea::createLinearGradient() {
+    QPainter painter(&image);
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rectLinear(m_x1, m_y1, width, height);
+
+    QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
+    gradient.setColorAt(0, Qt::white);
+    gradient.setColorAt(0.5, Qt::green);
+    gradient.setColorAt(1, Qt::black);
+
+    painter.fillRect(rectLinear, gradient);
+    setUpLinearGradientBool = false;
     update();
 }
 

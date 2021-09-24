@@ -18,6 +18,7 @@
 #include <QPair>
 #include <QList>
 #include <QPointF>
+#include <QGradient>
 
 class ScribbleArea : public QWidget
 {
@@ -55,11 +56,14 @@ public:
     void setUpEllipse();
     void createEllipse();
 
-    void setReadyToDrawConvaxPolygonBool();
+    void setReadyToDrawConvexPolygonBool();
     void secondDrawConvexPolygon();
 
     void setUpRoundSquare();
     void createRoundSquare();
+
+    void setUpLinearGradient();
+    void createLinearGradient();
 
 public slots:
     void clearImage();
@@ -108,12 +112,14 @@ private:
     bool setUpSquareBool;
     bool setUpEllipseBool;
 
-    bool secondConvaxReadyToDraw;
+    bool secondConvexReadyToDraw;
     int secondNumberOfPointsDrawn;
     int secondTotalNumNeedToDraw;
     QList<QPointF> secondCoordSet;
 
     bool setUpRoundSquareBool;
+
+    bool setUpLinearGradientBool;
 };
 
 #endif // SCRIBBLEAREA_H
