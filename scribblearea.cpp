@@ -93,8 +93,9 @@ void ScribbleArea::setUpLinearGradient() {
 }
 
 
-void ScribbleArea::setUpGradientPaints() {
-    inputDialogForGradientPaints();
+void ScribbleArea::setUpGradientPaints(int numColors) {
+    userChoseThisNumColors = numColors;
+    inputDialogForGradientPaints(numColors);
 }
 
 
@@ -259,6 +260,26 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             createLinearGradient();
         }
+        /* if(colorChoices.size() == 3) {
+            qDebug() << " color choice size is 3";
+            QPainter painter(&image);
+            m_x2 = 170;
+            m_x1 = 70;
+            m_y2 = 50;
+            m_y1 = 10;
+            int width = (m_x2 - m_x1);
+            int height = (m_y2 - m_y1);
+            QRect rectLinear(m_x1, m_y1, width, height);
+
+            QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
+            gradient.setColorAt(0, colorChoices.at(0));
+            gradient.setColorAt(0.5, colorChoices.at(1));
+            gradient.setColorAt(1, colorChoices.at(3));
+
+            painter.fillRect(rectLinear, gradient);
+            update();
+
+        } */
     }
 }
 
@@ -412,85 +433,86 @@ void ScribbleArea::createLinearGradient() {
     update();
 }
 
-void ScribbleArea::inputDialogForGradientPaints() {
-    QDialog dialog(this);
-    // the below line allows there to be a label next to each field
-    QFormLayout form(&dialog);
 
-    form.addRow(new QLabel("Pick two colors for your gradients, please."));
-    // QList<QLineEdit *> fields;
-    QList<QPixmap *> fields;
-    for(int i = 0; i < 2; i++) {
-        QLineEdit *lineEdit = new QLineEdit(&dialog);
-        QString label = QString("Value %1").arg(i + 1);
-        // form.addRow(label, lineEdit);
-        QPixmap *pixMap = new QPixmap(16, 16);
-        pixMap->fill("#ffff45");
-        /* form.addRow(label, pixMap);
+void ScribbleArea::inputDialogForGradientPaints(int numColors) {
+    // QWidget *userInput = new QWidget();
+    userInput = new QWidget();
+    QGridLayout *gridLayout = new QGridLayout();
 
-        // fields << lineEdit;
-        fields << pixMap;
-        */
+    // for(int i = 0; i < numColors; i++) {
+    // for(int i = 0; i < 1; i++) {
+    for(int i = 0; i < userChoseThisNumColors; i++) {
+        int tmpNum = (i+1);
+        QString tmpTitle = "Color" + QString::number(tmpNum);
+        QLabel *colorLabel = new QLabel(tr(tmpTitle.toStdString().c_str()));
+        QColor firstColor = QColor(Qt::black);
+
+        QPushButton *colorButton = new QPushButton(firstColor.name());
+        // connect(colorButton, SIGNAL(clicked(bool)), this, SLOT(callColorPicker(i)));
+        connect(colorButton, SIGNAL(clicked(bool)), this, SLOT(callColorPicker()));
+        curGradientColorsMap.insert(i, colorButton);
+
+        QString qss = QString("background-color: %1").arg(firstColor.name());
+        colorButton->setStyleSheet(qss);
+        // colorLabel->setBuddy(colorButton);
+        // gridLayout(*Widget, row, column, rowspan, colspan)
+        // gridLayout->addWidget(colorLabel, 0, 0, 1, 1);
+        // gridLayout->addWidget(colorButton, 0, 2, 1, 1);
+        gridLayout->addWidget(colorLabel, i, 0, 1, 1);
+        gridLayout->addWidget(colorButton, i, 2, 1, 1);
     }
 
-    QDialogButtonBox buttonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel,
-                               Qt::Horizontal, &dialog);
-    form.addRow(&buttonBox);
-    QObject::connect(&buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-    QObject::connect(&buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+    userInput->setLayout(gridLayout);
+    userInput->show();
+}
 
-    /* if(dialog.exec() == QDialog::Accepted) {
-        foreach(QLineEdit *lineEdit, fields) {
-            qDebug() << lineEdit->text();
+
+// void ScribbleArea::callColorPicker(int i) {
+void ScribbleArea::callColorPicker() {
+    qDebug() << "ScribbleArea::callColorPicker()";
+
+    QColor color = QColorDialog::getColor(Qt::yellow, this);
+    /* QList<int> curKeys = curGradientColorsMap.keys();
+    for(int i = 0; i < curKeys.size(); i++) {
+        if(i == curKeys.at(i)) {
+            return;
         }
     } */
-    QList<QPair<QString, QColor>> list;
-    list << QPair<QString,QColor>(tr("Color #1"), QColor("green")) <<
-            QPair<QString,QColor>(tr("Color #2"), QColor("red"));
+    if(color.isValid()) {
+        /* QMapIterator<int, QPushButton*> iter(curGradientColorsMap);
+        while(iter.hasNext()) {
+            if(iter.key() == i) {
+                iter.value()->setStyleSheet("background-color:" + color.name() + ";");
+            }
+        }
+        if(!curGradientColorsMap.contains(i)) {
+            qDebug() << " gradient color not in map ???!?!??! ";
+        } */
+        qDebug() << " -- Color choosen : " << color.name() << endl;
+        // need to remove color when "updated"
+        colorChoices << color;
+        /*if(color != colorButton->palette().button().color()) {
+            colorButton->setStyleSheet("background-color:" + color.name() + ";");
+        } */
+    }
 
-    QTableWidget *table = new QTableWidget(3, 2);
-    table->setHorizontalHeaderLabels(QStringList() << tr("Color placement")
-                                                   << tr("Color chosen"));
-    table->verticalHeader()->setVisible(false);
-    table->resize(150,150);
-    QTableWidgetItem *nameItem = new QTableWidgetItem("1");
-    table->setItem(0, 0, nameItem);
-    QTableWidgetItem *colorItem = new QTableWidgetItem(0);
-    table->setItem(0, 1, colorItem);
+    if(colorChoices.size() == userChoseThisNumColors) {
+        qDebug() << " color choice size is " + QString::number(userChoseThisNumColors);
+        QPainter painter(&image);
+        int width = (m_x2 - m_x1);
+        int height = (m_y2 - m_y1);
+        QRect rectLinear(m_x1, m_y1, width, height);
 
-    QTableWidgetItem *nameItemTwo = new QTableWidgetItem("2");
-    table->setItem(1, 0, nameItemTwo);
-    QTableWidgetItem *colorItemTwo = new QTableWidgetItem(0);
-    table->setItem(1, 1, colorItemTwo);
+        QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
+        float decimal = (1.0/userChoseThisNumColors);
+        for(int i = 0; i < userChoseThisNumColors; i++) {
+            float tmpDec = (decimal * (i+1));
+            gradient.setColorAt(tmpDec, colorChoices.at(i));
+        }
 
-    QWidget* newWidget = new QWidget();
-
-    table->resizeColumnsToContents();
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(table, 0, 0);
-
-    newWidget->setLayout(layout);
-    newWidget->setWindowTitle(tr("Color Edit"));
-    newWidget->show();
-
-        // QPair<QString, QColor> pair = list.takeAt(i);
-        // QTableWidgetItem *colorNum = new QTableWidgetItem(pair.first);
-        // QTableWidgetItem *colorItem = new QTableWidgetItem;
-        // colorItem->setData(Qt::DisplayRole, pair.second);
-
-        // table->setItem(i, 0, colorNum);
-        // table->setItem(i, 1, colorItem);
-    // table->resizeColumnsToContents(0);
-    /* table->resizeColumnsToContents();
-    table->horizontalHeader()->setStretchLastSection(true);
-
-    QGridLayout *layout = new QGridLayout;
-    layout->addWidget(table, 0, 0);
-
-    setLayout(layout);
-
-    setWindowTitle(tr("Color Edit"));
-    */
+        painter.fillRect(rectLinear, gradient);
+        update();
+    }
 }
 
 

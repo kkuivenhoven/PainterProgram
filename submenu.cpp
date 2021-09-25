@@ -156,5 +156,14 @@ void SubMenu::setUpLinearGradient() {
 }
 
 void SubMenu::userChooseGradientPaintColors() {
-    _scribbleArea.setUpGradientPaints();
+    bool okay;
+    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                         tr("Number of colors for gradient:"),
+                                         QLineEdit::Normal,
+                                         "0", &okay);
+    if(okay && !text.isEmpty()) {
+        int numColors = text.toInt();
+        _scribbleArea.setUpGradientPaints(numColors);
+    }
+    // _scribbleArea.setUpGradientPaints();
 }

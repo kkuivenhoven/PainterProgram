@@ -20,6 +20,7 @@
 #include <QPointF>
 #include <QGradient>
 #include <QPixmap>
+#include <QMap>
 
 class ScribbleArea : public QWidget
 {
@@ -66,12 +67,14 @@ public:
     void setUpLinearGradient();
     void createLinearGradient();
 
-    void setUpGradientPaints();
-    void inputDialogForGradientPaints();
+    void setUpGradientPaints(int numColors);
+    void inputDialogForGradientPaints(int numColors);
 
 public slots:
     void clearImage();
     void print();
+    // void callColorPicker(int i);
+    void callColorPicker();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -125,6 +128,11 @@ private:
 
     bool setUpLinearGradientBool;
 
+    QList<QColor> colorChoices;
+    QWidget *userInput;
+    int userChoseThisNumColors;
+    QList<QPushButton*> curColorList;
+    QMap<int, QPushButton*> curGradientColorsMap;
 };
 
 #endif // SCRIBBLEAREA_H
