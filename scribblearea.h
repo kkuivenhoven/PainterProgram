@@ -21,6 +21,7 @@
 #include <QGradient>
 #include <QPixmap>
 #include <QMap>
+#include <QSignalMapper>
 
 class ScribbleArea : public QWidget
 {
@@ -69,12 +70,15 @@ public:
 
     void setUpGradientPaints(int numColors);
     void inputDialogForGradientPaints(int numColors);
+    void handleButton(QString tmpTitle);
+    // void handleButton(int i);
 
 public slots:
     void clearImage();
     void print();
     // void callColorPicker(int i);
     void callColorPicker();
+    // void handleButton(int i);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -133,6 +137,9 @@ private:
     int userChoseThisNumColors;
     QList<QPushButton*> curColorList;
     QMap<int, QPushButton*> curGradientColorsMap;
+
+    QSignalMapper mapper;
+    QMap<QString, QPushButton*> curGradientStrColorsMap;
 };
 
 #endif // SCRIBBLEAREA_H
