@@ -435,12 +435,9 @@ void ScribbleArea::createLinearGradient() {
 
 
 void ScribbleArea::inputDialogForGradientPaints(int numColors) {
-    // QWidget *userInput = new QWidget();
     userInput = new QWidget();
     QGridLayout *gridLayout = new QGridLayout();
 
-    // for(int i = 0; i < numColors; i++) {
-    // for(int i = 0; i < 1; i++) {
     for(int i = 0; i < userChoseThisNumColors; i++) {
         int tmpNum = (i+1);
         QString tmpTitle = "Color" + QString::number(tmpNum);
@@ -448,8 +445,6 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
         QColor firstColor = QColor(Qt::black);
 
         QPushButton *colorButton = new QPushButton(firstColor.name());
-        // connect(colorButton, SIGNAL(clicked(bool)), this, SLOT(callColorPicker(i)));
-        // connect(colorButton, SIGNAL(clicked(bool)), this, SLOT(callColorPicker()));
         curGradientColorsMap.insert(i, colorButton);
         curGradientStrColorsMap.insert(tmpTitle, colorButton);
         mapper.setMapping(colorButton, tmpTitle);
@@ -460,15 +455,9 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
         QString qss = QString("background-color: %1").arg(firstColor.name());
         colorButton->setStyleSheet(qss);
 
-        // colorLabel->setBuddy(colorButton);
-        // gridLayout(*Widget, row, column, rowspan, colspan)
-        // gridLayout->addWidget(colorLabel, 0, 0, 1, 1);
-        // gridLayout->addWidget(colorButton, 0, 2, 1, 1);
         gridLayout->addWidget(colorLabel, i, 0, 1, 1);
         gridLayout->addWidget(colorButton, i, 2, 1, 1);
     }
-
-    // connect(&mapper, SIGNAL(mapped(int)), this, SLOT(handleButton(int)));
 
     userInput->setLayout(gridLayout);
     userInput->show();
@@ -509,34 +498,12 @@ void ScribbleArea::handleButton(QString tmpTitle) {
 // https://stackoverflow.com/questions/21150890/qt-5-assign-slot-with-parameters-to-a-qpushbutton
 // https://stackoverflow.com/questions/5153157/passing-an-argument-to-a-slot
 
-// void ScribbleArea::callColorPicker(int i) {
 void ScribbleArea::callColorPicker() {
-    qDebug() << "ScribbleArea::callColorPicker()";
-
     QColor color = QColorDialog::getColor(Qt::yellow, this);
-    /* QList<int> curKeys = curGradientColorsMap.keys();
-    for(int i = 0; i < curKeys.size(); i++) {
-        if(i == curKeys.at(i)) {
-            return;
-        }
-    } */
 
     if(color.isValid()) {
-        /* QMapIterator<int, QPushButton*> iter(curGradientColorsMap);
-        while(iter.hasNext()) {
-            if(iter.key() == i) {
-                iter.value()->setStyleSheet("background-color:" + color.name() + ";");
-            }
-        }
-        if(!curGradientColorsMap.contains(i)) {
-            qDebug() << " gradient color not in map ???!?!??! ";
-        } */
         qDebug() << " -- Color choosen : " << color.name() << endl;
-        // need to remove color when "updated"
         colorChoices << color;
-        /*if(color != colorButton->palette().button().color()) {
-            colorButton->setStyleSheet("background-color:" + color.name() + ";");
-        } */
     }
 
     if(colorChoices.size() == userChoseThisNumColors) {
