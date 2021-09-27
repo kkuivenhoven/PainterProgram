@@ -40,6 +40,9 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 
     secondConvexReadyToDraw = false;
     setUpLinearGradientBool = false;
+    setUpGradientColorsBool = false;
+
+    colorDiag = new QColorDialog();
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -88,14 +91,13 @@ void ScribbleArea::setUpRoundSquare() {
 
 
 void ScribbleArea::setUpLinearGradient() {
-    qDebug() << "ScribbleArea::setUpLinearGradient()";
     setUpLinearGradientBool = true;
 }
 
 
 void ScribbleArea::setUpGradientPaints(int numColors) {
     userChoseThisNumColors = numColors;
-    inputDialogForGradientPaints(numColors);
+    setUpGradientColorsBool = true;
 }
 
 
@@ -208,6 +210,10 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(setUpGradientColorsBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
     }
 }
 
@@ -260,26 +266,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             createLinearGradient();
         }
-        /* if(colorChoices.size() == 3) {
-            qDebug() << " color choice size is 3";
-            QPainter painter(&image);
-            m_x2 = 170;
-            m_x1 = 70;
-            m_y2 = 50;
-            m_y1 = 10;
-            int width = (m_x2 - m_x1);
-            int height = (m_y2 - m_y1);
-            QRect rectLinear(m_x1, m_y1, width, height);
-
-            QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-            gradient.setColorAt(0, colorChoices.at(0));
-            gradient.setColorAt(0.5, colorChoices.at(1));
-            gradient.setColorAt(1, colorChoices.at(3));
-
-            painter.fillRect(rectLinear, gradient);
-            update();
-
-        } */
+        if(setUpGradientColorsBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            inputDialogForGradientPaints(userChoseThisNumColors);
+        }
     }
 }
 
@@ -420,11 +411,7 @@ void ScribbleArea::createLinearGradient() {
     QRect rectLinear(m_x1, m_y1, width, height);
 
     QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-    // gradient.setColorAt(0, Qt::white);
-    // gradient.setColorAt(0.5, Qt::green);
-    // gradient.setColorAt(1, Qt::black);
 
-    // gradient.setColorAt(0, Qt::gray);
     gradient.setColorAt(0, myPenColor);
     gradient.setColorAt(1, Qt::black);
 
@@ -445,11 +432,10 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
         QColor firstColor = QColor(Qt::black);
 
         QPushButton *colorButton = new QPushButton(firstColor.name());
-        curGradientColorsMap.insert(i, colorButton);
         curGradientStrColorsMap.insert(tmpTitle, colorButton);
         mapper.setMapping(colorButton, tmpTitle);
         connect(colorButton, &QPushButton::released, [=] {
-            handleButton(tmpTitle);
+            handleButton(tmpTitle, tmpNum);
         });
 
         QString qss = QString("background-color: %1").arg(firstColor.name());
@@ -464,19 +450,37 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
 }
 
 
-void ScribbleArea::handleButton(QString tmpTitle) {
+// https://stackoverflow.com/questions/21150890/qt-5-assign-slot-with-parameters-to-a-qpushbutton
+// https://stackoverflow.com/questions/5153157/passing-an-argument-to-a-slot
+void ScribbleArea::handleButton(QString tmpTitle, int position) {
     QPushButton *curPushButton = curGradientStrColorsMap.value(tmpTitle);
 
     QColor color = QColorDialog::getColor(Qt::yellow, this);
 
     if(color.isValid()) {
-        colorChoices << color;
         curPushButton->setStyleSheet("background-color:" + color.name() + ";");
+        curPushButton->setText(color.name());
+        QMap<int, QColor> tmpMap;
+        tmpMap.insert(position, color);
+        if(mapCurColorChoices.contains(curPushButton)) {
+            mapCurColorChoices.remove(curPushButton);
+            mapCurColorChoices.insert(curPushButton, tmpMap);
+        } else {
+            mapCurColorChoices.insert(curPushButton, tmpMap);
+        }
         update();
     }
 
-    if(colorChoices.size() == userChoseThisNumColors) {
-        qDebug() << " color choice size is " + QString::number(userChoseThisNumColors);
+    if(mapCurColorChoices.size() == userChoseThisNumColors) {
+        QMap<int, QColor> gradientColors;
+        QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
+        for(iter = mapCurColorChoices.begin(); iter != mapCurColorChoices.end(); iter++) {
+            QMap<int, QColor> tmpMap = iter.value();
+            int tmpPosition = tmpMap.firstKey();
+            QColor tmpColor = tmpMap.value(tmpPosition);
+            gradientColors.insert(tmpPosition, tmpColor);
+        }
+
         QPainter painter(&image);
         int width = (m_x2 - m_x1);
         int height = (m_y2 - m_y1);
@@ -484,43 +488,19 @@ void ScribbleArea::handleButton(QString tmpTitle) {
 
         QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
         float decimal = (1.0/userChoseThisNumColors);
-        for(int i = 0; i < userChoseThisNumColors; i++) {
-            float tmpDec = (decimal * (i+1));
-            gradient.setColorAt(tmpDec, colorChoices.at(i));
+        QMap<int, QColor>::iterator tmpIter;
+        for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {
+            int tmpInt = tmpIter.key();
+            float tmpDec = (decimal * (tmpInt-1));
+            QColor tmpColor = tmpIter.value();
+            gradient.setColorAt(tmpDec, tmpColor);
         }
 
         painter.fillRect(rectLinear, gradient);
-        update();
-    }
-}
-
-
-// https://stackoverflow.com/questions/21150890/qt-5-assign-slot-with-parameters-to-a-qpushbutton
-// https://stackoverflow.com/questions/5153157/passing-an-argument-to-a-slot
-
-void ScribbleArea::callColorPicker() {
-    QColor color = QColorDialog::getColor(Qt::yellow, this);
-
-    if(color.isValid()) {
-        qDebug() << " -- Color choosen : " << color.name() << endl;
-        colorChoices << color;
-    }
-
-    if(colorChoices.size() == userChoseThisNumColors) {
-        qDebug() << " color choice size is " + QString::number(userChoseThisNumColors);
-        QPainter painter(&image);
-        int width = (m_x2 - m_x1);
-        int height = (m_y2 - m_y1);
-        QRect rectLinear(m_x1, m_y1, width, height);
-
-        QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-        float decimal = (1.0/userChoseThisNumColors);
-        for(int i = 0; i < userChoseThisNumColors; i++) {
-            float tmpDec = (decimal * (i+1));
-            gradient.setColorAt(tmpDec, colorChoices.at(i));
-        }
-
-        painter.fillRect(rectLinear, gradient);
+        setUpGradientColorsBool = false;
+        userInput->close();
+        delete userInput;
+        mapCurColorChoices.clear();
         update();
     }
 }

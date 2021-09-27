@@ -165,5 +165,4 @@ void SubMenu::userChooseGradientPaintColors() {
         int numColors = text.toInt();
         _scribbleArea.setUpGradientPaints(numColors);
     }
-    // _scribbleArea.setUpGradientPaints();
 }
