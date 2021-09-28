@@ -444,9 +444,14 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
         colorButton->setStyleSheet(qss);
 
         gridLayout->addWidget(colorLabel, i, 0, 1, 1);
-        gridLayout->addWidget(colorButton, i, 2, 1, 1);
+        gridLayout->addWidget(colorButton, i, 1, 1, 2);
         gridLayout->addWidget(colorName, i, 3, 1, 1);
     }
+    QLabel *drawSquareLabel = new QLabel("Is the user ready to draw gradient shape?");
+    QPushButton *userDrawSquare = new QPushButton("Yes!");
+    connect(userDrawSquare, SIGNAL(clicked(bool)), this, SLOT(drawTheGradientShape()));
+    gridLayout->addWidget(drawSquareLabel, userChoseThisNumColors, 0, 1, 3);
+    gridLayout->addWidget(userDrawSquare, userChoseThisNumColors, 3, 1, 1);
 
     userInput->setLayout(gridLayout);
     userInput->show();
@@ -455,7 +460,6 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
 
 // https://stackoverflow.com/questions/21150890/qt-5-assign-slot-with-parameters-to-a-qpushbutton
 // https://stackoverflow.com/questions/5153157/passing-an-argument-to-a-slot
-// void ScribbleArea::handleButton(QString tmpTitle, int position) {
 void ScribbleArea::handleButton(QString tmpTitle, int position, QLabel *colorName) {
     QPushButton *curPushButton = curGradientStrColorsMap.value(tmpTitle);
 
@@ -475,7 +479,10 @@ void ScribbleArea::handleButton(QString tmpTitle, int position, QLabel *colorNam
         colorName->setText(color.name());
         update();
     }
+}
 
+
+void ScribbleArea::drawTheGradientShape() {
     if(mapCurColorChoices.size() == userChoseThisNumColors) {
         QMap<int, QColor> gradientColors;
         QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
@@ -492,7 +499,6 @@ void ScribbleArea::handleButton(QString tmpTitle, int position, QLabel *colorNam
         QRect rectLinear(m_x1, m_y1, width, height);
 
         QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-        // float decimal = (1.0/userChoseThisNumColors);
         float decimal = (1.0/(userChoseThisNumColors-1));
         QMap<int, QColor>::iterator tmpIter;
         for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {

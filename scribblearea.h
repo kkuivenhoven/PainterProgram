@@ -78,6 +78,7 @@ public slots:
     void print();
     // void callColorPicker(int i);
     // void callColorPicker();
+    void drawTheGradientShape();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
