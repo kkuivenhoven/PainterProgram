@@ -71,16 +71,13 @@ public:
 
     void setUpGradientPaints(int numColors);
     void inputDialogForGradientPaints(int numColors);
-    // void handleButton(QString tmpTitle);
-    void handleButton(QString tmpTitle, int position);
-    // void handleButton(int i);
+    void handleButton(QString tmpTitle, int position, QLabel *colorName);
 
 public slots:
     void clearImage();
     void print();
     // void callColorPicker(int i);
     // void callColorPicker();
-    // void handleButton(int i);
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;

@@ -431,12 +431,13 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
         QString tmpTitle = "Color" + QString::number(tmpNum);
         QLabel *colorLabel = new QLabel(tr(tmpTitle.toStdString().c_str()));
         QColor firstColor = QColor(Qt::black);
+        QLabel *colorName = new QLabel(tr(firstColor.name().toUtf8()));
 
         QPushButton *colorButton = new QPushButton(firstColor.name());
         curGradientStrColorsMap.insert(tmpTitle, colorButton);
         mapper.setMapping(colorButton, tmpTitle);
         connect(colorButton, &QPushButton::released, [=] {
-            handleButton(tmpTitle, tmpNum);
+            handleButton(tmpTitle, tmpNum, colorName);
         });
 
         QString qss = QString("background-color: %1").arg(firstColor.name());
@@ -444,6 +445,7 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
 
         gridLayout->addWidget(colorLabel, i, 0, 1, 1);
         gridLayout->addWidget(colorButton, i, 2, 1, 1);
+        gridLayout->addWidget(colorName, i, 3, 1, 1);
     }
 
     userInput->setLayout(gridLayout);
@@ -453,7 +455,8 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
 
 // https://stackoverflow.com/questions/21150890/qt-5-assign-slot-with-parameters-to-a-qpushbutton
 // https://stackoverflow.com/questions/5153157/passing-an-argument-to-a-slot
-void ScribbleArea::handleButton(QString tmpTitle, int position) {
+// void ScribbleArea::handleButton(QString tmpTitle, int position) {
+void ScribbleArea::handleButton(QString tmpTitle, int position, QLabel *colorName) {
     QPushButton *curPushButton = curGradientStrColorsMap.value(tmpTitle);
 
     QColor color = QColorDialog::getColor(Qt::yellow, this);
@@ -469,6 +472,7 @@ void ScribbleArea::handleButton(QString tmpTitle, int position) {
         } else {
             mapCurColorChoices.insert(curPushButton, tmpMap);
         }
+        colorName->setText(color.name());
         update();
     }
 
