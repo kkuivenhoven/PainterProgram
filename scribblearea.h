@@ -139,8 +139,6 @@ private:
 
     QSignalMapper mapper;
     QMap<QString, QPushButton*> curGradientStrColorsMap;
-    // QMap<QPushButton*, QColor> mapCurColorChoices;
-    // QMap<QPushButton*, QList<int, QColor>> mapCurColorChoices;
     QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
     bool setUpGradientColorsBool;
 

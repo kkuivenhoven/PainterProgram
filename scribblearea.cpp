@@ -413,6 +413,7 @@ void ScribbleArea::createLinearGradient() {
     QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
 
     gradient.setColorAt(0, myPenColor);
+    gradient.setColorAt(0.5, Qt::green);
     gradient.setColorAt(1, Qt::black);
 
     painter.fillRect(rectLinear, gradient);
@@ -487,11 +488,13 @@ void ScribbleArea::handleButton(QString tmpTitle, int position) {
         QRect rectLinear(m_x1, m_y1, width, height);
 
         QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
-        float decimal = (1.0/userChoseThisNumColors);
+        // float decimal = (1.0/userChoseThisNumColors);
+        float decimal = (1.0/(userChoseThisNumColors-1));
         QMap<int, QColor>::iterator tmpIter;
         for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {
             int tmpInt = tmpIter.key();
             float tmpDec = (decimal * (tmpInt-1));
+            qDebug() << " ----- tmpDec: " << tmpDec;
             QColor tmpColor = tmpIter.value();
             gradient.setColorAt(tmpDec, tmpColor);
         }

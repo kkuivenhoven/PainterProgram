@@ -64,14 +64,21 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     roundSquareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
     connect(roundSquareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpRoundEdgeSquare()));
 
-    QPushButton *gradientBrush = new QPushButton();
-    gradientBrush->setToolTip("Draw a square with rounded edges");
-    gradientBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
-    connect(gradientBrush, SIGNAL(clicked(bool)), this, SLOT(setUpLinearGradient()));
+    /**
+     * @brief gradientBrush
+     * 		The below button was used primarily for building purposes. It still remains in the
+     * code as the program has not been tested thoroughly for bugs and is needed as a solid reference
+     * for a basic gradient tool.
+     * QPushButton *gradientBrush = new QPushButton();
+     * gradientBrush->setToolTip("Draw a square with rounded edges");
+     * gradientBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+     * connect(gradientBrush, SIGNAL(clicked(bool)), this, SLOT(setUpLinearGradient()));
+     * gridLayout->addWidget(gradientBrush);
+     */
 
     QPushButton *setUpGradientPaints = new QPushButton();
     setUpGradientPaints->setToolTip("Draw a square with rounded edges");
-    setUpGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+    setUpGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
     connect(setUpGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     gridLayout->addWidget(clearScreenBtn);
@@ -85,7 +92,6 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(ellipseBrush);
     gridLayout->addWidget(convexPolygonBrush);
     gridLayout->addWidget(roundSquareBrush);
-    gridLayout->addWidget(gradientBrush);
     gridLayout->addWidget(setUpGradientPaints);
 
     subMenu->setLayout(gridLayout);
