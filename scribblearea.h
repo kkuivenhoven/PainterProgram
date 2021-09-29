@@ -23,6 +23,8 @@
 #include <QMap>
 #include <QSignalMapper>
 #include <QColorDialog>
+#include <QGroupBox>
+#include <QCheckBox>
 
 class ScribbleArea : public QWidget
 {
@@ -141,6 +143,8 @@ private:
     bool setUpGradientColorsBool;
 
     QColorDialog *colorDiag;
+    QGroupBox *groupBox;
+    QList<QCheckBox *> checkBoxBtnsList;
 };
 
 #endif // SCRIBBLEAREA_H

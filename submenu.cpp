@@ -115,10 +115,10 @@ void SubMenu::changePenColor() {
 
 void SubMenu::changePenWidth() {
     bool okay;
-    int newWidth = QInputDialog::getInt(this, tr("Scribble"),
+    int newWidth = QInputDialog::getInt(this, tr("Changing Pen Width"),
                                         tr("Select pen width : "),
                                         _scribbleArea.penWidth(),
-                                        1, 50, 1, &okay);
+                                        1, 100, 1, &okay);
     if(okay) {
         _scribbleArea.setPenWidth(newWidth);
     }

@@ -453,6 +453,24 @@ void ScribbleArea::inputDialogForGradientPaints(int numColors) {
     gridLayout->addWidget(drawSquareLabel, userChoseThisNumColors, 0, 1, 3);
     gridLayout->addWidget(userDrawSquare, userChoseThisNumColors, 3, 1, 1);
 
+    groupBox = new QGroupBox(tr("Exclusive Radio Buttons"));
+    groupBox->setCheckable(true);
+    groupBox->setChecked(true);
+    QCheckBox *radioOne = new QCheckBox("Left to Right (straight across)");
+    QCheckBox *radioTwo = new QCheckBox("Top Left to Bottom Right (diagonal)");
+    QCheckBox *radioThree = new QCheckBox("Bottom Left to Top Right (diagonal)");
+
+    checkBoxBtnsList << radioOne;
+    checkBoxBtnsList << radioTwo;
+    checkBoxBtnsList << radioThree;
+
+    QVBoxLayout *vbox = new QVBoxLayout();
+    vbox->addWidget(radioOne);
+    vbox->addWidget(radioTwo);
+    vbox->addWidget(radioThree);
+    groupBox->setLayout(vbox);
+    gridLayout->addWidget(groupBox, userChoseThisNumColors+1, 0, 1, 3);
+
     userInput->setLayout(gridLayout);
     userInput->show();
 }
@@ -498,18 +516,41 @@ void ScribbleArea::drawTheGradientShape() {
         int height = (m_y2 - m_y1);
         QRect rectLinear(m_x1, m_y1, width, height);
 
-        QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
+        QLinearGradient gradient;
+        for(int i = 0; i < checkBoxBtnsList.size(); i++) {
+            QCheckBox *tmpCheckBox = checkBoxBtnsList.at(i);
+            if(tmpCheckBox->checkState() == Qt::Checked) {
+                if(tmpCheckBox->text() == "Left to Right (straight across)") {
+                    gradient.setStart(rectLinear.bottomLeft());
+                    gradient.setFinalStop(rectLinear.bottomRight());
+                }
+                if(tmpCheckBox->text() == "Top Left to Bottom Right (diagonal)") {
+                    gradient.setStart(rectLinear.topLeft());
+                    gradient.setFinalStop(rectLinear.bottomRight());
+                }
+                if(tmpCheckBox->text() == "Bottom Left to Top Right (diagonal)") {
+                    gradient.setStart(rectLinear.topRight());
+                    gradient.setFinalStop(rectLinear.bottomLeft());
+                }
+            }
+        }
+        // QLinearGradient gradient(rectLinear.topLeft(), rectLinear.bottomRight());
         float decimal = (1.0/(userChoseThisNumColors-1));
         QMap<int, QColor>::iterator tmpIter;
         for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {
             int tmpInt = tmpIter.key();
             float tmpDec = (decimal * (tmpInt-1));
-            qDebug() << " ----- tmpDec: " << tmpDec;
             QColor tmpColor = tmpIter.value();
             gradient.setColorAt(tmpDec, tmpColor);
         }
 
         painter.fillRect(rectLinear, gradient);
+
+        int checkBoxListSize = checkBoxBtnsList.count();
+        for(int i = 0; i < checkBoxListSize; i++) {
+            delete (checkBoxBtnsList.takeAt(0));
+        }
+
         setUpGradientColorsBool = false;
         userInput->close();
         delete userInput;
