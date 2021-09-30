@@ -55,18 +55,14 @@ void GradientColorInputDialog::_setUpLinearGradientWidget() {
     groupBox = new QGroupBox(tr("Gradient Direction Options:"));
     groupBox->setCheckable(true);
     groupBox->setChecked(true);
-    QCheckBox *radioOne = new QCheckBox("Left to Right (straight across)");
-    QCheckBox *radioTwo = new QCheckBox("Top Left to Bottom Right (diagonal)");
-    QCheckBox *radioThree = new QCheckBox("Bottom Left to Top Right (diagonal)");
-
-    checkBoxBtnsList << radioOne;
-    checkBoxBtnsList << radioTwo;
-    checkBoxBtnsList << radioThree;
+    _radioOne = new QCheckBox("Left to Right (straight across)");
+    _radioTwo = new QCheckBox("Top Left to Bottom Right (diagonal)");
+    _radioThree = new QCheckBox("Bottom Left to Top Right (diagonal)");
 
     QVBoxLayout *vbox = new QVBoxLayout();
-    vbox->addWidget(radioOne);
-    vbox->addWidget(radioTwo);
-    vbox->addWidget(radioThree);
+    vbox->addWidget(_radioOne);
+    vbox->addWidget(_radioTwo);
+    vbox->addWidget(_radioThree);
     groupBox->setLayout(vbox);
     gridLayout->addWidget(groupBox, 3+1, 0, 1, 3);
 
@@ -97,7 +93,6 @@ void GradientColorInputDialog::handleButton(QString tmpTitle, int position, QLab
 
 void GradientColorInputDialog::drawTheGradientShape() {
     if(mapCurColorChoices.size() == 3) {
-        qDebug() << "drawing the gradient";
         QMap<int, QColor> gradientColors;
         QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
         for(iter = mapCurColorChoices.begin(); iter != mapCurColorChoices.end(); iter++) {
@@ -111,24 +106,17 @@ void GradientColorInputDialog::drawTheGradientShape() {
         int height = (_linear_y2 - _linear_y1);
         QRect rectLinear(_linear_x1, _linear_y1, width, height);
 
-        for(int i = 0; i < checkBoxBtnsList.size(); i++) {
-            QCheckBox *tmpCheckBox = checkBoxBtnsList.at(i);
-            if(tmpCheckBox->checkState() == Qt::Checked) {
-                if(tmpCheckBox->checkState() == Qt::Checked) {
-                    if(tmpCheckBox->text() == "Left to Right (straight across)") {
-                        _curLinearGradient.setStart(rectLinear.bottomLeft());
-                        _curLinearGradient.setFinalStop(rectLinear.bottomRight());
-                    }
-                    if(tmpCheckBox->text() == "Top Left to Bottom Right (diagonal)") {
-                        _curLinearGradient.setStart(rectLinear.topLeft());
-                        _curLinearGradient.setFinalStop(rectLinear.bottomRight());
-                    }
-                    if(tmpCheckBox->text() == "Bottom Left to Top Right (diagonal)") {
-                        _curLinearGradient.setStart(rectLinear.topRight());
-                        _curLinearGradient.setFinalStop(rectLinear.bottomLeft());
-                    }
-                }
-            }
+        if(_radioOne->checkState() == Qt::Checked) {
+            _curLinearGradient.setStart(rectLinear.bottomLeft());
+            _curLinearGradient.setFinalStop(rectLinear.bottomRight());
+        }
+        if(_radioTwo->checkState() == Qt::Checked) {
+            _curLinearGradient.setStart(rectLinear.topLeft());
+            _curLinearGradient.setFinalStop(rectLinear.bottomRight());
+        }
+        if(_radioThree->checkState() == Qt::Checked) {
+            _curLinearGradient.setStart(rectLinear.topRight());
+            _curLinearGradient.setFinalStop(rectLinear.bottomLeft());
         }
         float decimal = (1.0/(3-1));
         QMap<int, QColor>::iterator tmpIter;
@@ -137,11 +125,6 @@ void GradientColorInputDialog::drawTheGradientShape() {
             float tmpDec = (decimal * (tmpInt - 1));
             QColor tmpColor = tmpIter.value();
             _curLinearGradient.setColorAt(tmpDec, tmpColor);
-        }
-
-        int checkBoxListSize = checkBoxBtnsList.count();
-        for(int i = 0; i < checkBoxListSize; i++) {
-            delete (checkBoxBtnsList.takeAt(0));
         }
 
         emit linearGradientToolsSet();

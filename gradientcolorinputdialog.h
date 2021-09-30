@@ -24,15 +24,11 @@ class GradientColorInputDialog : public QWidget
     void _setUpRadialGradientWidget();
 
 public:
-    // GradientColorInputDialog(QImage& image, QWidget *parent = 0);
     GradientColorInputDialog(QWidget *parent = 0);
     ~GradientColorInputDialog();
 
     void showLinearGradientWidget(int x1, int y1, int x2, int y2);
     void handleButton(QString tmpTitle, int position, QLabel *colorName);
-    // void getLinearRectGradientMap();
-    // void getLinearGradientTools();
-    // QMap<QRect, QLinearGradient> getLinearGradientTools();
     QLinearGradient getLinearGradientTools();
 
 signals:
@@ -44,7 +40,6 @@ public slots:
 private:
     QMap<QString, QPushButton*> curGradientStrColorsMap;
     QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
-    QList<QCheckBox *> checkBoxBtnsList;
 
     QWidget *_linearWidget;
     QWidget *_conicalWidget;
@@ -57,9 +52,11 @@ private:
 
     int _linear_x2;
     int _linear_y2;
-    QMap<QRect, QLinearGradient> rectGradientList;
 
     QLinearGradient _curLinearGradient;
+    QCheckBox *_radioOne;
+    QCheckBox *_radioTwo;
+    QCheckBox *_radioThree;
 };
 
 #endif // GRADIENTCOLORINPUTDIALOG_H
