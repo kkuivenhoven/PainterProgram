@@ -76,10 +76,15 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
      * gridLayout->addWidget(gradientBrush);
      */
 
-    QPushButton *setUpGradientPaints = new QPushButton();
-    setUpGradientPaints->setToolTip("Draw a square with rounded edges");
-    setUpGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
-    connect(setUpGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
+    QPushButton *setUpLinearGradientPaints = new QPushButton();
+    setUpLinearGradientPaints->setToolTip("Draw a square with a linear gradient");
+    setUpLinearGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
+    connect(setUpLinearGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
+
+    QPushButton *setUpConicalGradientPaints = new QPushButton();
+    setUpConicalGradientPaints->setToolTip("Draw a square with a conical gradient");
+    setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
+    connect(setUpConicalGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
@@ -92,7 +97,8 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(ellipseBrush);
     gridLayout->addWidget(convexPolygonBrush);
     gridLayout->addWidget(roundSquareBrush);
-    gridLayout->addWidget(setUpGradientPaints);
+    gridLayout->addWidget(setUpLinearGradientPaints);
+    gridLayout->addWidget(setUpConicalGradientPaints);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -167,8 +173,17 @@ void SubMenu::userChooseGradientPaintColors() {
                                          tr("Number of colors for gradient:"),
                                          QLineEdit::Normal,
                                          "0", &okay);
+    int numColors;
     if(okay && !text.isEmpty()) {
-        int numColors = text.toInt();
-        _scribbleArea.setUpGradientPaints(numColors);
+        numColors = text.toInt();
+    }
+    QPushButton *btnSender = qobject_cast<QPushButton*>(sender());
+    QString btnText = btnSender->toolTip();
+    if(btnText == "Draw a square with a linear gradient") {
+        _scribbleArea.setUpLinearGradientPaints(numColors);
+    }
+    if(btnText == "Draw a square with a conical gradient") {
+        qDebug() << " ready to draw conical gradient";
+        _scribbleArea.setUpConicalGradientPaints(numColors);
     }
 }

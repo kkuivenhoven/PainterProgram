@@ -26,6 +26,9 @@
 #include <QGroupBox>
 #include <QCheckBox>
 
+// #include "gradientcolorinputdialog.h"
+#include "gradientcolorinputdialog.h"
+
 class ScribbleArea : public QWidget
 {
     Q_OBJECT
@@ -71,16 +74,21 @@ public:
     void setUpLinearGradient();
     void createLinearGradient();
 
-    void setUpGradientPaints(int numColors);
+    void setUpLinearGradientPaints(int numColors);
     void inputDialogForGradientPaints(int numColors);
     void handleButton(QString tmpTitle, int position, QLabel *colorName);
+
+    void setUpConicalGradientPaints(int numColors);
+    void conicalGradientColorSelection(int numColors);
+
+    // QImage image;
 
 public slots:
     void clearImage();
     void print();
-    // void callColorPicker(int i);
-    // void callColorPicker();
     void drawTheGradientShape();
+    void receiveMapCurColorChoicesFromLinearGradientSelection();
+    void readyToDrawLinearGradient();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -101,6 +109,7 @@ private:
     int myPenWidth;
     QColor myPenColor;
     QImage image;
+    // QImage *image;
     QPoint lastPoint;
 
     bool drawLineBool;
@@ -140,11 +149,14 @@ private:
     QSignalMapper mapper;
     QMap<QString, QPushButton*> curGradientStrColorsMap;
     QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
-    bool setUpGradientColorsBool;
+    bool setUpLinearGradientColorsBool;
 
-    QColorDialog *colorDiag;
     QGroupBox *groupBox;
     QList<QCheckBox *> checkBoxBtnsList;
+
+    bool setUpConicalGradientColorsBool;
+    GradientColorInputDialog *_gradientColorInputDialog;
+
 };
 
 #endif // SCRIBBLEAREA_H
