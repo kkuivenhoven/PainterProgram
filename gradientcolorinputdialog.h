@@ -14,8 +14,6 @@
 #include <QPainter>
 #include <QRadioButton>
 
-// #include "scribblearea.h"
-
 class GradientColorInputDialog : public QWidget
 {
     Q_OBJECT
@@ -56,9 +54,6 @@ private:
     int _linear_y2;
 
     QLinearGradient _curLinearGradient;
-    // QCheckBox *_radioOne;
-    // QCheckBox *_radioTwo;
-    // QCheckBox *_radioThree;
     QRadioButton *_radioOne;
     QRadioButton *_radioTwo;
     QRadioButton *_radioThree;

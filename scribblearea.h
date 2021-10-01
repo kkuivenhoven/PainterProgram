@@ -71,12 +71,10 @@ public:
     void setUpRoundSquare();
     void createRoundSquare();
 
+    /*
     void setUpLinearGradient();
     void createLinearGradient();
-
-    void setUpLinearGradientPaints(int numColors);
-    void inputDialogForGradientPaints(int numColors);
-    void handleButton(QString tmpTitle, int position, QLabel *colorName);
+    */
 
     void setUpConicalGradientPaints(int numColors);
     void conicalGradientColorSelection(int numColors);
@@ -84,7 +82,6 @@ public:
 public slots:
     void clearImage();
     void print();
-    void drawTheGradientShape();
     void readyToDrawLinearGradient();
 
 protected:
@@ -137,15 +134,12 @@ private:
 
     bool setUpRoundSquareBool;
 
-    bool setUpLinearGradientBool;
-
     QWidget *userInput;
     int userChoseThisNumColors;
 
     QSignalMapper mapper;
     QMap<QString, QPushButton*> curGradientStrColorsMap;
     QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
-    bool setUpLinearGradientColorsBool;
 
     QGroupBox *groupBox;
     QList<QCheckBox *> checkBoxBtnsList;
