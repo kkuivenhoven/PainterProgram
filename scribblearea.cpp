@@ -11,11 +11,6 @@
 
 #include "scribblearea.h"
 
-// for when want to build "set font" tool
-    // curFont = QFontDialog::getFont(
-                // &ok, QFont("Helvetica [Cronyx]", 10), this);
-    // painter.setFont(curFont);
-
 
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 {
@@ -35,6 +30,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     turnBoolOn = false;
     setUpSquareBool = false;
     setUpRoundSquareBool = false;
+    setUpEllipseBool = false;
 
     secondConvexReadyToDraw = false;
     setUpLinearGradientBool = false;
@@ -580,13 +576,14 @@ void ScribbleArea::conicalGradientColorSelection(int numColors) {
 
 void ScribbleArea::readyToDrawLinearGradient() {
     QLinearGradient curLinearGradient = _gradientColorInputDialog->getLinearGradientTools();
-
     QPainter painter(&image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectLinear(m_x1, m_y1, width, height);
 
     painter.fillRect(rectLinear, curLinearGradient);
+    setUpConicalGradientColorsBool = false;
+
     update();
 }
 
@@ -605,4 +602,9 @@ void ScribbleArea::print() {
     }
 #endif // QT_CONFIG(printdialog)
 }
+
+// for when want to build "set font" tool
+    // curFont = QFontDialog::getFont(
+                // &ok, QFont("Helvetica [Cronyx]", 10), this);
+    // painter.setFont(curFont);
 
