@@ -48,11 +48,6 @@ void GradientColorInputDialog::_setUpLinearGradientWidget() {
         gridLayout->addWidget(colorButton, i, 1, 1, 2);
         gridLayout->addWidget(colorName, i, 3, 1, 1);
     }
-    QLabel *drawSquareLabel = new QLabel("Is the user ready to draw gradient shape?");
-    QPushButton *userDrawSquare = new QPushButton("Yes!");
-    connect(userDrawSquare, SIGNAL(clicked(bool)), this, SLOT(drawTheGradientShape()));
-    gridLayout->addWidget(drawSquareLabel, _linearNumColors, 0, 1, 3);
-    gridLayout->addWidget(userDrawSquare, _linearNumColors, 3, 1, 1);
 
     groupBox = new QGroupBox(tr("Gradient Direction Options:"));
     _radioOne = new QRadioButton("Left to Right (straight across)");
@@ -64,7 +59,19 @@ void GradientColorInputDialog::_setUpLinearGradientWidget() {
     vbox->addWidget(_radioTwo);
     vbox->addWidget(_radioThree);
     groupBox->setLayout(vbox);
-    gridLayout->addWidget(groupBox, _linearNumColors+1, 0, 1, 3);
+    gridLayout->addWidget(groupBox, _linearNumColors, 0, 1, 3);
+
+    QLabel *drawSquareLabel = new QLabel("Is the user ready to draw gradient shape?");
+    QPushButton *userDrawSquare = new QPushButton("Yes!");
+    connect(userDrawSquare, SIGNAL(clicked(bool)), this, SLOT(drawTheGradientShape()));
+    gridLayout->addWidget(drawSquareLabel, _linearNumColors+1, 0, 1, 3);
+    gridLayout->addWidget(userDrawSquare, _linearNumColors+1, 3, 1, 1);
+
+    QLabel *closeWidgetLabel = new QLabel("Are you done with this gradient?");
+    QPushButton *closeWidgetBtn = new QPushButton("Yes!");
+    connect(closeWidgetBtn, SIGNAL(clicked(bool)), this, SLOT(clearOutLinearColorMap()));
+    gridLayout->addWidget(closeWidgetLabel, _linearNumColors+2, 0, 1, 3);
+    gridLayout->addWidget(closeWidgetBtn, _linearNumColors+2, 3, 1, 1);
 
     _linearWidget->setLayout(gridLayout);
 }
@@ -79,7 +86,7 @@ void GradientColorInputDialog::handleButton(QString tmpTitle, int position, QLab
         curPushButton->setText(color.name());
         QMap<int, QColor> tmpMap;
         tmpMap.insert(position, color);
-        if(mapCurColorChoices.remove(curPushButton)) {
+        if(mapCurColorChoices.contains(curPushButton)) {
             mapCurColorChoices.remove(curPushButton);
             mapCurColorChoices.insert(curPushButton, tmpMap);
         } else {
@@ -129,6 +136,16 @@ void GradientColorInputDialog::drawTheGradientShape() {
 
         emit linearGradientToolsSet();
     }
+}
+
+
+void GradientColorInputDialog::clearOutLinearColorMap() {
+    QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
+    for(iter = mapCurColorChoices.begin(); iter != mapCurColorChoices.end();) {
+        mapCurColorChoices.erase(iter);
+        iter++;
+    }
+    _linearWidget->close();
 }
 
 

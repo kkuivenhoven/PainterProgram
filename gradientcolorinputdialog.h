@@ -38,6 +38,7 @@ signals:
 
 public slots:
     void drawTheGradientShape();
+    void clearOutLinearColorMap();
 
 private:
     QMap<QString, QPushButton*> curGradientStrColorsMap;
