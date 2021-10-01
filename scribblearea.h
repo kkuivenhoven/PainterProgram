@@ -81,13 +81,10 @@ public:
     void setUpConicalGradientPaints(int numColors);
     void conicalGradientColorSelection(int numColors);
 
-    // QImage image;
-
 public slots:
     void clearImage();
     void print();
     void drawTheGradientShape();
-    void receiveMapCurColorChoicesFromLinearGradientSelection();
     void readyToDrawLinearGradient();
 
 protected:
@@ -109,7 +106,6 @@ private:
     int myPenWidth;
     QColor myPenColor;
     QImage image;
-    // QImage *image;
     QPoint lastPoint;
 
     bool drawLineBool;

@@ -25,14 +25,12 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     scribbling = false;
     myPenWidth = 1;
     myPenColor = Qt::black;
-
     m_x1 = 0;
     m_x2 = 0;
     m_y1 = 0;
     m_y2 = 0;
     drawLineBool = false;
     textSettingSet = false;
-
     fontSizeSet = false;
     turnBoolOn = false;
     setUpSquareBool = false;
@@ -41,10 +39,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     secondConvexReadyToDraw = false;
     setUpLinearGradientBool = false;
     setUpLinearGradientColorsBool = false;
-
     setUpConicalGradientColorsBool = false;
-
-    // _gradientColorInputDialog = new GradientColorInputDialog(image);
     _gradientColorInputDialog = new GradientColorInputDialog();
 
     setFocusPolicy(Qt::StrongFocus);
@@ -579,8 +574,7 @@ void ScribbleArea::drawTheGradientShape() {
 
 
 void ScribbleArea::conicalGradientColorSelection(int numColors) {
-    qDebug() << " -- ScribbleArea::conicalGradientColorSelection()";
-    _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2);
+    _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
     connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
 }
 
@@ -594,10 +588,6 @@ void ScribbleArea::readyToDrawLinearGradient() {
 
     painter.fillRect(rectLinear, curLinearGradient);
     update();
-}
-
-void ScribbleArea::receiveMapCurColorChoicesFromLinearGradientSelection() {
-    // _gradientColorInputDialog->getLinearRectGradientMap();
 }
 
 void ScribbleArea::print() {

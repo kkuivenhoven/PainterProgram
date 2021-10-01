@@ -12,6 +12,7 @@
 #include <QDebug>
 #include <QColorDialog>
 #include <QPainter>
+#include <QRadioButton>
 
 // #include "scribblearea.h"
 
@@ -22,12 +23,13 @@ class GradientColorInputDialog : public QWidget
     void _setUpLinearGradientWidget();
     void _setUpConicalGradientWidget();
     void _setUpRadialGradientWidget();
+    int _linearNumColors;
 
 public:
     GradientColorInputDialog(QWidget *parent = 0);
     ~GradientColorInputDialog();
 
-    void showLinearGradientWidget(int x1, int y1, int x2, int y2);
+    void showLinearGradientWidget(int x1, int y1, int x2, int y2, int numColors);
     void handleButton(QString tmpTitle, int position, QLabel *colorName);
     QLinearGradient getLinearGradientTools();
 
@@ -49,14 +51,16 @@ private:
 
     int _linear_x1;
     int _linear_y1;
-
     int _linear_x2;
     int _linear_y2;
 
     QLinearGradient _curLinearGradient;
-    QCheckBox *_radioOne;
-    QCheckBox *_radioTwo;
-    QCheckBox *_radioThree;
+    // QCheckBox *_radioOne;
+    // QCheckBox *_radioTwo;
+    // QCheckBox *_radioThree;
+    QRadioButton *_radioOne;
+    QRadioButton *_radioTwo;
+    QRadioButton *_radioThree;
 };
 
 #endif // GRADIENTCOLORINPUTDIALOG_H

@@ -1,9 +1,9 @@
 #include "gradientcolorinputdialog.h"
 
 GradientColorInputDialog::GradientColorInputDialog(QWidget *parent) : QWidget(parent) {
-    _setUpLinearGradientWidget();
     _setUpConicalGradientWidget();
     _setUpRadialGradientWidget();
+    _linearNumColors = 0;
 }
 
 
@@ -12,12 +12,14 @@ GradientColorInputDialog::~GradientColorInputDialog() {
 }
 
 
-void GradientColorInputDialog::showLinearGradientWidget(int x1, int y1, int x2, int y2) {
+void GradientColorInputDialog::showLinearGradientWidget(int x1, int y1, int x2, int y2, int numColors) {
     _linear_x1 = x1;
     _linear_y1 = y1;
     _linear_x2 = x2;
     _linear_y2 = y2;
+    _linearNumColors = numColors;
 
+    _setUpLinearGradientWidget();
     _linearWidget->show();
 }
 
@@ -26,9 +28,9 @@ void GradientColorInputDialog::_setUpLinearGradientWidget() {
     _linearWidget = new QWidget();
     QGridLayout *gridLayout = new QGridLayout();
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < _linearNumColors; i++) {
         int tmpNum = (i+1);
-        QString tmpTitle = "Color" + QString::number(tmpNum);
+        QString tmpTitle = "Color #" + QString::number(tmpNum);
         QLabel *colorLabel = new QLabel(tr(tmpTitle.toStdString().c_str()));
         QColor firstColor = QColor(Qt::black);
         QLabel *colorName = new QLabel(tr(firstColor.name().toUtf8()));
@@ -49,22 +51,20 @@ void GradientColorInputDialog::_setUpLinearGradientWidget() {
     QLabel *drawSquareLabel = new QLabel("Is the user ready to draw gradient shape?");
     QPushButton *userDrawSquare = new QPushButton("Yes!");
     connect(userDrawSquare, SIGNAL(clicked(bool)), this, SLOT(drawTheGradientShape()));
-    gridLayout->addWidget(drawSquareLabel, 3, 0, 1, 3);
-    gridLayout->addWidget(userDrawSquare, 3, 3, 1, 1);
+    gridLayout->addWidget(drawSquareLabel, _linearNumColors, 0, 1, 3);
+    gridLayout->addWidget(userDrawSquare, _linearNumColors, 3, 1, 1);
 
     groupBox = new QGroupBox(tr("Gradient Direction Options:"));
-    groupBox->setCheckable(true);
-    groupBox->setChecked(true);
-    _radioOne = new QCheckBox("Left to Right (straight across)");
-    _radioTwo = new QCheckBox("Top Left to Bottom Right (diagonal)");
-    _radioThree = new QCheckBox("Bottom Left to Top Right (diagonal)");
+    _radioOne = new QRadioButton("Left to Right (straight across)");
+    _radioTwo = new QRadioButton("Top Left to Bottom Right (diagonal)");
+    _radioThree = new QRadioButton("Bottom Left to Top Right (diagonal)");
 
     QVBoxLayout *vbox = new QVBoxLayout();
     vbox->addWidget(_radioOne);
     vbox->addWidget(_radioTwo);
     vbox->addWidget(_radioThree);
     groupBox->setLayout(vbox);
-    gridLayout->addWidget(groupBox, 3+1, 0, 1, 3);
+    gridLayout->addWidget(groupBox, _linearNumColors+1, 0, 1, 3);
 
     _linearWidget->setLayout(gridLayout);
 }
@@ -92,7 +92,7 @@ void GradientColorInputDialog::handleButton(QString tmpTitle, int position, QLab
 
 
 void GradientColorInputDialog::drawTheGradientShape() {
-    if(mapCurColorChoices.size() == 3) {
+    if(mapCurColorChoices.size() == _linearNumColors) {
         QMap<int, QColor> gradientColors;
         QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
         for(iter = mapCurColorChoices.begin(); iter != mapCurColorChoices.end(); iter++) {
@@ -106,19 +106,19 @@ void GradientColorInputDialog::drawTheGradientShape() {
         int height = (_linear_y2 - _linear_y1);
         QRect rectLinear(_linear_x1, _linear_y1, width, height);
 
-        if(_radioOne->checkState() == Qt::Checked) {
+        if(_radioOne->isChecked()) {
             _curLinearGradient.setStart(rectLinear.bottomLeft());
             _curLinearGradient.setFinalStop(rectLinear.bottomRight());
         }
-        if(_radioTwo->checkState() == Qt::Checked) {
+        if(_radioTwo->isChecked()) {
             _curLinearGradient.setStart(rectLinear.topLeft());
             _curLinearGradient.setFinalStop(rectLinear.bottomRight());
         }
-        if(_radioThree->checkState() == Qt::Checked) {
+        if(_radioThree->isChecked()) {
             _curLinearGradient.setStart(rectLinear.topRight());
             _curLinearGradient.setFinalStop(rectLinear.bottomLeft());
         }
-        float decimal = (1.0/(3-1));
+        float decimal = (1.0/(_linearNumColors-1));
         QMap<int, QColor>::iterator tmpIter;
         for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {
             int tmpInt = tmpIter.key();
