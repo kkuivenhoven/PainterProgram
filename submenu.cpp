@@ -83,7 +83,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
 
     QPushButton *setUpConicalGradientPaints = new QPushButton();
     setUpConicalGradientPaints->setToolTip("Draw a square with a conical gradient");
-    setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
+    setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/conicalGradient.png"));
     connect(setUpConicalGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     gridLayout->addWidget(clearScreenBtn);
