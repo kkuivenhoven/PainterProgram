@@ -174,12 +174,12 @@ void SubMenu::userChooseGradientPaintColors() {
         numColors = text.toInt();
     }
     QPushButton *btnSender = qobject_cast<QPushButton*>(sender());
-    QString btnText = btnSender->toolTip();
-    if(btnText == "Draw a square with a linear gradient") {
+    QString btnToolTip = btnSender->toolTip();
+    if(btnToolTip == "Draw a square with a linear gradient") {
         qDebug() << " ready to draw linear gradient";
         _scribbleArea.setUpLinearGradientPaints(numColors);
     }
-    if(btnText == "Draw a square with a conical gradient") {
+    if(btnToolTip == "Draw a square with a conical gradient") {
         qDebug() << " ready to draw conical gradient";
         _scribbleArea.setUpConicalGradientPaints(numColors);
     }
