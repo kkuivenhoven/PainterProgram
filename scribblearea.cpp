@@ -11,7 +11,6 @@
 
 #include "scribblearea.h"
 
-
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 {
     setAttribute(Qt::WA_StaticContents);
@@ -31,10 +30,11 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     setUpSquareBool = false;
     setUpRoundSquareBool = false;
     setUpEllipseBool = false;
-
     secondConvexReadyToDraw = false;
-    setUpConicalGradientColorsBool = false;
+
     _gradientColorInputDialog = new GradientColorInputDialog();
+    setUpLinearGradientColorsBool = false;
+    setUpConicalGradientColorsBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -79,6 +79,12 @@ void ScribbleArea::setReadyToDrawConvexPolygonBool() {
 
 void ScribbleArea::setUpRoundSquare() {
     setUpRoundSquareBool = true;
+}
+
+
+void ScribbleArea::setUpLinearGradientPaints(int numColors) {
+    userChoseThisNumColors = numColors;
+    setUpLinearGradientColorsBool = true;
 }
 
 
@@ -193,6 +199,10 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
                 secondDrawConvexPolygon();
             }
         }
+        if(setUpLinearGradientColorsBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
         if(setUpConicalGradientColorsBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
@@ -243,6 +253,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             createEllipse();
+        }
+        if(setUpLinearGradientColorsBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            linearGradientColorSelection(userChoseThisNumColors);
         }
         if(setUpConicalGradientColorsBool && this->underMouse()) {
             m_x2 = event->x();
@@ -382,11 +397,10 @@ void ScribbleArea::createRoundSquare() {
 }
 
 
-void ScribbleArea::conicalGradientColorSelection(int numColors) {
+void ScribbleArea::linearGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
     connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
 }
-
 
 void ScribbleArea::readyToDrawLinearGradient() {
     QLinearGradient curLinearGradient = _gradientColorInputDialog->getLinearGradientTools();
@@ -396,6 +410,26 @@ void ScribbleArea::readyToDrawLinearGradient() {
     QRect rectLinear(m_x1, m_y1, width, height);
 
     painter.fillRect(rectLinear, curLinearGradient);
+    setUpLinearGradientColorsBool = false;
+
+    update();
+}
+
+
+void ScribbleArea::conicalGradientColorSelection(int numColors) {
+    _gradientColorInputDialog->showConicalGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
+    connect(_gradientColorInputDialog, SIGNAL(conicalGradientToolsSet()), this, SLOT(readyToDrawConicalGradient()));
+}
+
+
+void ScribbleArea::readyToDrawConicalGradient() {
+    QConicalGradient* curConicalGradient = _gradientColorInputDialog->getConicalGradientTools();
+    QPainter painter(&image);
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rectConical(m_x1, m_y1, width, height);
+
+    painter.fillRect(rectConical, *curConicalGradient);
     setUpConicalGradientColorsBool = false;
 
     update();

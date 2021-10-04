@@ -38,8 +38,6 @@ private slots:
     void setUpConvexPolygon();
     void setUpRoundEdgeSquare();
 
-    // void setUpLinearGradient();
-
     void userChooseGradientPaintColors();
 };
 

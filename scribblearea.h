@@ -71,18 +71,21 @@ public:
     void setUpRoundSquare();
     void createRoundSquare();
 
-    /*
-    void setUpLinearGradient();
-    void createLinearGradient();
-    */
+    void setUpLinearGradientPaints(int numColors);
+    void linearGradientColorSelection(int numColors);
 
     void setUpConicalGradientPaints(int numColors);
     void conicalGradientColorSelection(int numColors);
+
+    /* void twoSetUpConicalGradientPaints(int numColors);
+    void twoConicalGradientColorSelection(int numColors); */
 
 public slots:
     void clearImage();
     void print();
     void readyToDrawLinearGradient();
+    void readyToDrawConicalGradient();
+    // void twoReadyToDrawConicalGradient();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -144,9 +147,13 @@ private:
     QGroupBox *groupBox;
     QList<QCheckBox *> checkBoxBtnsList;
 
-    bool setUpConicalGradientColorsBool;
+    bool setUpLinearGradientColorsBool;
     GradientColorInputDialog *_gradientColorInputDialog;
 
+    bool setUpConicalGradientColorsBool;
+
+    /* int twoUserChoseThisNumColors;
+    bool twoSetUpConicalGradientColorsBool; */
 };
 
 #endif // SCRIBBLEAREA_H
