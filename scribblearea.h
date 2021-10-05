@@ -26,7 +26,6 @@
 #include <QGroupBox>
 #include <QCheckBox>
 
-// #include "gradientcolorinputdialog.h"
 #include "gradientcolorinputdialog.h"
 
 class ScribbleArea : public QWidget
@@ -77,15 +76,15 @@ public:
     void setUpConicalGradientPaints(int numColors);
     void conicalGradientColorSelection(int numColors);
 
-    /* void twoSetUpConicalGradientPaints(int numColors);
-    void twoConicalGradientColorSelection(int numColors); */
+    void setUpRadialGradientPaints(int numColors);
+    void radialGradientColorSelection(int numColors);
 
 public slots:
     void clearImage();
     void print();
     void readyToDrawLinearGradient();
     void readyToDrawConicalGradient();
-    // void twoReadyToDrawConicalGradient();
+    void readyToDrawRadialGradient();
 
 protected:
     void mousePressEvent(QMouseEvent *event) override;
@@ -147,13 +146,12 @@ private:
     QGroupBox *groupBox;
     QList<QCheckBox *> checkBoxBtnsList;
 
-    bool setUpLinearGradientColorsBool;
     GradientColorInputDialog *_gradientColorInputDialog;
 
+    bool setUpLinearGradientColorsBool;
     bool setUpConicalGradientColorsBool;
+    bool setUpRadialGradientColorsBool;
 
-    /* int twoUserChoseThisNumColors;
-    bool twoSetUpConicalGradientColorsBool; */
 };
 
 #endif // SCRIBBLEAREA_H

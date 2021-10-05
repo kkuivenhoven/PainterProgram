@@ -41,10 +41,14 @@ public:
     void handleConicalButton(QString tmpTitle, int position, QLabel *colorName);
     QConicalGradient* getConicalGradientTools();
 
+    void showRadialGradientWidget(int x1, int y1, int x2, int y2, int numColors);
+    void handleRadialButton(QString tmpTitle, int position, QLabel *colorName);
+    QRadialGradient* getRadialGradientTools();
+
 signals:
     void linearGradientToolsSet();
     void conicalGradientToolsSet();
-    void twoConicalGradientToolsSet();
+    void radialGradientToolsSet();
 
 public slots:
     void drawTheGradientShape();
@@ -53,14 +57,13 @@ public slots:
     void conicalDrawTheGradientShape();
     void clearOutConicalColorMap();
 
-private:
-    QMap<QString, QPushButton*> curGradientStrColorsMap;
+    void radialDrawTheGradientShape();
+    void clearOutRadialColorMap();
 
+private:
     QWidget *_linearWidget;
     QWidget *_conicalWidget;
     QWidget *_radialWidget;
-
-    QGroupBox *groupBox;
 
     int _linearNumColors;
     int _linear_x1;
@@ -74,6 +77,13 @@ private:
     int _conical_x2;
     int _conical_y2;
 
+    int _radialNumColors;
+    int _radial_x1;
+    int _radial_y1;
+    int _radial_x2;
+    int _radial_y2;
+
+    QGroupBox *groupBox;
     QLinearGradient _curLinearGradient;
     QRadioButton *_radioLinearOne;
     QRadioButton *_radioLinearTwo;
@@ -84,6 +94,17 @@ private:
     QSpinBox *_conicalSpinBox;
     QMap<QPushButton*, QMap<int, QColor>> conicalMapCurColorChoices;
     QMap<QString, QPushButton*> curConicalGradientStrColorsMap;
+    QMap<QString, QPushButton*> curGradientStrColorsMap;
+
+    QRadialGradient *_curRadialGradient;
+    QMap<QPushButton*, QMap<int, QColor>> radialMapCurColorChoices;
+    QMap<QString, QPushButton*> curRadialGradientStrColorsMap;
+
+    QGroupBox *_radialGroupBox;
+    QRadioButton *_radioRadialOne;
+    QRadioButton *_radioRadialTwo;
+    QRadioButton *_radioRadialThree;
+    QSpinBox *_radialSpinBox;
 };
 
 #endif // GRADIENTCOLORINPUTDIALOG_H

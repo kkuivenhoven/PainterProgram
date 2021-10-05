@@ -86,6 +86,11 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/conicalGradient.png"));
     connect(setUpConicalGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
+    QPushButton *setUpRadialGradientPaints = new QPushButton();
+    setUpRadialGradientPaints->setToolTip("Draw a square with a radial gradient");
+    setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/conicalGradient.png"));
+    connect(setUpRadialGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
+
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
@@ -99,6 +104,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(roundSquareBrush);
     gridLayout->addWidget(setUpLinearGradientPaints);
     gridLayout->addWidget(setUpConicalGradientPaints);
+    gridLayout->addWidget(setUpRadialGradientPaints);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -182,5 +188,9 @@ void SubMenu::userChooseGradientPaintColors() {
     if(btnToolTip == "Draw a square with a conical gradient") {
         qDebug() << " ready to draw conical gradient";
         _scribbleArea.setUpConicalGradientPaints(numColors);
+    }
+    if(btnToolTip == "Draw a square with a radial gradient") {
+        qDebug() << " ready to draw radial gradient";
+        _scribbleArea.setUpRadialGradientPaints(numColors);
     }
 }

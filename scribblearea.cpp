@@ -35,6 +35,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     _gradientColorInputDialog = new GradientColorInputDialog();
     setUpLinearGradientColorsBool = false;
     setUpConicalGradientColorsBool = false;
+    setUpRadialGradientColorsBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -91,6 +92,12 @@ void ScribbleArea::setUpLinearGradientPaints(int numColors) {
 void ScribbleArea::setUpConicalGradientPaints(int numColors) {
     userChoseThisNumColors = numColors;
     setUpConicalGradientColorsBool = true;
+}
+
+
+void ScribbleArea::setUpRadialGradientPaints(int numColors) {
+    userChoseThisNumColors = numColors;
+    setUpRadialGradientColorsBool = true;
 }
 
 
@@ -207,6 +214,10 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
+        if(setUpRadialGradientColorsBool && this->underMouse()) {
+            m_x1 = event->x();
+            m_y1 = event->y();
+        }
     }
 }
 
@@ -263,6 +274,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             conicalGradientColorSelection(userChoseThisNumColors);
+        }
+        if(setUpRadialGradientColorsBool && this->underMouse()) {
+            m_x2 = event->x();
+            m_y2 = event->y();
+            radialGradientColorSelection(userChoseThisNumColors);
         }
     }
 }
@@ -431,6 +447,33 @@ void ScribbleArea::readyToDrawConicalGradient() {
 
     painter.fillRect(rectConical, *curConicalGradient);
     setUpConicalGradientColorsBool = false;
+
+    update();
+}
+
+
+void ScribbleArea::radialGradientColorSelection(int numColors) {
+    _gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
+    connect(_gradientColorInputDialog, SIGNAL(radialGradientToolsSet()), this, SLOT(readyToDrawRadialGradient()));
+}
+
+void ScribbleArea::readyToDrawRadialGradient() {
+    QRadialGradient* curRadialGradient = _gradientColorInputDialog->getRadialGradientTools();
+    QPainter painter(&image);
+    int width = (m_x2 - m_x1);
+    int height = (m_y2 - m_y1);
+    QRect rectRadial(m_x1, m_y1, width, height);
+
+    /* QRadialGradient radialGradient(QPointF(m_x1+25, m_y1), 200);
+    radialGradient.setColorAt(0, Qt::red);
+    radialGradient.setColorAt(0.5, Qt::blue);
+    radialGradient.setColorAt(1, Qt::green);
+    // radialGradient.setSpread(QGradient::ReflectSpread);
+    radialGradient.setSpread(QGradient::RepeatSpread); */
+
+    painter.fillRect(rectRadial, *curRadialGradient);
+    // painter.fillRect(rectRadial, radialGradient);
+    setUpRadialGradientColorsBool = false;
 
     update();
 }
