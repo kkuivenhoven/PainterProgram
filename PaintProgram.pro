@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui printsupport qml quick
+QT       += core gui printsupport quick
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 

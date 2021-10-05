@@ -88,7 +88,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
 
     QPushButton *setUpRadialGradientPaints = new QPushButton();
     setUpRadialGradientPaints->setToolTip("Draw a square with a radial gradient");
-    setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/conicalGradient.png"));
+    setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
     connect(setUpRadialGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     gridLayout->addWidget(clearScreenBtn);

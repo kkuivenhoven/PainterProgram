@@ -152,6 +152,8 @@ private:
     bool setUpConicalGradientColorsBool;
     bool setUpRadialGradientColorsBool;
 
+    QList<QRect> drawnRectList;
+    QList<QRect*> drawnRectPointerList;
 };
 
 #endif // SCRIBBLEAREA_H

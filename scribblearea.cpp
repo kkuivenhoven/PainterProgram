@@ -146,6 +146,20 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
 
 
 void ScribbleArea::clearImage() {
+    // image.fill(qRgb(255,255,255));
+    /* QImage newImage;
+    image = newImage;
+    image.fill(qRgb(255,255,255)); */
+    QPainter painter(&image);
+    for(int i = 0; i < drawnRectList.size(); i++) {
+        painter.eraseRect(drawnRectList.at(i));
+        drawnRectList.takeAt(i);
+    }
+    for(int i = 0; i < drawnRectPointerList.size(); i++) {
+        painter.eraseRect(*drawnRectPointerList.at(i));
+        delete drawnRectPointerList.at(i);
+        drawnRectPointerList.removeAt(i);
+    }
     image.fill(qRgb(255,255,255));
     modified = true;
     update();
@@ -366,6 +380,7 @@ void ScribbleArea::createSquare() {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRect(rect);
+    drawnRectList << rect;
     setUpSquareBool = false;
     update();
 }
@@ -379,6 +394,7 @@ void ScribbleArea::createEllipse() {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(rect);
+    drawnRectList << rect;
     setUpEllipseBool = false;
     update();
 }
@@ -403,11 +419,19 @@ void ScribbleArea::secondDrawConvexPolygon() {
 void ScribbleArea::createRoundSquare() {
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
-    QRect rect(m_x1, m_y1, width, height);
+    // QRect rect(m_x1, m_y1, width, height);
+    QRect *rect = new QRect();
+    rect->setX(m_x1);
+    rect->setY(m_y1);
+    rect->setWidth(width);
+    rect->setHeight(height);
     QPainter painter(&image);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    painter.drawRoundedRect(rect, 20.0, 15.0);
+    // painter.drawRoundedRect(rect, 20.0, 15.0);
+    painter.drawRoundedRect(*rect, 20.0, 15.0);
+    // drawnRectList << rect;
+    drawnRectPointerList << rect;
     setUpRoundSquareBool = false;
     update();
 }
@@ -418,6 +442,7 @@ void ScribbleArea::linearGradientColorSelection(int numColors) {
     connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
 }
 
+
 void ScribbleArea::readyToDrawLinearGradient() {
     QLinearGradient curLinearGradient = _gradientColorInputDialog->getLinearGradientTools();
     QPainter painter(&image);
@@ -427,6 +452,7 @@ void ScribbleArea::readyToDrawLinearGradient() {
 
     painter.fillRect(rectLinear, curLinearGradient);
     setUpLinearGradientColorsBool = false;
+    drawnRectList << rectLinear;
 
     update();
 }
@@ -447,15 +473,18 @@ void ScribbleArea::readyToDrawConicalGradient() {
 
     painter.fillRect(rectConical, *curConicalGradient);
     setUpConicalGradientColorsBool = false;
+    drawnRectList << rectConical;
 
     update();
 }
 
 
 void ScribbleArea::radialGradientColorSelection(int numColors) {
-    _gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
+    _gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors,
+                                                        image.width(), image.height());
     connect(_gradientColorInputDialog, SIGNAL(radialGradientToolsSet()), this, SLOT(readyToDrawRadialGradient()));
 }
+
 
 void ScribbleArea::readyToDrawRadialGradient() {
     QRadialGradient* curRadialGradient = _gradientColorInputDialog->getRadialGradientTools();
@@ -464,16 +493,9 @@ void ScribbleArea::readyToDrawRadialGradient() {
     int height = (m_y2 - m_y1);
     QRect rectRadial(m_x1, m_y1, width, height);
 
-    /* QRadialGradient radialGradient(QPointF(m_x1+25, m_y1), 200);
-    radialGradient.setColorAt(0, Qt::red);
-    radialGradient.setColorAt(0.5, Qt::blue);
-    radialGradient.setColorAt(1, Qt::green);
-    // radialGradient.setSpread(QGradient::ReflectSpread);
-    radialGradient.setSpread(QGradient::RepeatSpread); */
-
     painter.fillRect(rectRadial, *curRadialGradient);
-    // painter.fillRect(rectRadial, radialGradient);
     setUpRadialGradientColorsBool = false;
+    drawnRectList << rectRadial;
 
     update();
 }
@@ -499,4 +521,3 @@ void ScribbleArea::print() {
     // curFont = QFontDialog::getFont(
                 // &ok, QFont("Helvetica [Cronyx]", 10), this);
     // painter.setFont(curFont);
-

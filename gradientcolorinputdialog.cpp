@@ -285,11 +285,14 @@ void GradientColorInputDialog::clearOutConicalColorMap() {
 }
 
 
-void GradientColorInputDialog::showRadialGradientWidget(int x1, int y1, int x2, int y2, int numColors) {
+void GradientColorInputDialog::showRadialGradientWidget(int x1, int y1, int x2, int y2,
+                                                        int numColors, int widgetHeight, int widgetWidth) {
     _radial_x1 = x1;
     _radial_y1 = y1;
     _radial_x2 = x2;
     _radial_y2 = y2;
+    _widgetHeight = widgetHeight;
+    _widgetWidth = widgetWidth;
 
     _radialNumColors = numColors;
     _setUpRadialGradientWidget();
@@ -300,7 +303,7 @@ void GradientColorInputDialog::_setUpRadialGradientWidget() {
     _radialWidget = new QWidget();
     QGridLayout *gridLayout = new QGridLayout();
 
-    for(int i = 0; i < 3; i++) {
+    for(int i = 0; i < _radialNumColors; i++) {
         int tmpNum = (i+1);
         QString tmpTitle = "Color #" + QString::number(tmpNum);
         QLabel *colorLabel = new QLabel(tr(tmpTitle.toStdString().c_str()));
@@ -331,27 +334,46 @@ void GradientColorInputDialog::_setUpRadialGradientWidget() {
     vbox->addWidget(_radioRadialTwo);
     vbox->addWidget(_radioRadialThree);
     _radialGroupBox->setLayout(vbox);
-    gridLayout->addWidget(_radialGroupBox, 3+1, 0, 1, 3);
+    gridLayout->addWidget(_radialGroupBox, _radialNumColors+1, 0, 1, 3);
 
     QLabel *radiusLabel = new QLabel("Radius for radial spread:");
-    gridLayout->addWidget(radiusLabel, 3+2, 0, 1, 3);
-
+    gridLayout->addWidget(radiusLabel, _radialNumColors+2, 0, 1, 3);
     _radialSpinBox = new QSpinBox();
     _radialSpinBox->setRange(0, 360);
     connect(_radialSpinBox, SIGNAL(valueChanged(int)), _radialSpinBox, SLOT(setValue(int)));
-    gridLayout->addWidget(_radialSpinBox, 3+2, 3, 1, 1);
+    gridLayout->addWidget(_radialSpinBox, _radialNumColors+2, 3, 1, 1);
+
+    QLabel *firstXYset = new QLabel("First set: (x, y): -- (" + QString::number(_radial_x1) + ", " + QString::number(_radial_y1) + "):");
+    gridLayout->addWidget(firstXYset, _radialNumColors+3, 0, 1, 3);
+
+    QLabel *centerXLabel = new QLabel("X value for center of radial:");
+    gridLayout->addWidget(centerXLabel, _radialNumColors+4, 0, 1, 3);
+    _centerXSpinBox = new QSpinBox();
+    _centerXSpinBox->setRange(0, _widgetWidth);
+    connect(_centerXSpinBox, SIGNAL(valueChanged(int)), _centerXSpinBox, SLOT(setValue(int)));
+    gridLayout->addWidget(_centerXSpinBox, _radialNumColors+4, 3, 1, 1);
+
+    QLabel *secondXYset = new QLabel("Second set: (x, y): -- (" + QString::number(_radial_x2) + ", " + QString::number(_radial_y2) + "):");
+    gridLayout->addWidget(secondXYset, _radialNumColors+5, 0, 1, 3);
+
+    QLabel *centerYLabel = new QLabel("Y value for center of radial:");
+    gridLayout->addWidget(centerYLabel, _radialNumColors+6, 0, 1, 3);
+    _centerYSpinBox = new QSpinBox();
+    _centerYSpinBox->setRange(0, _widgetHeight);
+    connect(_centerYSpinBox, SIGNAL(valueChanged(int)), _centerYSpinBox, SLOT(setValue(int)));
+    gridLayout->addWidget(_centerYSpinBox, _radialNumColors+6, 3, 1, 1);
 
     QLabel *drawSquareLabel = new QLabel("Is the user ready to draw gradient?");
     QPushButton *userDrawSquare = new QPushButton("Yes!");
     connect(userDrawSquare, SIGNAL(clicked(bool)), this, SLOT(radialDrawTheGradientShape()));
-    gridLayout->addWidget(drawSquareLabel, 3+3, 0, 1, 3);
-    gridLayout->addWidget(userDrawSquare, 3+3 ,3, 1, 1);
+    gridLayout->addWidget(drawSquareLabel, _radialNumColors+7, 0, 1, 3);
+    gridLayout->addWidget(userDrawSquare, _radialNumColors+7 ,3, 1, 1);
 
     QLabel *closeWidgetLabel = new QLabel("Are you done with this gradient?");
     QPushButton *closeWidgetBtn = new QPushButton("Yes!");
     connect(closeWidgetBtn, SIGNAL(clicked(bool)), this, SLOT(clearOutRadialColorMap()));
-    gridLayout->addWidget(closeWidgetLabel, 3+4, 0, 1, 3);
-    gridLayout->addWidget(closeWidgetBtn, 3+4, 3, 1, 1);
+    gridLayout->addWidget(closeWidgetLabel, _radialNumColors+8, 0, 1, 3);
+    gridLayout->addWidget(closeWidgetBtn, _radialNumColors+8, 3, 1, 1);
 
     _radialWidget->setLayout(gridLayout);
     _radialWidget->show();
@@ -380,7 +402,7 @@ void GradientColorInputDialog::handleRadialButton(QString tmpTitle, int position
 
 
 void GradientColorInputDialog::radialDrawTheGradientShape() {
-    if(radialMapCurColorChoices.size() == 3) {
+    if(radialMapCurColorChoices.size() == _radialNumColors) {
         QMap<int, QColor> gradientColors;
         QMap<QPushButton *, QMap<int, QColor>>::iterator iter;
         for(iter = radialMapCurColorChoices.begin(); iter != radialMapCurColorChoices.end(); iter++) {
@@ -395,16 +417,13 @@ void GradientColorInputDialog::radialDrawTheGradientShape() {
         QRect rectRadial(_radial_x1, _radial_y1, width, height);
 
         qreal radius = _radialSpinBox->value();
-        // qreal radius = width;
         _curRadialGradient = new QRadialGradient();
-        _curRadialGradient->setCenter(rectRadial.center());
-        // _curRadialGradient->setRadius(radius);
+        QPointF set;
+        set.setX(_centerXSpinBox->value());
+        set.setY(_centerYSpinBox->value());
+        _curRadialGradient->setCenter(set);
         _curRadialGradient->setCenterRadius(radius);
 
-        // radialGradient.setSpread(QGradient::RepeatSpread);
-        // _radioRadialOne = new QRadioButton("Pad Spread");
-        // _radioRadialTwo = new QRadioButton("Reflect Spread");
-        // _radioRadialThree = new QRadioButton("Repeat Spread");
         if(_radioRadialOne->isChecked()) {
             _curRadialGradient->setSpread(QGradient::PadSpread);
         }
@@ -415,7 +434,7 @@ void GradientColorInputDialog::radialDrawTheGradientShape() {
             _curRadialGradient->setSpread(QGradient::RepeatSpread);
         }
 
-        float decimal = (1.0/(3));
+        float decimal = (1.0/(_radialNumColors-1));
         QMap<int, QColor>::iterator tmpIter;
         for(tmpIter = gradientColors.begin(); tmpIter != gradientColors.end(); tmpIter++) {
             int tmpInt = tmpIter.key();

@@ -41,7 +41,8 @@ public:
     void handleConicalButton(QString tmpTitle, int position, QLabel *colorName);
     QConicalGradient* getConicalGradientTools();
 
-    void showRadialGradientWidget(int x1, int y1, int x2, int y2, int numColors);
+    void showRadialGradientWidget(int x1, int y1, int x2, int y2, int numColors,
+                                  int widgetHeight, int widgetWidth);
     void handleRadialButton(QString tmpTitle, int position, QLabel *colorName);
     QRadialGradient* getRadialGradientTools();
 
@@ -82,6 +83,8 @@ private:
     int _radial_y1;
     int _radial_x2;
     int _radial_y2;
+    int _widgetHeight;
+    int _widgetWidth;
 
     QGroupBox *groupBox;
     QLinearGradient _curLinearGradient;
@@ -105,6 +108,8 @@ private:
     QRadioButton *_radioRadialTwo;
     QRadioButton *_radioRadialThree;
     QSpinBox *_radialSpinBox;
+    QSpinBox *_centerXSpinBox;
+    QSpinBox *_centerYSpinBox;
 };
 
 #endif // GRADIENTCOLORINPUTDIALOG_H
