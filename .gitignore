@@ -1,1 +1,4 @@
 *.o
+moc_*.cpp
+moc_*.h
+*.pro.user
