@@ -25,6 +25,7 @@
 #include <QColorDialog>
 #include <QGroupBox>
 #include <QCheckBox>
+#include <QPainterPath>
 
 #include "gradientcolorinputdialog.h"
 
@@ -59,7 +60,7 @@ public:
     void setPenUp();
 
     void setUpSquare();
-    void createSquare();
+    void createSquare(QPainter &painter);
 
     void setUpEllipse();
     void createEllipse();
@@ -68,6 +69,7 @@ public:
     void secondDrawConvexPolygon();
 
     void setUpRoundSquare();
+    // void createRoundSquare(QPainter &painter);
     void createRoundSquare();
 
     void setUpLinearGradientPaints(int numColors);
@@ -78,6 +80,12 @@ public:
 
     void setUpRadialGradientPaints(int numColors);
     void radialGradientColorSelection(int numColors);
+
+    void setUpPillBox();
+    void drawPillBox();
+
+    void setUpDrawSquircle();
+    void drawSquircle();
 
 public slots:
     void clearImage();
@@ -152,8 +160,19 @@ private:
     bool setUpConicalGradientColorsBool;
     bool setUpRadialGradientColorsBool;
 
-    QList<QRect> drawnRectList;
-    QList<QRect*> drawnRectPointerList;
+    QList<QRectF> drawnRectList;
+    QList<QRectF*> drawnRectPointerList;
+
+    QRectF drawingSquare;
+    bool startDrawingSquare;
+
+    QRectF drawingRoundedSquare;
+    bool startDrawingRoundedSquare;
+
+    bool setUpPillBoxBool;
+    bool setUpSquircleBool;
+    int initialDiff;
+    int xIncrement;
 };
 
 #endif // SCRIBBLEAREA_H

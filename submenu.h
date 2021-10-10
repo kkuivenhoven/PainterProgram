@@ -38,6 +38,9 @@ private slots:
     void setUpConvexPolygon();
     void setUpRoundEdgeSquare();
 
+    void setUpPillBox();
+    void setUpHandDrawnSquircle();
+
     void userChooseGradientPaintColors();
 };
 

@@ -91,6 +91,16 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
     connect(setUpRadialGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
+    QPushButton *setUpPillBoxBtn = new QPushButton();
+    setUpPillBoxBtn->setToolTip("Draw a square with a radial gradient");
+    setUpPillBoxBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
+    connect(setUpPillBoxBtn, SIGNAL(clicked(bool)), this, SLOT(setUpPillBox()));
+
+    QPushButton *setUpSquircle = new QPushButton();
+    setUpSquircle->setToolTip("Draw a square with a radial gradient");
+    setUpSquircle->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
+    connect(setUpSquircle, SIGNAL(clicked(bool)), this, SLOT(setUpHandDrawnSquircle()));
+
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
@@ -105,6 +115,8 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(setUpLinearGradientPaints);
     gridLayout->addWidget(setUpConicalGradientPaints);
     gridLayout->addWidget(setUpRadialGradientPaints);
+    gridLayout->addWidget(setUpPillBoxBtn);
+    gridLayout->addWidget(setUpSquircle);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -169,6 +181,16 @@ void SubMenu::setUpRoundEdgeSquare() {
 }
 
 
+void SubMenu::setUpPillBox() {
+    _scribbleArea.setUpPillBox();
+}
+
+
+void SubMenu::setUpHandDrawnSquircle() {
+    _scribbleArea.setUpDrawSquircle();
+}
+
+
 void SubMenu::userChooseGradientPaintColors() {
     bool okay;
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
@@ -194,3 +216,4 @@ void SubMenu::userChooseGradientPaintColors() {
         _scribbleArea.setUpRadialGradientPaints(numColors);
     }
 }
+
