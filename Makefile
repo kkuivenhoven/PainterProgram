@@ -53,16 +53,20 @@ OBJECTS_DIR   = ./
 SOURCES       = main.cpp \
 		mainwindow.cpp \
 		scribblearea.cpp \
-		submenu.cpp moc_mainwindow.cpp \
+		submenu.cpp \
+		gradientcolorinputdialog.cpp moc_mainwindow.cpp \
 		moc_scribblearea.cpp \
-		moc_submenu.cpp
+		moc_submenu.cpp \
+		moc_gradientcolorinputdialog.cpp
 OBJECTS       = main.o \
 		mainwindow.o \
 		scribblearea.o \
 		submenu.o \
+		gradientcolorinputdialog.o \
 		moc_mainwindow.o \
 		moc_scribblearea.o \
-		moc_submenu.o
+		moc_submenu.o \
+		moc_gradientcolorinputdialog.o
 DIST          = ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_pre.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/qdevice.pri \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/device_config.prf \
@@ -221,6 +225,7 @@ DIST          = ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_pre.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/qt_config.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang/qmake.conf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/exclusive_builds.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/mac/sdk.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/toolchain.prf \
@@ -249,10 +254,12 @@ DIST          = ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_pre.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/lex.prf \
 		PaintProgram.pro mainwindow.h \
 		scribblearea.h \
-		submenu.h main.cpp \
+		submenu.h \
+		gradientcolorinputdialog.h main.cpp \
 		mainwindow.cpp \
 		scribblearea.cpp \
-		submenu.cpp
+		submenu.cpp \
+		gradientcolorinputdialog.cpp
 QMAKE_TARGET  = PaintProgram
 DESTDIR       = 
 TARGET        = PaintProgram.app/Contents/MacOS/PaintProgram
@@ -428,6 +435,7 @@ Makefile: PaintProgram.pro ../Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang/qmake.co
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/qt_config.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang/qmake.conf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_post.prf \
+		.qmake.stash \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/exclusive_builds.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/mac/sdk.prf \
 		../Qt5.9.4/5.9.4/clang_64/mkspecs/features/toolchain.prf \
@@ -621,6 +629,7 @@ Makefile: PaintProgram.pro ../Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang/qmake.co
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/qt_config.prf:
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang/qmake.conf:
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/spec_post.prf:
+.qmake.stash:
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/exclusive_builds.prf:
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/mac/sdk.prf:
 ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/toolchain.prf:
@@ -685,8 +694,8 @@ distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
 	$(COPY_FILE) --parents ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/data/dummy.cpp $(DISTDIR)/
-	$(COPY_FILE) --parents mainwindow.h scribblearea.h submenu.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp mainwindow.cpp scribblearea.cpp submenu.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents mainwindow.h scribblearea.h submenu.h gradientcolorinputdialog.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp mainwindow.cpp scribblearea.cpp submenu.cpp gradientcolorinputdialog.cpp $(DISTDIR)/
 	$(COPY_FILE) --parents mainwindow.ui $(DISTDIR)/
 
 
@@ -697,6 +706,7 @@ clean: compiler_clean
 
 distclean: clean 
 	-$(DEL_FILE) -r PaintProgram.app
+	-$(DEL_FILE) .qmake.stash
 	-$(DEL_FILE) Makefile
 
 
@@ -718,9 +728,9 @@ compiler_moc_predefs_clean:
 moc_predefs.h: ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/data/dummy.cpp
 	/Library/Developer/CommandLineTools/usr/bin/clang++ -pipe -stdlib=libc++ -g -std=gnu++11 $(EXPORT_ARCH_ARGS) -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -mmacosx-version-min=10.10 -Wall -W -dM -E -o moc_predefs.h ../Qt5.9.4/5.9.4/clang_64/mkspecs/features/data/dummy.cpp
 
-compiler_moc_header_make_all: moc_mainwindow.cpp moc_scribblearea.cpp moc_submenu.cpp
+compiler_moc_header_make_all: moc_mainwindow.cpp moc_scribblearea.cpp moc_submenu.cpp moc_gradientcolorinputdialog.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_mainwindow.cpp moc_scribblearea.cpp moc_submenu.cpp
+	-$(DEL_FILE) moc_mainwindow.cpp moc_scribblearea.cpp moc_submenu.cpp moc_gradientcolorinputdialog.cpp
 moc_mainwindow.cpp: ../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QMainWindow \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qmainwindow.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QList \
@@ -800,13 +810,34 @@ moc_mainwindow.cpp: ../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QM
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPair \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
-		submenu.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		submenu.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QStyle \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qstyle.h \
 		mainwindow.h \
@@ -847,6 +878,35 @@ moc_scribblearea.cpp: ../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QCol
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QList \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QColorDialog \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
 		scribblearea.h \
 		moc_predefs.h \
 		../Qt5.9.4/5.9.4/clang_64/bin/moc
@@ -898,10 +958,67 @@ moc_submenu.cpp: ../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QWidg
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QList \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
 		submenu.h \
 		moc_predefs.h \
 		../Qt5.9.4/5.9.4/clang_64/bin/moc
 	/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang -I/Users/kendrakuivenhoven/PaintProgram -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtPrintSupport.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtQuick.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtQml.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtNetwork.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/10.0.0/include -I/Library/Developer/CommandLineTools/usr/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include -F/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib submenu.h -o moc_submenu.cpp
+
+moc_gradientcolorinputdialog.cpp: ../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QLabel \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QColorDialog \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QLinearGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qbrush.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpoint.h \
+		gradientcolorinputdialog.h \
+		moc_predefs.h \
+		../Qt5.9.4/5.9.4/clang_64/bin/moc
+	/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/bin/moc $(DEFINES) --include ./moc_predefs.h -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/mkspecs/macx-clang -I/Users/kendrakuivenhoven/PaintProgram -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtPrintSupport.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtQuick.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtQml.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtNetwork.framework/Headers -I/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers -I/Library/Developer/CommandLineTools/usr/include/c++/v1 -I/Library/Developer/CommandLineTools/usr/lib/clang/10.0.0/include -I/Library/Developer/CommandLineTools/usr/include -I/Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk/usr/include -F/Users/kendrakuivenhoven/Qt5.9.4/5.9.4/clang_64/lib gradientcolorinputdialog.h -o moc_gradientcolorinputdialog.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1004,13 +1121,34 @@ main.o: main.cpp mainwindow.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPair \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
-		submenu.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		submenu.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QStyle \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qstyle.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QApplication \
@@ -1097,13 +1235,34 @@ mainwindow.o: mainwindow.cpp mainwindow.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPair \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
-		submenu.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		submenu.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QStyle \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qstyle.h \
 		ui_mainwindow.h
@@ -1143,6 +1302,35 @@ scribblearea.o: scribblearea.cpp scribblearea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QList \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QColorDialog \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QtWidgets \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qtwidgetsglobal.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qabstractbutton.h \
@@ -1158,8 +1346,6 @@ scribblearea.o: scribblearea.cpp scribblearea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qboxlayout.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qbuttongroup.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcalendarwidget.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolormap.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolumnview.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcombobox.h \
@@ -1200,8 +1386,6 @@ scribblearea.o: scribblearea.cpp scribblearea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgraphicstransform.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgraphicsview.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgraphicswidget.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qheaderview.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qitemdelegate.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qitemeditorfactory.h \
@@ -1224,8 +1408,6 @@ scribblearea.o: scribblearea.cpp scribblearea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qprogressbar.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qprogressdialog.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qproxystyle.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qrubberband.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qscrollarea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qscrollbar.h \
@@ -1235,7 +1417,6 @@ scribblearea.o: scribblearea.cpp scribblearea.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qsizegrip.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qsizepolicy.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qslider.h \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qsplashscreen.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qsplitter.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qstackedlayout.h \
@@ -1319,8 +1500,63 @@ submenu.o: submenu.cpp submenu.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPair \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpair.h \
 		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QList \
-		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPixmap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpixmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QSignalMapper \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qsignalmapper.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o submenu.o submenu.cpp
+
+gradientcolorinputdialog.o: gradientcolorinputdialog.cpp gradientcolorinputdialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QWidget \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qwidget.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QObject \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qobject.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGridLayout \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgridlayout.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QLabel \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qlabel.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QPushButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qpushbutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QMap \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qmap.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QGroupBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qgroupbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QCheckBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcheckbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QDebug \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qdebug.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QColorDialog \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qcolordialog.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QPainter \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qpainter.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QRadioButton \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qradiobutton.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QLinearGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/qbrush.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtGui.framework/Headers/QConicalGradient \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/QSpinBox \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtWidgets.framework/Headers/qspinbox.h \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/QPointF \
+		../Qt5.9.4/5.9.4/clang_64/lib/QtCore.framework/Headers/qpoint.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o gradientcolorinputdialog.o gradientcolorinputdialog.cpp
 
 moc_mainwindow.o: moc_mainwindow.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_mainwindow.o moc_mainwindow.cpp
@@ -1330,6 +1566,9 @@ moc_scribblearea.o: moc_scribblearea.cpp
 
 moc_submenu.o: moc_submenu.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_submenu.o moc_submenu.cpp
+
+moc_gradientcolorinputdialog.o: moc_gradientcolorinputdialog.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_gradientcolorinputdialog.o moc_gradientcolorinputdialog.cpp
 
 ####### Install
 
