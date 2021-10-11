@@ -28,7 +28,6 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     fontSizeSet = false;
     turnBoolOn = false;
     setUpSquareBool = false;
-    setUpRoundSquareBool = false;
     setUpEllipseBool = false;
     secondConvexReadyToDraw = false;
 
@@ -39,7 +38,6 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 
     startDrawingRoundedSquare = false;
     startDrawingSquare = false;
-    setUpPillBoxBool = false;
     setUpSquircleBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
@@ -83,11 +81,6 @@ void ScribbleArea::setReadyToDrawConvexPolygonBool() {
 }
 
 
-void ScribbleArea::setUpRoundSquare() {
-    setUpRoundSquareBool = true;
-}
-
-
 void ScribbleArea::setUpLinearGradientPaints(int numColors) {
     userChoseThisNumColors = numColors;
     setUpLinearGradientColorsBool = true;
@@ -105,11 +98,6 @@ void ScribbleArea::setUpRadialGradientPaints(int numColors) {
     setUpRadialGradientColorsBool = true;
 }
 
-
-void ScribbleArea::setUpPillBox() {
-    setUpPillBoxBool = true;
-    // drawPillBox();
-}
 
 void ScribbleArea::setUpDrawSquircle() {
     setUpSquircleBool = true;
@@ -220,14 +208,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             drawingSquare.setY(m_y1);
             startDrawingSquare = true;
         }
-        if(setUpRoundSquareBool && this->underMouse()) {
-            qDebug() << " setUpRoundSquareBool -- gathering m_x1 and m_y1";
-            m_x1 = event->x();
-            m_y1 = event->y();
-            // drawingRoundedSquare.setX(m_x1);
-            // drawingRoundedSquare.setY(m_y1);
-            startDrawingRoundedSquare = true;
-        }
         if(setUpEllipseBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
@@ -259,10 +239,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpPillBoxBool && this->underMouse()) {
-            m_x1 = event->x();
-            m_y1 = event->y();
-        }
         if(setUpSquircleBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
@@ -273,8 +249,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
-        // QPainter painter(&image);
-        // painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
         if(turnBoolOn) {
             drawLineTo(event->pos());
         }
@@ -292,44 +266,9 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
 
             drawingSquare.setWidth(width);
             drawingSquare.setHeight(height);
-            // painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        // Qt::RoundCap, Qt::RoundJoin));
+            painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+                        Qt::RoundCap, Qt::RoundJoin));
             painter.drawRect(drawingSquare);
-            update();
-        }
-        if(setUpRoundSquareBool && this->underMouse()) {
-            QPainter painter(&image);
-            if(startDrawingRoundedSquare == true) {
-                drawingRoundedSquare.setX(m_x1);
-                drawingRoundedSquare.setY(m_y1);
-            }
-            if(startDrawingRoundedSquare == false) {
-                painter.eraseRect(drawingRoundedSquare);
-            }
-            startDrawingRoundedSquare = false;
-            int dx = event->x();
-            int dy = event->y();
-            int width = (dx - m_x1);
-            int height = (dy - m_y1);
-
-            // https://rechneronline.de/pi/round-corner.php
-            // drawingRoundedSquare.setWidth(width - width);
-            // drawingRoundedSquare.setHeight(height - width);
-            // drawingRoundedSquare.setWidth(width - 50);
-            // drawingRoundedSquare.setHeight(height - 50);
-            drawingRoundedSquare.setWidth(width);
-            drawingRoundedSquare.setHeight(height);
-            // drawingRoundedSquare.set``
-            // painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        // Qt::RoundCap, Qt::RoundJoin));
-            // painter.setBackgroundMode(Qt::BGMode::TransparentMode);
-            // painter.drawRoundedRect(drawingRoundedSquare, 35.0, 35.0);
-            // painter.drawRect(drawingRoundedSquare);
-            painter.setRenderHint(QPainter::Antialiasing);
-            QPainterPath path;
-            path.addRoundedRect(drawingRoundedSquare, 25.0, 25.0);
-            painter.fillPath(path, Qt::red);
-            painter.drawPath(path);
             update();
         }
         if(setUpSquircleBool && this->underMouse()) {
@@ -341,26 +280,32 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
                 dx = event->x();
                 dy = event->y();
                 squareWidth = 20;
-
-                QPainter painter(&image);
-                QPainterPath path;
-
-                path.moveTo(m_x1 + squareWidth, m_y1);
-                path.lineTo(dx - squareWidth, m_y1);
-                path.arcTo(dx - squareWidth, m_y1, squareWidth, squareWidth, 90.0, -90.0);
-                path.lineTo(dx, dy - squareWidth);
-                path.arcTo(dx - squareWidth, dy - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
-                path.lineTo(m_x1 + squareWidth, dy);
-                path.arcTo(m_x1, dy - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
-                path.lineTo(m_x1, m_y1 + squareWidth);
-                path.arcTo(m_x1, m_y1, squareWidth, squareWidth, 180.0, -90.0);
-
-                painter.setBrush(Qt::white);
-                painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        Qt::RoundCap, Qt::RoundJoin));
-                painter.drawPath(path);
-                update();
+            } else {
+                dx = (m_x1 + 25);
+                dy = (m_y1 + 25);
+                squareWidth = 20;
             }
+
+            QPainter painter(&image);
+            QPainterPath path;
+
+            path.moveTo(m_x1 + squareWidth, m_y1);
+            path.lineTo(dx - squareWidth, m_y1);
+            path.arcTo(dx - squareWidth, m_y1, squareWidth, squareWidth, 90.0, -90.0);
+            path.lineTo(dx, dy - squareWidth);
+            path.arcTo(dx - squareWidth, dy - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
+            path.lineTo(m_x1 + squareWidth, dy);
+            path.arcTo(m_x1, dy - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
+            path.lineTo(m_x1, m_y1 + squareWidth);
+            path.arcTo(m_x1, m_y1, squareWidth, squareWidth, 180.0, -90.0);
+            path.closeSubpath();
+
+
+            painter.setBrush(Qt::white);
+            painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+            Qt::RoundCap, Qt::RoundJoin));
+            painter.drawPath(path);
+            update();
         }
     }
 }
@@ -390,17 +335,6 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_y2 = event->y();
             createSquare(painter);
         }
-        if(setUpRoundSquareBool && this->underMouse()) {
-            QPainter painter(&image);
-            painter.eraseRect(drawingRoundedSquare);
-            // painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        // Qt::RoundCap, Qt::RoundJoin));
-            painter.end();
-            m_x2 = event->x();
-            m_y2 = event->y();
-            // createRoundSquare(painter);
-            createRoundSquare();
-        }
         if(setUpEllipseBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
@@ -420,11 +354,6 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             m_x2 = event->x();
             m_y2 = event->y();
             radialGradientColorSelection(userChoseThisNumColors);
-        }
-        if(setUpPillBoxBool && this->underMouse()) {
-            m_x2 = event->x();
-            m_y2 = event->y();
-            drawPillBox();
         }
         if(setUpSquircleBool && this->underMouse()) {
             m_x2 = event->x();
@@ -553,29 +482,6 @@ void ScribbleArea::secondDrawConvexPolygon() {
 }
 
 
-// void ScribbleArea::createRoundSquare(QPainter &painter) {
-void ScribbleArea::createRoundSquare() {
-    qDebug() << " creating round square";
-    QPainter painter(&image);
-    int width = (m_x2 - m_x1);
-    int height = (m_y2 - m_y1);
-    QRectF *rect = new QRectF();
-    rect->setX(m_x1);
-    rect->setY(m_y1);
-    rect->setWidth(width);
-    rect->setHeight(height);
-    // painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
-                        // Qt::RoundCap, Qt::RoundJoin));
-    // painter.drawRoundedRect(*rect, 20.0, 15.0);
-    painter.setBackgroundMode(Qt::TransparentMode);
-    painter.drawRoundedRect(*rect, 35.0, 35.0);
-    drawnRectPointerList << rect;
-    setUpRoundSquareBool = false;
-    update();
-    painter.end();
-}
-
-
 void ScribbleArea::linearGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
     connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
@@ -597,141 +503,6 @@ void ScribbleArea::readyToDrawLinearGradient() {
 }
 
 
-void ScribbleArea::drawPillBox() {
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    QPainterPath path;
-
-    /* path.moveTo(40, 10); // roundedRecPath.moveTo(80.0, 35.0)
-    path.lineTo(80, 10);
-    // path.arcTo(80, 0, 40, 40, 0.0, 90);
-    path.lineTo(120, 80);
-    // path.arcTo(80, 80, 40, 40, 90.0, 90.0);
-    path.lineTo(40, 120);
-    // path.arcTo(0, 80, 40, 40, 180.0, 90.0);
-    path.lineTo(40, 40);
-    // path.arcTo(0, 0, 40, 40, 270.0, 90.0);
-    */
-
-    /* path.moveTo(40, 10);
-    path.lineTo(80, 10);
-    path.lineTo(120, 50);
-    path.lineTo(120, 90);
-    path.lineTo(80, 130);
-    path.lineTo(40, 130);
-    path.lineTo(0, 90);
-    path.lineTo(0, 50);
-    */
-
-    /* path.moveTo(40, 210);
-    path.lineTo(80, 210);
-    // should replace with arcTo -- path.lineTo(120, 250);
-    path.arcTo(80, 210, 40, 40, 90.0, -90.0);
-    path.lineTo(120, 290);
-    // should replace with arcTo -- path.lineTo(80, 330);
-    path.arcTo(80, 290, 40, 40, 0.0, -90.0);
-    path.lineTo(40, 330);
-    // should replace with arcTo -- path.lineTo(0, 290);
-    path.arcTo(0, 290, 40, 40, 270.0, -90.0);
-    path.lineTo(0, 250);
-    path.arcTo(0, 210, 40, 40, 180.0, -90.0); */
-
-    QPainterPath diffPath;
-    diffPath.moveTo(40, 0);
-    diffPath.lineTo(80, 0);
-    diffPath.arcTo(80, 0, 40, 40, 90.0, -90.0);
-    diffPath.lineTo(120, 80);
-    diffPath.arcTo(80, 80, 40, 40, 0.0, -90.0);
-    diffPath.lineTo(40, 120);
-    diffPath.arcTo(0, 80, 40, 40, 270.0, -90.0);
-    diffPath.lineTo(0, 40);
-    diffPath.arcTo(0, 0, 40, 40, 180.0, -90.0);
-
-    int width = (m_x2 - m_x1);
-    int height = (m_y2 - m_y1);
-
-    qDebug() << " -- width: " << QString::number(width);
-    qDebug() << " -- height: " << QString::number(height);
-
-    /* path.moveTo(m_x1 + 20, m_y1);
-    path.lineTo(m_x2 - 20, m_y1);
-    path.arcTo(m_x2 - 20, m_y1, 40, 40, 90.0, -90.0);
-    path.lineTo(m_x2, m_y2 - 20);
-    path.arcTo(m_x2 - 20, m_y2 - 20, 40, 40, 0.0, -90.0);
-    path.lineTo(m_x1 + 20, m_y2);
-    path.arcTo(m_x1, m_y2 - 20, 40, 40, 270.0, -90.0);
-    path.lineTo(m_x1, m_y1 + 20);
-    path.arcTo(m_x1, m_y1, 40, 40, 180.0, -90.0);
-    */
-
-    path.moveTo(m_x1 + 40, m_y1);
-    path.lineTo(m_x2 - 40, m_y1);
-    path.arcTo(m_x2 - 40, m_y1, 40, 40, 90.0, -90.0);
-    path.arcTo(m_x2 - 40, m_y2 - 40, 40, 40, 0.0, -90.0);
-    path.lineTo(m_x2 - 40, m_y2);
-    path.arcTo(m_x1, m_y2 - 40, 40, 40, 270.0, -90.0);
-    path.lineTo(m_x1, m_y2 - 40);
-    path.arcTo(m_x1, m_y1, 40, 40, 180.0, -90.0);
-
-    /* QPainterPath roundRectPath;
-    roundRectPath.moveTo(80.0, 35.0);
-    roundRectPath.arcTo(70.0, 30.0, 10.0, 10.0, 0.0, 90.0);
-    roundRectPath.lineTo(25.0, 30.0);
-    roundRectPath.arcTo(20.0, 30.0, 10.0, 10.0, 90.0, 90.0);
-    roundRectPath.lineTo(20.0, 65.0);
-    roundRectPath.arcTo(20.0, 60.0, 10.0, 10.0, 180.0, 90.0);
-    roundRectPath.lineTo(75.0, 70.0);
-    roundRectPath.arcTo(70.0, 60.0, 10.0, 10.0, 270.0, 90.0);
-    roundRectPath.closeSubpath();
-    */
-
-    painter.setBrush(Qt::black);
-    painter.setPen(QPen(Qt::black, 1));
-    painter.drawPath(diffPath);
-    painter.drawPath(path);
-    // painter.drawPath(roundRectPath);
-    setUpPillBoxBool = false;
-
-    update();
-
-    /* QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    QPainterPath path;
-
-    // compose the half
-    path.moveTo(20, 0); // moves the cur position to (x, y) and starts a new subpath, implicitly
-                        // closing the previous path
-    path.lineTo(100, 0); // draws a line from the current position to the point (x, y)
-    path.lineTo(100, 40); // draws a line from the current position to the point (x, y)
-    path.lineTo(20, 40); // draws a line from the current position to the point (x, y)
-    path.arcTo(0, 0, 40, 40, -90, -180); // creates an arc that occupies the rectangle QRectF(x, y, width, height)
-                        // beginning at the specified startAngle and extending sweepLength degrees counter-clockwise
-
-    // draw black half
-    painter.setBrush(Qt::black);
-    painter.setPen(QPen(Qt::black, 1));
-    painter.drawPath(path); // draws the given painter path using the current pen for outline and the current
-                            // brush for filling
-
-    // mirror and reposition the painter
-    QTransform mirror(-1, 0, 0, 0, 1, 0, 0, 0, 1);
-    painter.setTransform(mirror);
-    painter.translate(-200, 0);
-
-    painter.setBrush(Qt::white);
-    painter.drawPath(path);
-
-    QPainter painter(&image);
-    painter.setRenderHint(QPainter::Antialiasing);
-    QPainterPath path;
-    path.addRoundedRect(QRectF(10, 10, 100, 50), 10, 10);
-    QPen pen(Qt::black, 10);
-    painter.setPen(pen);
-    painter.fillPath(path, Qt::red);
-    painter.drawPath(path);
-    update(); */
-}
-
 void ScribbleArea::drawSquircle() {
     QPainter painter(&image);
     QPainterPath path;
@@ -745,6 +516,7 @@ void ScribbleArea::drawSquircle() {
     path.arcTo(m_x1, m_y2 - 20, 20, 20, 270.0, -90.0);
     path.lineTo(m_x1, m_y1 + 20);
     path.arcTo(m_x1, m_y1, 20, 20, 180.0, -90.0);
+    path.closeSubpath();
 
     painter.setBrush(Qt::white);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
@@ -754,6 +526,7 @@ void ScribbleArea::drawSquircle() {
     setUpSquircleBool = false;
     update();
 }
+
 
 void ScribbleArea::conicalGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showConicalGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);

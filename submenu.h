@@ -36,9 +36,7 @@ private slots:
     void setUpSquare();
     void setUpEllipse();
     void setUpConvexPolygon();
-    void setUpRoundEdgeSquare();
 
-    void setUpPillBox();
     void setUpHandDrawnSquircle();
 
     void userChooseGradientPaintColors();

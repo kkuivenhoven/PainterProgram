@@ -68,10 +68,6 @@ public:
     void setReadyToDrawConvexPolygonBool();
     void secondDrawConvexPolygon();
 
-    void setUpRoundSquare();
-    // void createRoundSquare(QPainter &painter);
-    void createRoundSquare();
-
     void setUpLinearGradientPaints(int numColors);
     void linearGradientColorSelection(int numColors);
 
@@ -80,9 +76,6 @@ public:
 
     void setUpRadialGradientPaints(int numColors);
     void radialGradientColorSelection(int numColors);
-
-    void setUpPillBox();
-    void drawPillBox();
 
     void setUpDrawSquircle();
     void drawSquircle();
@@ -142,8 +135,6 @@ private:
     int secondTotalNumNeedToDraw;
     QList<QPointF> secondCoordSet;
 
-    bool setUpRoundSquareBool;
-
     QWidget *userInput;
     int userChoseThisNumColors;
 
@@ -169,7 +160,6 @@ private:
     QRectF drawingRoundedSquare;
     bool startDrawingRoundedSquare;
 
-    bool setUpPillBoxBool;
     bool setUpSquircleBool;
     int initialDiff;
     int xIncrement;

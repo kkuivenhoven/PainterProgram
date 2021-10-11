@@ -59,10 +59,10 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/convexIcon.png"));
     connect(convexPolygonBrush, SIGNAL(clicked(bool)), this, SLOT(setUpConvexPolygon()));
 
-    QPushButton *roundSquareBrush = new QPushButton();
-    roundSquareBrush->setToolTip("Draw a square with rounded edges");
-    roundSquareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
-    connect(roundSquareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpRoundEdgeSquare()));
+    QPushButton *setUpSquircle = new QPushButton();
+    setUpSquircle->setToolTip("Draw a square with a radial gradient");
+    setUpSquircle->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+    connect(setUpSquircle, SIGNAL(clicked(bool)), this, SLOT(setUpHandDrawnSquircle()));
 
     /**
      * @brief gradientBrush
@@ -91,16 +91,6 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
     connect(setUpRadialGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
-    QPushButton *setUpPillBoxBtn = new QPushButton();
-    setUpPillBoxBtn->setToolTip("Draw a square with a radial gradient");
-    setUpPillBoxBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
-    connect(setUpPillBoxBtn, SIGNAL(clicked(bool)), this, SLOT(setUpPillBox()));
-
-    QPushButton *setUpSquircle = new QPushButton();
-    setUpSquircle->setToolTip("Draw a square with a radial gradient");
-    setUpSquircle->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
-    connect(setUpSquircle, SIGNAL(clicked(bool)), this, SLOT(setUpHandDrawnSquircle()));
-
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
     gridLayout->addWidget(penWidthBtn);
@@ -111,12 +101,10 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(squareBrush);
     gridLayout->addWidget(ellipseBrush);
     gridLayout->addWidget(convexPolygonBrush);
-    gridLayout->addWidget(roundSquareBrush);
+    gridLayout->addWidget(setUpSquircle);
     gridLayout->addWidget(setUpLinearGradientPaints);
     gridLayout->addWidget(setUpConicalGradientPaints);
     gridLayout->addWidget(setUpRadialGradientPaints);
-    gridLayout->addWidget(setUpPillBoxBtn);
-    gridLayout->addWidget(setUpSquircle);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -175,16 +163,6 @@ void SubMenu::setUpEllipse() {
 void SubMenu::setUpConvexPolygon() {
     _scribbleArea.setReadyToDrawConvexPolygonBool();
 }
-
-void SubMenu::setUpRoundEdgeSquare() {
-    _scribbleArea.setUpRoundSquare();
-}
-
-
-void SubMenu::setUpPillBox() {
-    _scribbleArea.setUpPillBox();
-}
-
 
 void SubMenu::setUpHandDrawnSquircle() {
     _scribbleArea.setUpDrawSquircle();
