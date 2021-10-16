@@ -28,13 +28,17 @@ SOURCES += \
         mainwindow.cpp \
     scribblearea.cpp \
     submenu.cpp \
-    gradientcolorinputdialog.cpp
+    gradientcolorinputdialog.cpp \
+    toolsethandling.cpp \
+    shapes/rectangle.cpp
 
 HEADERS += \
         mainwindow.h \
     scribblearea.h \
     submenu.h \
-    gradientcolorinputdialog.h
+    gradientcolorinputdialog.h \
+    toolsethandling.h \
+    shapes/rectangle.h
 
 FORMS += \
         mainwindow.ui
