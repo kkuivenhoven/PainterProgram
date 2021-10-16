@@ -19,8 +19,7 @@
 #include <QPointF>
 
 
-class GradientColorInputDialog : public QWidget
-{
+class GradientColorInputDialog : public QWidget {
     Q_OBJECT
 
     void _setUpLinearGradientWidget();

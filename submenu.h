@@ -40,6 +40,8 @@ private slots:
     void setUpHandDrawnSquircle();
 
     void userChooseGradientPaintColors();
+
+    void setUpUndoBtn();
 };
 
 #endif // SUBMENU_H

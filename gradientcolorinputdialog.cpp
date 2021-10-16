@@ -1,5 +1,6 @@
 #include "gradientcolorinputdialog.h"
 
+
 GradientColorInputDialog::GradientColorInputDialog(QWidget *parent) : QWidget(parent) {
     _linearNumColors = 0;
     _conicalNumColors = 0;

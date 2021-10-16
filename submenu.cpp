@@ -11,57 +11,57 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
 
     QPushButton *fillEaselBtn = new QPushButton();
     fillEaselBtn->setToolTip("Fill the canvas with current paint color");
-    fillEaselBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBucket.png"));
+    fillEaselBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/PaintBucket.png"));
     connect(fillEaselBtn, SIGNAL(clicked(bool)), this, SLOT(fillEasel()));
 
     QPushButton *penColorBtn = new QPushButton();
     penColorBtn->setToolTip("Change paint color");
-    penColorBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/PaintBrush.png"));
+    penColorBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/PaintBrush.png"));
     connect(penColorBtn, SIGNAL(clicked(bool)), this, SLOT(changePenColor()));
 
     QPushButton *penWidthBtn = new QPushButton();
     penWidthBtn->setToolTip("Change the width of the pen");
-    penWidthBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/3366100-200.png"));
+    penWidthBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/3366100-200.png"));
     connect(penWidthBtn, SIGNAL(clicked(bool)), this, SLOT(changePenWidth()));
 
     QPushButton *clearScreenBtn = new QPushButton();
     clearScreenBtn->setToolTip("Clear the canvas");
-    clearScreenBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/clear-screen.jpg"));
+    clearScreenBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/clear-screen.jpg"));
     connect(clearScreenBtn, SIGNAL(clicked(bool)), this, SLOT(clearScreen()));
 
     QPushButton *createLineBtn = new QPushButton();
     createLineBtn->setToolTip("Draw a straight line");
-    createLineBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/lineToolPic.png"));
+    createLineBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/lineToolPic.png"));
     connect(createLineBtn, SIGNAL(clicked(bool)), this, SLOT(createLine()));
 
     QPushButton *createTextBlurbBtn = new QPushButton();
     createTextBlurbBtn->setToolTip("Draw text area");
-    createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/letterPhoto.png"));
+    createTextBlurbBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/letterPhoto.png"));
     connect(createTextBlurbBtn, SIGNAL(clicked(bool)), this, SLOT(createTextBlurb()));
 
     QPushButton *paintBrush = new QPushButton();
     paintBrush->setToolTip("Paint brush tool");
-    paintBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/paintBrushTwo.png"));
+    paintBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/paintBrushTwo.png"));
     connect(paintBrush, SIGNAL(clicked(bool)), this, SLOT(setUpPaintBrush()));
 
     QPushButton *squareBrush = new QPushButton();
     squareBrush->setToolTip("Draw a square or rectangle");
-    squareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/squareIcon.png"));
+    squareBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/squareIcon.png"));
     connect(squareBrush, SIGNAL(clicked(bool)), this, SLOT(setUpSquare()));
 
     QPushButton *ellipseBrush = new QPushButton();
     ellipseBrush->setToolTip("Draw an ellipse");
-    ellipseBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/circleIcon.png"));
+    ellipseBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/circleIcon.png"));
     connect(ellipseBrush, SIGNAL(clicked(bool)), this, SLOT(setUpEllipse()));
 
     QPushButton *convexPolygonBrush = new QPushButton();
     convexPolygonBrush->setToolTip("Draw a convex polygon");
-    convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/convexIcon.png"));
+    convexPolygonBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/convexIcon.png"));
     connect(convexPolygonBrush, SIGNAL(clicked(bool)), this, SLOT(setUpConvexPolygon()));
 
     QPushButton *setUpSquircle = new QPushButton();
     setUpSquircle->setToolTip("Draw a square with a radial gradient");
-    setUpSquircle->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+    setUpSquircle->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/roundedSquareIcon.png"));
     connect(setUpSquircle, SIGNAL(clicked(bool)), this, SLOT(setUpHandDrawnSquircle()));
 
     /**
@@ -71,25 +71,30 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
      * for a basic gradient tool.
      * QPushButton *gradientBrush = new QPushButton();
      * gradientBrush->setToolTip("Draw a square with rounded edges");
-     * gradientBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/roundedSquareIcon.png"));
+     * gradientBrush->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/roundedSquareIcon.png"));
      * connect(gradientBrush, SIGNAL(clicked(bool)), this, SLOT(setUpLinearGradient()));
      * gridLayout->addWidget(gradientBrush);
      */
 
     QPushButton *setUpLinearGradientPaints = new QPushButton();
     setUpLinearGradientPaints->setToolTip("Draw a square with a linear gradient");
-    setUpLinearGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/gradientIcon.png.jpeg"));
+    setUpLinearGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/gradientIcon.png.jpeg"));
     connect(setUpLinearGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     QPushButton *setUpConicalGradientPaints = new QPushButton();
     setUpConicalGradientPaints->setToolTip("Draw a square with a conical gradient");
-    setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/conicalGradient.png"));
+    setUpConicalGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/conicalGradient.png"));
     connect(setUpConicalGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
 
     QPushButton *setUpRadialGradientPaints = new QPushButton();
     setUpRadialGradientPaints->setToolTip("Draw a square with a radial gradient");
-    setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PaintProgram/radialIcon.png"));
+    setUpRadialGradientPaints->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/radialIcon.png"));
     connect(setUpRadialGradientPaints, SIGNAL(clicked(bool)), this, SLOT(userChooseGradientPaintColors()));
+
+    QPushButton *setUpUndoBtn = new QPushButton();
+    setUpUndoBtn->setToolTip("Draw a square with a radial gradient");
+    setUpUndoBtn->setIcon(QIcon("/Users/kendrakuivenhoven/PainterProgram/radialIcon.png"));
+    connect(setUpUndoBtn, SIGNAL(clicked(bool)), this, SLOT(setUpUndoBtn()));
 
     gridLayout->addWidget(clearScreenBtn);
     gridLayout->addWidget(penColorBtn);
@@ -105,6 +110,7 @@ SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(sc
     gridLayout->addWidget(setUpLinearGradientPaints);
     gridLayout->addWidget(setUpConicalGradientPaints);
     gridLayout->addWidget(setUpRadialGradientPaints);
+    gridLayout->addWidget(setUpUndoBtn);
 
     subMenu->setLayout(gridLayout);
     subMenu->show();
@@ -195,3 +201,7 @@ void SubMenu::userChooseGradientPaintColors() {
     }
 }
 
+
+void SubMenu::setUpUndoBtn() {
+    _scribbleArea.setUpUndoFunctionality();
+}

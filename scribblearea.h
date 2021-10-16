@@ -28,6 +28,7 @@
 #include <QPainterPath>
 
 #include "gradientcolorinputdialog.h"
+#include "toolsethandling.h"
 
 class ScribbleArea : public QWidget
 {
@@ -79,6 +80,8 @@ public:
 
     void setUpDrawSquircle();
     void drawSquircle();
+
+    void setUpUndoFunctionality();
 
 public slots:
     void clearImage();
@@ -163,6 +166,7 @@ private:
     bool setUpSquircleBool;
     int initialDiff;
     int xIncrement;
+    ToolSetHandling toolSetHandling;
 };
 
 #endif // SCRIBBLEAREA_H

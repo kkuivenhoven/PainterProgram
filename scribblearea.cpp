@@ -148,6 +148,47 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
 }
 
 
+void ScribbleArea::setUpUndoFunctionality() {
+    clearImage();
+    QStack<QString> orderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
+    QQueue<Rectangle> curRectangleQueue = toolSetHandling.getQueueOfRectangles();
+    qDebug() << " -- inside setUpUndoFunctionality()";
+    qDebug() << " -- order of actions size: " << orderOfActions.size();
+    qDebug() << " -> rectangle queue size: " << QString::number(curRectangleQueue.size());
+    if(orderOfActions.size() >= 1) {
+        for(int i = 0; i < 1; i++) {
+            QString action = orderOfActions.at(i);
+            if(action == ToolSetHandling::RECTANGLE) {
+                toolSetHandling.removeLastRectangle();
+            }
+        }
+        toolSetHandling.removeLastActionFromStack();
+    }
+    QQueue<Rectangle> rectangleQueue = toolSetHandling.getQueueOfRectangles();
+    QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
+    qDebug() << " -- after removing last action object (rectangle)";
+    QPainter painter(&image);
+    if(newOrderOfActions.size() >= 1) {
+        qDebug() << " -- size of newOrderOfActions: " << QString::number(newOrderOfActions.size());
+        qDebug() << " >> rectangle queue size: " << QString::number(rectangleQueue.size());
+        for(int i = 0; i < newOrderOfActions.size(); i++) {
+            QString action = newOrderOfActions.at(i);
+            qDebug() << " --->>> action: " + action;
+            if(action == ToolSetHandling::RECTANGLE) {
+                Rectangle rectangle = rectangleQueue.at(i);
+                int width = (rectangle.getX2() - rectangle.getX1());
+                int height = (rectangle.getY2() - rectangle.getY1());
+                QRect rect(rectangle.getX1(), rectangle.getY1(), width, height);
+                QColor curPenColor = rectangle.getPenColor();
+                int curPenWidth = rectangle.getPenWidth();
+                painter.drawRect(rect);
+            }
+        }
+    }
+    update();
+}
+
+
 void ScribbleArea::clearImage() {
     // image.fill(qRgb(255,255,255));
     /* QImage newImage;
@@ -443,6 +484,11 @@ void ScribbleArea::createSquare(QPainter &painter) {
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rect(m_x1, m_y1, width, height);
+    Rectangle rectangle;
+    rectangle.setCoords(m_x1, m_x2, m_y1, m_y2);
+    rectangle.setPenColor(myPenColor);
+    rectangle.setPenWidth(myPenWidth);
+    toolSetHandling.addRectangleToStack(rectangle);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRect(rect);
