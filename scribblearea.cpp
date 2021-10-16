@@ -372,9 +372,10 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
         if(setUpSquareBool && this->underMouse()) {
             QPainter painter(&image);
             painter.eraseRect(drawingSquare);
+            painter.end();
             m_x2 = event->x();
             m_y2 = event->y();
-            createSquare(painter);
+            createSquare();
         }
         if(setUpEllipseBool && this->underMouse()) {
             m_x2 = event->x();
@@ -479,7 +480,8 @@ void ScribbleArea::createTextBlurb() {
 }
 
 
-void ScribbleArea::createSquare(QPainter &painter) {
+void ScribbleArea::createSquare() {
+    QPainter painter(&image);
     qDebug() << " creating square";
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
@@ -492,6 +494,7 @@ void ScribbleArea::createSquare(QPainter &painter) {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRect(rect);
+    painter.end();
     drawnRectList << rect;
     setUpSquareBool = false;
     update();

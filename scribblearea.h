@@ -61,7 +61,7 @@ public:
     void setPenUp();
 
     void setUpSquare();
-    void createSquare(QPainter &painter);
+    void createSquare();
 
     void setUpEllipse();
     void createEllipse();
