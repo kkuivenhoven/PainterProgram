@@ -5,6 +5,7 @@ const QString ToolSetHandling::RECTANGLE("RECTANGLE");
 const QString ToolSetHandling::ELLIPSE("ELLIPSE");
 const QString ToolSetHandling::SQUIRCLE("SQUIRCLE");
 const QString ToolSetHandling::FREE_HAND_LINE("FREE_HAND_LINE");
+const QString ToolSetHandling::CONVEX_POLYGON("CONVEX_POLYGON");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -64,7 +65,7 @@ void ToolSetHandling::removeFrontRectFromQueue() {
 }
 
 
- void ToolSetHandling::addEllipseToQueue(Ellipse ellipse) {
+void ToolSetHandling::addEllipseToQueue(Ellipse ellipse) {
     qDebug() << " adding ellipse to queue";
     addLastActionToStack(ELLIPSE);
     ellipse.setPosInOrderOfActions(getPositionOfLastActionAdded());
@@ -84,7 +85,7 @@ void ToolSetHandling::removeFrontEllipseFromQueue() {
 }
 
 
- void ToolSetHandling::addSquircleToQueue(Squircle squircle) {
+void ToolSetHandling::addSquircleToQueue(Squircle squircle) {
     addLastActionToStack(SQUIRCLE);
     squircle.setPosInOrderOfActions(getPositionOfLastActionAdded());
     _squircleQueue.append(squircle);
@@ -103,7 +104,7 @@ void ToolSetHandling::removeFrontSquircleFromQueue() {
 }
 
 
- void ToolSetHandling::addFreeHandLineToQueue(FreeHandLine freeHandLine) {
+void ToolSetHandling::addFreeHandLineToQueue(FreeHandLine freeHandLine) {
     addLastActionToStack(FREE_HAND_LINE);
     freeHandLine.setPosInOrderOfActions(getPositionOfLastActionAdded());
     _freeHandLineQueue.append(freeHandLine);
@@ -123,5 +124,20 @@ void ToolSetHandling::removeFrontFreeHandLineFromQueue() {
 
 FreeHandLine& ToolSetHandling::obtainCurFreeHandLineInstance() {
     return _freeHandLineQueue.last();
+}
+
+
+void ToolSetHandling::addConvexPolygonToQueue(ConvexPolygon convexPolygon) {
+    addLastActionToStack(CONVEX_POLYGON);
+    convexPolygon.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _convexPolygonQueue.append(convexPolygon);
+}
+
+void ToolSetHandling::removeLastConvexPolygon() {
+    _convexPolygonQueue.pop_back();
+}
+
+QQueue<ConvexPolygon> ToolSetHandling::getQueueOfConvexPolygons() {
+    return _convexPolygonQueue;
 }
 

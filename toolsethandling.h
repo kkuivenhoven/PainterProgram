@@ -10,6 +10,7 @@
 #include "shapes/ellipse.h"
 #include "shapes/squircle.h"
 #include "shapes/freehandline.h"
+#include "shapes/convexpolygon.h"
 
 class ToolSetHandling {
     QStack<QString> _orderOfActions;
@@ -18,6 +19,7 @@ class ToolSetHandling {
     QQueue<Ellipse> _ellipseQueue;
     QQueue<Squircle> _squircleQueue;
     QQueue<FreeHandLine> _freeHandLineQueue;
+    QQueue<ConvexPolygon> _convexPolygonQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> _posMap;
@@ -53,11 +55,16 @@ public:
     void removeFrontSquircleFromQueue();
 
     static const QString FREE_HAND_LINE;
-    void addFreeHandLineToQueue(FreeHandLine FreeHandLine);
+    void addFreeHandLineToQueue(FreeHandLine freeHandLine);
     void removeLastFreeHandLine();
     QQueue<FreeHandLine> getQueueOfFreeHandLines();
     void removeFrontFreeHandLineFromQueue();
     FreeHandLine& obtainCurFreeHandLineInstance();
+
+    static const QString CONVEX_POLYGON;
+    void addConvexPolygonToQueue(ConvexPolygon convexPolygon);
+    void removeLastConvexPolygon();
+    QQueue<ConvexPolygon> getQueueOfConvexPolygons();
 
 };
 

@@ -166,6 +166,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::FREE_HAND_LINE) {
                 toolSetHandling.removeLastFreeHandLine();
             }
+            if(action == ToolSetHandling::CONVEX_POLYGON) {
+                toolSetHandling.removeLastConvexPolygon();
+            }
             toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             toolSetHandling.removeLastActionFromStack();
         }
@@ -174,6 +177,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<Ellipse> ellipseQueue = toolSetHandling.getQueueOfEllipses();
     QQueue<Squircle> squircleQueue = toolSetHandling.getQueueOfSquircles();
     QQueue<FreeHandLine> freeHandLineQueue = toolSetHandling.getQueueOfFreeHandLines();
+    QQueue<ConvexPolygon> convexPolygonQueue = toolSetHandling.getQueueOfConvexPolygons();
     QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
          int /*posInShapeStack*/> posMap = toolSetHandling.getPosMap();
@@ -208,6 +212,15 @@ void ScribbleArea::setUpUndoFunctionality() {
                 for(int i = 1; i < allPoints.size(); i++) {
                     redrawLineTo(allPoints.at(i), painter);
                 }
+            }
+            if(action == ToolSetHandling::CONVEX_POLYGON) {
+                ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
+                QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
+                QPointF points[allPoints.size()];
+                for(int i = 0; i < allPoints.size(); i++) {
+                    points[i] = allPoints.at(i);
+                }
+                painter.drawConvexPolygon(points, allPoints.size());
             }
         }
     }
@@ -583,10 +596,19 @@ void ScribbleArea::secondDrawConvexPolygon() {
                         Qt::RoundCap, Qt::RoundJoin));
     int arrSize = secondCoordSet.size();
     QPointF points[arrSize];
+    ConvexPolygon convexPolygon;
     for(int i = 0; i < secondCoordSet.size(); i++) {
         points[i] = secondCoordSet.at(i);
+        convexPolygon.addPointToQueue(secondCoordSet.at(i));
     }
     painter.drawConvexPolygon(points, arrSize);
+
+    toolSetHandling.addConvexPolygonToQueue(convexPolygon);
+    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfConvexPolygonQueue = toolSetHandling.getQueueOfConvexPolygons().size();
+    int posConvexPolygonInQueue = (sizeOfConvexPolygonQueue - 1);
+    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
+
     secondConvexReadyToDraw = false;
     secondCoordSet.clear();
     update();
