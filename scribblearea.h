@@ -111,6 +111,7 @@ private:
     QColor myPenColor;
     QImage image;
     QPoint lastPoint;
+    ToolSetHandling _toolSetHandling;
 
     bool drawLineBool;
 
@@ -167,7 +168,6 @@ private:
     bool setUpSquircleBool;
     int initialDiff;
     int xIncrement;
-    ToolSetHandling toolSetHandling;
 };
 
 #endif // SCRIBBLEAREA_H

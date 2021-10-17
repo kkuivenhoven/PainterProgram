@@ -150,37 +150,41 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
 
 void ScribbleArea::setUpUndoFunctionality() {
     clearImage();
-    QStack<QString> orderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
+    QStack<QString> orderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     if(orderOfActions.size() >= 1) {
         for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
-                toolSetHandling.removeLastRectangle();
+                _toolSetHandling.removeLastRectangle();
             }
             if(action == ToolSetHandling::ELLIPSE) {
-                toolSetHandling.removeLastEllipse();
+                _toolSetHandling.removeLastEllipse();
             }
             if(action == ToolSetHandling::SQUIRCLE) {
-                toolSetHandling.removeLastSquircle();
+                _toolSetHandling.removeLastSquircle();
             }
             if(action == ToolSetHandling::FREE_HAND_LINE) {
-                toolSetHandling.removeLastFreeHandLine();
+                _toolSetHandling.removeLastFreeHandLine();
             }
             if(action == ToolSetHandling::CONVEX_POLYGON) {
-                toolSetHandling.removeLastConvexPolygon();
+                _toolSetHandling.removeLastConvexPolygon();
             }
-            toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
-            toolSetHandling.removeLastActionFromStack();
+            if(action == ToolSetHandling::STRAIGHT_LINE) {
+                _toolSetHandling.removeLastStraightLine();
+            }
+            _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
+            _toolSetHandling.removeLastActionFromStack();
         }
     }
-    QQueue<Rectangle> rectangleQueue = toolSetHandling.getQueueOfRectangles();
-    QQueue<Ellipse> ellipseQueue = toolSetHandling.getQueueOfEllipses();
-    QQueue<Squircle> squircleQueue = toolSetHandling.getQueueOfSquircles();
-    QQueue<FreeHandLine> freeHandLineQueue = toolSetHandling.getQueueOfFreeHandLines();
-    QQueue<ConvexPolygon> convexPolygonQueue = toolSetHandling.getQueueOfConvexPolygons();
-    QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
+    QQueue<Rectangle> rectangleQueue = _toolSetHandling.getQueueOfRectangles();
+    QQueue<Ellipse> ellipseQueue = _toolSetHandling.getQueueOfEllipses();
+    QQueue<Squircle> squircleQueue = _toolSetHandling.getQueueOfSquircles();
+    QQueue<FreeHandLine> freeHandLineQueue = _toolSetHandling.getQueueOfFreeHandLines();
+    QQueue<ConvexPolygon> convexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons();
+    QQueue<StraightLine> straightLineQueue = _toolSetHandling.getQueueOfStraightLines();
+    QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
-         int /*posInShapeStack*/> posMap = toolSetHandling.getPosMap();
+         int /*posInShapeStack*/> posMap = _toolSetHandling.getPosMap();
 
     QPainter painter(&image);
     if(newOrderOfActions.size() >= 1) {
@@ -221,6 +225,14 @@ void ScribbleArea::setUpUndoFunctionality() {
                     points[i] = allPoints.at(i);
                 }
                 painter.drawConvexPolygon(points, allPoints.size());
+            }
+            if(action == ToolSetHandling::STRAIGHT_LINE) {
+                StraightLine straightLine = straightLineQueue.at(shapePos);
+                QPoint pointOne = straightLine.getPointOne();
+                QPoint pointTwo = straightLine.getPointTwo();
+                painter.drawEllipse(pointOne, 1, 1);
+                painter.drawEllipse(pointTwo, 1, 1);
+                painter.drawLine(pointOne, pointTwo);
             }
         }
     }
@@ -275,11 +287,11 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             freeHandLine.setNewPoint(lastPoint);
             freeHandLine.setPenColor(myPenColor);
             freeHandLine.setPenWidth(myPenWidth);
-            toolSetHandling.addFreeHandLineToQueue(freeHandLine);
-            int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
-            int sizeOfFreeHandLineQueue = toolSetHandling.getQueueOfFreeHandLines().size();
+            _toolSetHandling.addFreeHandLineToQueue(freeHandLine);
+            int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+            int sizeOfFreeHandLineQueue = _toolSetHandling.getQueueOfFreeHandLines().size();
             int posFreeHandLineInQueue = (sizeOfFreeHandLineQueue -1);
-            toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posFreeHandLineInQueue);
+            _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posFreeHandLineInQueue);
         }
         if(drawLineBool && this->underMouse()) {
             m_x1 = event->x();
@@ -339,7 +351,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
-            FreeHandLine &curFreeHandLine = toolSetHandling.obtainCurFreeHandLineInstance();
+            FreeHandLine &curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
             curFreeHandLine.setNewPoint(event->pos());
         }
         if(setUpSquareBool && this->underMouse()) {
@@ -404,7 +416,7 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
-            FreeHandLine curFreeHandLine = toolSetHandling.obtainCurFreeHandLineInstance();
+            FreeHandLine curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
             curFreeHandLine.setNewPoint(event->pos());
             turnBoolOn = false;
         }
@@ -515,6 +527,15 @@ void ScribbleArea::drawLine() {
     QPoint pointOne(m_x1, m_y1);
     QPoint pointTwo(m_x2, m_y2);
 
+    StraightLine straightLine;
+    straightLine.setPoints(pointOne, pointTwo);
+
+    _toolSetHandling.addStraightLineToQueue(straightLine);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfStraightLineQueue = _toolSetHandling.getQueueOfStraightLines().size();
+    int posStraightLineInQueue = (sizeOfStraightLineQueue - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posStraightLineInQueue);
+
     painter.drawEllipse(pointOne, 1, 1);
     painter.drawEllipse(pointTwo, 1, 1);
 
@@ -553,11 +574,11 @@ void ScribbleArea::createSquare() {
     painter.drawRect(rect);
     painter.end();
 
-    toolSetHandling.addRectangleToQueue(rectangle);
-    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfRectangleQueue = toolSetHandling.getQueueOfRectangles().size();
+    _toolSetHandling.addRectangleToQueue(rectangle);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfRectangleQueue = _toolSetHandling.getQueueOfRectangles().size();
     int posSquareInQueue = (sizeOfRectangleQueue - 1);
-    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
 
     drawnRectList << rect;
     setUpSquareBool = false;
@@ -578,11 +599,11 @@ void ScribbleArea::createEllipse() {
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(rect);
 
-    toolSetHandling.addEllipseToQueue(ellipse);
-    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfEllipsesQueue = toolSetHandling.getQueueOfEllipses().size();
+    _toolSetHandling.addEllipseToQueue(ellipse);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfEllipsesQueue = _toolSetHandling.getQueueOfEllipses().size();
     int posSquareInQueue = (sizeOfEllipsesQueue - 1);
-    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
 
     drawnRectList << rect;
     setUpEllipseBool = false;
@@ -603,11 +624,11 @@ void ScribbleArea::secondDrawConvexPolygon() {
     }
     painter.drawConvexPolygon(points, arrSize);
 
-    toolSetHandling.addConvexPolygonToQueue(convexPolygon);
-    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfConvexPolygonQueue = toolSetHandling.getQueueOfConvexPolygons().size();
+    _toolSetHandling.addConvexPolygonToQueue(convexPolygon);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfConvexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons().size();
     int posConvexPolygonInQueue = (sizeOfConvexPolygonQueue - 1);
-    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
 
     secondConvexReadyToDraw = false;
     secondCoordSet.clear();
@@ -661,11 +682,11 @@ void ScribbleArea::drawSquircle() {
     squircle.setPenWidth(myPenWidth);
     squircle.setPenColor(myPenColor);
 
-    toolSetHandling.addSquircleToQueue(squircle);
-    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfSquircleQueue = toolSetHandling.getQueueOfSquircles().size();
+    _toolSetHandling.addSquircleToQueue(squircle);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfSquircleQueue = _toolSetHandling.getQueueOfSquircles().size();
     int posSquircleInQueue = (sizeOfSquircleQueue - 1);
-    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquircleInQueue);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquircleInQueue);
 
     setUpSquircleBool = false;
     update();

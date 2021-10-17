@@ -6,6 +6,7 @@ const QString ToolSetHandling::ELLIPSE("ELLIPSE");
 const QString ToolSetHandling::SQUIRCLE("SQUIRCLE");
 const QString ToolSetHandling::FREE_HAND_LINE("FREE_HAND_LINE");
 const QString ToolSetHandling::CONVEX_POLYGON("CONVEX_POLYGON");
+const QString ToolSetHandling::STRAIGHT_LINE("STRAIGHT_LINE");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -139,5 +140,20 @@ void ToolSetHandling::removeLastConvexPolygon() {
 
 QQueue<ConvexPolygon> ToolSetHandling::getQueueOfConvexPolygons() {
     return _convexPolygonQueue;
+}
+
+
+void ToolSetHandling::addStraightLineToQueue(StraightLine straightLine) {
+    addLastActionToStack(STRAIGHT_LINE);
+    straightLine.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _straightLineQueue.append(straightLine);
+}
+
+void ToolSetHandling::removeLastStraightLine() {
+    _straightLineQueue.pop_back();
+}
+
+QQueue<StraightLine> ToolSetHandling::getQueueOfStraightLines() {
+    return _straightLineQueue;
 }
 
