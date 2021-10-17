@@ -151,37 +151,46 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
 void ScribbleArea::setUpUndoFunctionality() {
     clearImage();
     QStack<QString> orderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
-    QQueue<Rectangle> curRectangleQueue = toolSetHandling.getQueueOfRectangles();
-    qDebug() << " -- inside setUpUndoFunctionality()";
-    qDebug() << " -- order of actions size: " << orderOfActions.size();
-    qDebug() << " -> rectangle queue size: " << QString::number(curRectangleQueue.size());
+    QMap<int /*posInActionStack*/,
+         int /*posInShapeStack*/> curPosMap = toolSetHandling.getPosMap();
     if(orderOfActions.size() >= 1) {
-        for(int i = 0; i < 1; i++) {
+        for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 toolSetHandling.removeLastRectangle();
+                toolSetHandling.removeLastActionFromStack();
             }
+            if(action == ToolSetHandling::ELLIPSE) {
+                toolSetHandling.removeLastEllipse();
+                toolSetHandling.removeLastActionFromStack();
+            }
+            toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
         }
-        toolSetHandling.removeLastActionFromStack();
     }
     QQueue<Rectangle> rectangleQueue = toolSetHandling.getQueueOfRectangles();
+    QQueue<Ellipse> ellipseQueue = toolSetHandling.getQueueOfEllipses();
     QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
-    qDebug() << " -- after removing last action object (rectangle)";
+    QMap<int /*posInActionStack*/,
+         int /*posInShapeStack*/> posMap = toolSetHandling.getPosMap();
+
     QPainter painter(&image);
     if(newOrderOfActions.size() >= 1) {
-        qDebug() << " -- size of newOrderOfActions: " << QString::number(newOrderOfActions.size());
-        qDebug() << " >> rectangle queue size: " << QString::number(rectangleQueue.size());
         for(int i = 0; i < newOrderOfActions.size(); i++) {
             QString action = newOrderOfActions.at(i);
-            qDebug() << " --->>> action: " + action;
+            int shapePos = posMap.value(i);
             if(action == ToolSetHandling::RECTANGLE) {
-                Rectangle rectangle = rectangleQueue.at(i);
+                Rectangle rectangle = rectangleQueue.at(shapePos);
                 int width = (rectangle.getX2() - rectangle.getX1());
                 int height = (rectangle.getY2() - rectangle.getY1());
-                QRect rect(rectangle.getX1(), rectangle.getY1(), width, height);
-                QColor curPenColor = rectangle.getPenColor();
-                int curPenWidth = rectangle.getPenWidth();
-                painter.drawRect(rect);
+                QRect rectToDraw(rectangle.getX1(), rectangle.getY1(), width, height);
+                painter.drawRect(rectToDraw);
+            }
+            if(action == ToolSetHandling::ELLIPSE) {
+                Ellipse ellipse = ellipseQueue.at(shapePos);
+                int width = (ellipse.getX2() - ellipse.getX1());
+                int height = (ellipse.getY2() - ellipse.getY1());
+                QRect ellipseToDraw(ellipse.getX1(), ellipse.getY1(), width, height);
+                painter.drawEllipse(ellipseToDraw);
             }
         }
     }
@@ -242,7 +251,6 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_y1 = event->y();
         }
         if(setUpSquareBool && this->underMouse()) {
-            qDebug() << " setUpSquareBool -- gathering m_x1 and m_y1";
             m_x1 = event->x();
             m_y1 = event->y();
             drawingSquare.setX(m_x1);
@@ -294,7 +302,6 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             drawLineTo(event->pos());
         }
         if(setUpSquareBool && this->underMouse()) {
-            qDebug() << " ready to draw regular square";
             QPainter painter(&image);
             if(startDrawingSquare == false) {
                 painter.eraseRect(drawingSquare);
@@ -482,7 +489,6 @@ void ScribbleArea::createTextBlurb() {
 
 void ScribbleArea::createSquare() {
     QPainter painter(&image);
-    qDebug() << " creating square";
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rect(m_x1, m_y1, width, height);
@@ -490,11 +496,17 @@ void ScribbleArea::createSquare() {
     rectangle.setCoords(m_x1, m_x2, m_y1, m_y2);
     rectangle.setPenColor(myPenColor);
     rectangle.setPenWidth(myPenWidth);
-    toolSetHandling.addRectangleToStack(rectangle);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRect(rect);
     painter.end();
+
+    toolSetHandling.addRectangleToQueue(rectangle);
+    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfRectangleQueue = toolSetHandling.getQueueOfRectangles().size();
+    int posSquareInQueue = (sizeOfRectangleQueue - 1);
+    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+
     drawnRectList << rect;
     setUpSquareBool = false;
     update();
@@ -506,9 +518,20 @@ void ScribbleArea::createEllipse() {
     int height = (m_y2 - m_y1);
     QRect rect(m_x1, m_y1, width, height);
     QPainter painter(&image);
+    Ellipse ellipse;
+    ellipse.setCoords(m_x1, m_x2, m_y1, m_y2);
+    ellipse.setPenColor(myPenColor);
+    ellipse.setPenWidth(myPenWidth);
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(rect);
+
+    toolSetHandling.addEllipseToQueue(ellipse);
+    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfEllipsesQueue = toolSetHandling.getQueueOfEllipses().size();
+    int posSquareInQueue = (sizeOfEllipsesQueue - 1);
+    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+
     drawnRectList << rect;
     setUpEllipseBool = false;
     update();

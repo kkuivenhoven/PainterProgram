@@ -30,7 +30,8 @@ SOURCES += \
     submenu.cpp \
     gradientcolorinputdialog.cpp \
     toolsethandling.cpp \
-    shapes/rectangle.cpp
+    shapes/rectangle.cpp \
+    shapes/ellipse.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -38,7 +39,8 @@ HEADERS += \
     submenu.h \
     gradientcolorinputdialog.h \
     toolsethandling.h \
-    shapes/rectangle.h
+    shapes/rectangle.h \
+    shapes/ellipse.h
 
 FORMS += \
         mainwindow.ui
