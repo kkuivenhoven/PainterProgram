@@ -101,6 +101,7 @@ protected:
 
 private:
     void drawLineTo(const QPoint &endPoint);
+    void redrawLineTo(const QPoint &endPoint, QPainter &curPainter);
     void resizeImage(QImage *image, const QSize &newSize);
 
     bool modified;
