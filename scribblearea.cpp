@@ -163,6 +163,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::SQUIRCLE) {
                 toolSetHandling.removeLastSquircle();
             }
+            if(action == ToolSetHandling::FREE_HAND_LINE) {
+                toolSetHandling.removeLastFreeHandLine();
+            }
             toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             toolSetHandling.removeLastActionFromStack();
         }
@@ -170,6 +173,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<Rectangle> rectangleQueue = toolSetHandling.getQueueOfRectangles();
     QQueue<Ellipse> ellipseQueue = toolSetHandling.getQueueOfEllipses();
     QQueue<Squircle> squircleQueue = toolSetHandling.getQueueOfSquircles();
+    QQueue<FreeHandLine> freeHandLineQueue = toolSetHandling.getQueueOfFreeHandLines();
     QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
          int /*posInShapeStack*/> posMap = toolSetHandling.getPosMap();
@@ -196,6 +200,14 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::SQUIRCLE) {
                 Squircle squircle = squircleQueue.at(shapePos);
                 painter.drawPath(squircle.getPainterPath());
+            }
+            if(action == ToolSetHandling::FREE_HAND_LINE) {
+                FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
+                QQueue<QPoint> allPoints = freeHandLine.getAllSetPoints();
+                lastPoint = allPoints.first();
+                for(int i = 1; i < allPoints.size(); i++) {
+                    redrawLineTo(allPoints.at(i), painter);
+                }
             }
         }
     }
@@ -246,6 +258,15 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
         if(turnBoolOn) {
             lastPoint = event->pos();
+            FreeHandLine freeHandLine;
+            freeHandLine.setNewPoint(lastPoint);
+            freeHandLine.setPenColor(myPenColor);
+            freeHandLine.setPenWidth(myPenWidth);
+            toolSetHandling.addFreeHandLineToQueue(freeHandLine);
+            int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
+            int sizeOfFreeHandLineQueue = toolSetHandling.getQueueOfFreeHandLines().size();
+            int posFreeHandLineInQueue = (sizeOfFreeHandLineQueue -1);
+            toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posFreeHandLineInQueue);
         }
         if(drawLineBool && this->underMouse()) {
             m_x1 = event->x();
@@ -305,6 +326,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
+            FreeHandLine &curFreeHandLine = toolSetHandling.obtainCurFreeHandLineInstance();
+            curFreeHandLine.setNewPoint(event->pos());
         }
         if(setUpSquareBool && this->underMouse()) {
             QPainter painter(&image);
@@ -368,6 +391,8 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
+            FreeHandLine curFreeHandLine = toolSetHandling.obtainCurFreeHandLineInstance();
+            curFreeHandLine.setNewPoint(event->pos());
             turnBoolOn = false;
         }
         if(drawLineBool) {
@@ -441,6 +466,15 @@ void ScribbleArea::drawLineTo(const QPoint &endPoint) {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawLine(lastPoint, endPoint);
+    modified = true;
+    int rad = (myPenWidth / 2) + 2;
+    update(QRect(lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
+    lastPoint = endPoint;
+}
+
+
+void ScribbleArea::redrawLineTo(const QPoint &endPoint, QPainter &curPainter) {
+    curPainter.drawLine(lastPoint, endPoint);
     modified = true;
     int rad = (myPenWidth / 2) + 2;
     update(QRect(lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));

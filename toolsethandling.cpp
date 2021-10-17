@@ -4,6 +4,7 @@
 const QString ToolSetHandling::RECTANGLE("RECTANGLE");
 const QString ToolSetHandling::ELLIPSE("ELLIPSE");
 const QString ToolSetHandling::SQUIRCLE("SQUIRCLE");
+const QString ToolSetHandling::FREE_HAND_LINE("FREE_HAND_LINE");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -84,7 +85,6 @@ void ToolSetHandling::removeFrontEllipseFromQueue() {
 
 
  void ToolSetHandling::addSquircleToQueue(Squircle squircle) {
-    qDebug() << " adding squircle to queue";
     addLastActionToStack(SQUIRCLE);
     squircle.setPosInOrderOfActions(getPositionOfLastActionAdded());
     _squircleQueue.append(squircle);
@@ -102,4 +102,26 @@ void ToolSetHandling::removeFrontSquircleFromQueue() {
     _squircleQueue.removeFirst();
 }
 
+
+ void ToolSetHandling::addFreeHandLineToQueue(FreeHandLine freeHandLine) {
+    addLastActionToStack(FREE_HAND_LINE);
+    freeHandLine.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _freeHandLineQueue.append(freeHandLine);
+}
+
+void ToolSetHandling::removeLastFreeHandLine() {
+    _freeHandLineQueue.pop_back();
+}
+
+QQueue<FreeHandLine> ToolSetHandling::getQueueOfFreeHandLines() {
+    return _freeHandLineQueue;
+}
+
+void ToolSetHandling::removeFrontFreeHandLineFromQueue() {
+    _freeHandLineQueue.removeFirst();
+}
+
+FreeHandLine& ToolSetHandling::obtainCurFreeHandLineInstance() {
+    return _freeHandLineQueue.last();
+}
 
