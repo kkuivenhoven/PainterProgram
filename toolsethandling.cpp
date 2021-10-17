@@ -3,6 +3,7 @@
 
 const QString ToolSetHandling::RECTANGLE("RECTANGLE");
 const QString ToolSetHandling::ELLIPSE("ELLIPSE");
+const QString ToolSetHandling::SQUIRCLE("SQUIRCLE");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -79,6 +80,26 @@ QQueue<Ellipse> ToolSetHandling::getQueueOfEllipses() {
 
 void ToolSetHandling::removeFrontEllipseFromQueue() {
     _ellipseQueue.removeFirst();
+}
+
+
+ void ToolSetHandling::addSquircleToQueue(Squircle squircle) {
+    qDebug() << " adding squircle to queue";
+    addLastActionToStack(SQUIRCLE);
+    squircle.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _squircleQueue.append(squircle);
+}
+
+void ToolSetHandling::removeLastSquircle() {
+    _squircleQueue.pop_back();
+}
+
+QQueue<Squircle> ToolSetHandling::getQueueOfSquircles() {
+    return _squircleQueue;
+}
+
+void ToolSetHandling::removeFrontSquircleFromQueue() {
+    _squircleQueue.removeFirst();
 }
 
 

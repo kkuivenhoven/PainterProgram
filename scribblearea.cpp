@@ -151,24 +151,25 @@ void ScribbleArea::setEasel(const QColor &fillColor) {
 void ScribbleArea::setUpUndoFunctionality() {
     clearImage();
     QStack<QString> orderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
-    QMap<int /*posInActionStack*/,
-         int /*posInShapeStack*/> curPosMap = toolSetHandling.getPosMap();
     if(orderOfActions.size() >= 1) {
         for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 toolSetHandling.removeLastRectangle();
-                toolSetHandling.removeLastActionFromStack();
             }
             if(action == ToolSetHandling::ELLIPSE) {
                 toolSetHandling.removeLastEllipse();
-                toolSetHandling.removeLastActionFromStack();
+            }
+            if(action == ToolSetHandling::SQUIRCLE) {
+                toolSetHandling.removeLastSquircle();
             }
             toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
+            toolSetHandling.removeLastActionFromStack();
         }
     }
     QQueue<Rectangle> rectangleQueue = toolSetHandling.getQueueOfRectangles();
     QQueue<Ellipse> ellipseQueue = toolSetHandling.getQueueOfEllipses();
+    QQueue<Squircle> squircleQueue = toolSetHandling.getQueueOfSquircles();
     QStack<QString> newOrderOfActions = toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
          int /*posInShapeStack*/> posMap = toolSetHandling.getPosMap();
@@ -191,6 +192,10 @@ void ScribbleArea::setUpUndoFunctionality() {
                 int height = (ellipse.getY2() - ellipse.getY1());
                 QRect ellipseToDraw(ellipse.getX1(), ellipse.getY1(), width, height);
                 painter.drawEllipse(ellipseToDraw);
+            }
+            if(action == ToolSetHandling::SQUIRCLE) {
+                Squircle squircle = squircleQueue.at(shapePos);
+                painter.drawPath(squircle.getPainterPath());
             }
         }
     }
@@ -594,6 +599,17 @@ void ScribbleArea::drawSquircle() {
     painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawPath(path);
+
+    Squircle squircle;
+    squircle.setPainterPath(path);
+    squircle.setPenWidth(myPenWidth);
+    squircle.setPenColor(myPenColor);
+
+    toolSetHandling.addSquircleToQueue(squircle);
+    int posLastActionAdded = toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfSquircleQueue = toolSetHandling.getQueueOfSquircles().size();
+    int posSquircleInQueue = (sizeOfSquircleQueue - 1);
+    toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquircleInQueue);
 
     setUpSquircleBool = false;
     update();

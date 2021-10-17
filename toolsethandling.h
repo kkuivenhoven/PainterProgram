@@ -8,12 +8,14 @@
 
 #include "shapes/rectangle.h"
 #include "shapes/ellipse.h"
+#include "shapes/squircle.h"
 
 class ToolSetHandling {
     QStack<QString> _orderOfActions;
 
     QQueue<Rectangle> _rectangleQueue;
     QQueue<Ellipse> _ellipseQueue;
+    QQueue<Squircle> _squircleQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> _posMap;
@@ -41,6 +43,12 @@ public:
     void removeLastEllipse();
     QQueue<Ellipse> getQueueOfEllipses();
     void removeFrontEllipseFromQueue();
+
+    static const QString SQUIRCLE;
+    void addSquircleToQueue(Squircle squircle);
+    void removeLastSquircle();
+    QQueue<Squircle> getQueueOfSquircles();
+    void removeFrontSquircleFromQueue();
 
 };
 
