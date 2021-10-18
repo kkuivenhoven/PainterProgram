@@ -36,7 +36,8 @@ SOURCES += \
     shapes/freehandline.cpp \
     shapes/convexpolygon.cpp \
     shapes/straightline.cpp \
-    shapes/lineargradientshape.cpp
+    shapes/lineargradientshape.cpp \
+    shapes/conicalgradientshape.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,7 +51,8 @@ HEADERS += \
     shapes/freehandline.h \
     shapes/convexpolygon.h \
     shapes/straightline.h \
-    shapes/lineargradientshape.h
+    shapes/lineargradientshape.h \
+    shapes/conicalgradientshape.h
 
 FORMS += \
         mainwindow.ui

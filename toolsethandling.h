@@ -13,6 +13,7 @@
 #include "shapes/convexpolygon.h"
 #include "shapes/straightline.h"
 #include "shapes/lineargradientshape.h"
+#include "shapes/conicalgradientshape.h"
 
 class ToolSetHandling {
     QStack<QString> _orderOfActions;
@@ -24,6 +25,7 @@ class ToolSetHandling {
     QQueue<ConvexPolygon> _convexPolygonQueue;
     QQueue<StraightLine> _straightLineQueue;
     QQueue<LinearGradientShape> _linearGradientShapeQueue;
+    QQueue<ConicalGradientShape> _conicalGradientShapeQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> _posMap;
@@ -80,6 +82,12 @@ public:
     void removeLastLinearGradientShape();
     QQueue<LinearGradientShape> getQueueOfLinearGradientShapes();
     void updateLinearGradient(QLinearGradient linearGradient);
+
+    static const QString CONICAL_GRADIENT_SHAPE;
+    void addConicalGradientShapeToQueue(ConicalGradientShape conicalGradientShape);
+    void removeLastConicalGradientShape();
+    QQueue<ConicalGradientShape> getQueueOfConicalGradientShapes();
+    void updateConicalGradient(QConicalGradient conicalGradient);
 
 };
 

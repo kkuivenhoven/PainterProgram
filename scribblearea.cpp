@@ -175,6 +175,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
                 _toolSetHandling.removeLastLinearGradientShape();
             }
+            if(action == ToolSetHandling::CONICAL_GRADIENT_SHAPE) {
+                _toolSetHandling.removeLastConicalGradientShape();
+            }
             _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             _toolSetHandling.removeLastActionFromStack();
         }
@@ -186,6 +189,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<ConvexPolygon> convexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons();
     QQueue<StraightLine> straightLineQueue = _toolSetHandling.getQueueOfStraightLines();
     QQueue<LinearGradientShape> linearGradientShapeQueue = _toolSetHandling.getQueueOfLinearGradientShapes();
+    QQueue<ConicalGradientShape> conicalGradientShapeQueue = _toolSetHandling.getQueueOfConicalGradientShapes();
 
     QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
@@ -245,6 +249,13 @@ void ScribbleArea::setUpUndoFunctionality() {
                 int height = (linearGradientShape.getY2() - linearGradientShape.getY1());
                 QRect rectLinear(linearGradientShape.getX1(), linearGradientShape.getY1(), width, height);
                 painter.fillRect(rectLinear, linearGradientShape.getLinearGradient());
+            }
+            if(action == ToolSetHandling::CONICAL_GRADIENT_SHAPE) {
+                ConicalGradientShape conicalGradientShape = conicalGradientShapeQueue.at(shapePos);
+                int width = (conicalGradientShape.getX2() - conicalGradientShape.getX1());
+                int height = (conicalGradientShape.getY2() - conicalGradientShape.getY1());
+                QRect rectLinear(conicalGradientShape.getX1(), conicalGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, conicalGradientShape.getConicalGradient());
             }
         }
     }
@@ -720,6 +731,15 @@ void ScribbleArea::drawSquircle() {
 void ScribbleArea::conicalGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showConicalGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
     connect(_gradientColorInputDialog, SIGNAL(conicalGradientToolsSet()), this, SLOT(readyToDrawConicalGradient()));
+
+    ConicalGradientShape conicalGradientShape;
+    conicalGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
+
+    _toolSetHandling.addConicalGradientShapeToQueue(conicalGradientShape);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfConicalGradientShapes = _toolSetHandling.getQueueOfConicalGradientShapes().size();
+    int posConicalGradientShapeInQueue = (sizeOfConicalGradientShapes - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConicalGradientShapeInQueue);
 }
 
 
@@ -729,6 +749,8 @@ void ScribbleArea::readyToDrawConicalGradient() {
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectConical(m_x1, m_y1, width, height);
+
+    _toolSetHandling.updateConicalGradient(*curConicalGradient);
 
     painter.fillRect(rectConical, *curConicalGradient);
     setUpConicalGradientColorsBool = false;
