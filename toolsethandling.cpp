@@ -7,6 +7,7 @@ const QString ToolSetHandling::SQUIRCLE("SQUIRCLE");
 const QString ToolSetHandling::FREE_HAND_LINE("FREE_HAND_LINE");
 const QString ToolSetHandling::CONVEX_POLYGON("CONVEX_POLYGON");
 const QString ToolSetHandling::STRAIGHT_LINE("STRAIGHT_LINE");
+const QString ToolSetHandling::LINEAR_GRADIENT_SHAPE("LINEAR_GRADIENT_SHAPE");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -67,7 +68,6 @@ void ToolSetHandling::removeFrontRectFromQueue() {
 
 
 void ToolSetHandling::addEllipseToQueue(Ellipse ellipse) {
-    qDebug() << " adding ellipse to queue";
     addLastActionToStack(ELLIPSE);
     ellipse.setPosInOrderOfActions(getPositionOfLastActionAdded());
     _ellipseQueue.append(ellipse);
@@ -157,3 +157,25 @@ QQueue<StraightLine> ToolSetHandling::getQueueOfStraightLines() {
     return _straightLineQueue;
 }
 
+
+void ToolSetHandling::addLinearGradientShapeToQueue(LinearGradientShape linearGradientShape) {
+    addLastActionToStack(LINEAR_GRADIENT_SHAPE);
+    linearGradientShape.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _linearGradientShapeQueue.append(linearGradientShape);
+}
+
+void ToolSetHandling::removeLastLinearGradientShape() {
+    _linearGradientShapeQueue.pop_back();
+}
+
+QQueue<LinearGradientShape> ToolSetHandling::getQueueOfLinearGradientShapes() {
+    return _linearGradientShapeQueue;
+}
+
+void ToolSetHandling::updateLinearGradient(QLinearGradient linearGradient) {
+    int indexLastElement = (_linearGradientShapeQueue.size() - 1);
+    LinearGradientShape linearGradientShape = _linearGradientShapeQueue.at(indexLastElement);
+    _linearGradientShapeQueue.pop_back();
+    linearGradientShape.setLinearGradient(linearGradient);
+    _linearGradientShapeQueue.append(linearGradientShape);
+}

@@ -31,7 +31,12 @@ SOURCES += \
     gradientcolorinputdialog.cpp \
     toolsethandling.cpp \
     shapes/rectangle.cpp \
-    shapes/ellipse.cpp
+    shapes/ellipse.cpp \
+    shapes/squircle.cpp \
+    shapes/freehandline.cpp \
+    shapes/convexpolygon.cpp \
+    shapes/straightline.cpp \
+    shapes/lineargradientshape.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -40,7 +45,12 @@ HEADERS += \
     gradientcolorinputdialog.h \
     toolsethandling.h \
     shapes/rectangle.h \
-    shapes/ellipse.h
+    shapes/ellipse.h \
+    shapes/squircle.h \
+    shapes/freehandline.h \
+    shapes/convexpolygon.h \
+    shapes/straightline.h \
+    shapes/lineargradientshape.h
 
 FORMS += \
         mainwindow.ui

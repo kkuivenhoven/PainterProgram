@@ -172,6 +172,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::STRAIGHT_LINE) {
                 _toolSetHandling.removeLastStraightLine();
             }
+            if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
+                _toolSetHandling.removeLastLinearGradientShape();
+            }
             _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             _toolSetHandling.removeLastActionFromStack();
         }
@@ -182,6 +185,8 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<FreeHandLine> freeHandLineQueue = _toolSetHandling.getQueueOfFreeHandLines();
     QQueue<ConvexPolygon> convexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons();
     QQueue<StraightLine> straightLineQueue = _toolSetHandling.getQueueOfStraightLines();
+    QQueue<LinearGradientShape> linearGradientShapeQueue = _toolSetHandling.getQueueOfLinearGradientShapes();
+
     QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
          int /*posInShapeStack*/> posMap = _toolSetHandling.getPosMap();
@@ -233,6 +238,13 @@ void ScribbleArea::setUpUndoFunctionality() {
                 painter.drawEllipse(pointOne, 1, 1);
                 painter.drawEllipse(pointTwo, 1, 1);
                 painter.drawLine(pointOne, pointTwo);
+            }
+            if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
+                LinearGradientShape linearGradientShape = linearGradientShapeQueue.at(shapePos);
+                int width = (linearGradientShape.getX2() - linearGradientShape.getX1());
+                int height = (linearGradientShape.getY2() - linearGradientShape.getY1());
+                QRect rectLinear(linearGradientShape.getX1(), linearGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, linearGradientShape.getLinearGradient());
             }
         }
     }
@@ -639,6 +651,15 @@ void ScribbleArea::secondDrawConvexPolygon() {
 void ScribbleArea::linearGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
     connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
+
+    LinearGradientShape linearGradientShape;
+    linearGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
+
+    _toolSetHandling.addLinearGradientShapeToQueue(linearGradientShape);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfLinearGradientShapes = _toolSetHandling.getQueueOfLinearGradientShapes().size();
+    int posLinearGradientShapeInQueue = (sizeOfLinearGradientShapes - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posLinearGradientShapeInQueue);
 }
 
 
@@ -649,12 +670,15 @@ void ScribbleArea::readyToDrawLinearGradient() {
     int height = (m_y2 - m_y1);
     QRect rectLinear(m_x1, m_y1, width, height);
 
+    _toolSetHandling.updateLinearGradient(curLinearGradient);
+
     painter.fillRect(rectLinear, curLinearGradient);
     setUpLinearGradientColorsBool = false;
     drawnRectList << rectLinear;
 
     update();
 }
+
 
 
 void ScribbleArea::drawSquircle() {
