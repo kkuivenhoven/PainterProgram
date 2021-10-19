@@ -14,6 +14,7 @@
 #include "shapes/straightline.h"
 #include "shapes/lineargradientshape.h"
 #include "shapes/conicalgradientshape.h"
+#include "shapes/radialgradientshape.h"
 
 class ToolSetHandling {
     QStack<QString> _orderOfActions;
@@ -26,6 +27,7 @@ class ToolSetHandling {
     QQueue<StraightLine> _straightLineQueue;
     QQueue<LinearGradientShape> _linearGradientShapeQueue;
     QQueue<ConicalGradientShape> _conicalGradientShapeQueue;
+    QQueue<RadialGradientShape> _radialGradientShapeQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> _posMap;
@@ -88,6 +90,12 @@ public:
     void removeLastConicalGradientShape();
     QQueue<ConicalGradientShape> getQueueOfConicalGradientShapes();
     void updateConicalGradient(QConicalGradient conicalGradient);
+
+    static const QString RADIAL_GRADIENT_SHAPE;
+    void addRadialGradientShapeToQueue(RadialGradientShape radialGradientShape);
+    void removeLastRadialGradientShape();
+    QQueue<RadialGradientShape> getQueueOfRadialGradientShapes();
+    void updateRadialGradient(QRadialGradient radialGradient);
 
 };
 

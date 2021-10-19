@@ -178,6 +178,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::CONICAL_GRADIENT_SHAPE) {
                 _toolSetHandling.removeLastConicalGradientShape();
             }
+            if(action == ToolSetHandling::RADIAL_GRADIENT_SHAPE) {
+                _toolSetHandling.removeLastRadialGradientShape();
+            }
             _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             _toolSetHandling.removeLastActionFromStack();
         }
@@ -190,6 +193,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<StraightLine> straightLineQueue = _toolSetHandling.getQueueOfStraightLines();
     QQueue<LinearGradientShape> linearGradientShapeQueue = _toolSetHandling.getQueueOfLinearGradientShapes();
     QQueue<ConicalGradientShape> conicalGradientShapeQueue = _toolSetHandling.getQueueOfConicalGradientShapes();
+    QQueue<RadialGradientShape> radialGradientShapeQueue = _toolSetHandling.getQueueOfRadialGradientShapes();
 
     QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
@@ -256,6 +260,13 @@ void ScribbleArea::setUpUndoFunctionality() {
                 int height = (conicalGradientShape.getY2() - conicalGradientShape.getY1());
                 QRect rectLinear(conicalGradientShape.getX1(), conicalGradientShape.getY1(), width, height);
                 painter.fillRect(rectLinear, conicalGradientShape.getConicalGradient());
+            }
+            if(action == ToolSetHandling::RADIAL_GRADIENT_SHAPE) {
+                RadialGradientShape radialGradientShape = radialGradientShapeQueue.at(shapePos);
+                int width = (radialGradientShape.getX2() - radialGradientShape.getX1());
+                int height = (radialGradientShape.getY2() - radialGradientShape.getY1());
+                QRect rectLinear(radialGradientShape.getX1(), radialGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, radialGradientShape.getRadialGradient());
             }
         }
     }
@@ -764,6 +775,15 @@ void ScribbleArea::radialGradientColorSelection(int numColors) {
     _gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors,
                                                         image.width(), image.height());
     connect(_gradientColorInputDialog, SIGNAL(radialGradientToolsSet()), this, SLOT(readyToDrawRadialGradient()));
+
+    RadialGradientShape radialGradientShape;
+    radialGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
+
+    _toolSetHandling.addRadialGradientShapeToQueue(radialGradientShape);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfRadialGradientShapes = _toolSetHandling.getQueueOfRadialGradientShapes().size();
+    int posRadialGradientShapeInQueue = (sizeOfRadialGradientShapes - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posRadialGradientShapeInQueue);
 }
 
 
@@ -773,6 +793,8 @@ void ScribbleArea::readyToDrawRadialGradient() {
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectRadial(m_x1, m_y1, width, height);
+
+    _toolSetHandling.updateRadialGradient(*curRadialGradient);
 
     painter.fillRect(rectRadial, *curRadialGradient);
     setUpRadialGradientColorsBool = false;

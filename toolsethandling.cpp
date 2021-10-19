@@ -9,6 +9,7 @@ const QString ToolSetHandling::CONVEX_POLYGON("CONVEX_POLYGON");
 const QString ToolSetHandling::STRAIGHT_LINE("STRAIGHT_LINE");
 const QString ToolSetHandling::LINEAR_GRADIENT_SHAPE("LINEAR_GRADIENT_SHAPE");
 const QString ToolSetHandling::CONICAL_GRADIENT_SHAPE("CONICAL_GRADIENT_SHAPE");
+const QString ToolSetHandling::RADIAL_GRADIENT_SHAPE("RADIAL_GRADIENT_SHAPE");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -202,6 +203,29 @@ void ToolSetHandling::updateConicalGradient(QConicalGradient conicalGradient) {
     _conicalGradientShapeQueue.pop_back();
     conicalGradientShape.setConicalGradient(conicalGradient);
     _conicalGradientShapeQueue.append(conicalGradientShape);
+}
+
+
+void ToolSetHandling::addRadialGradientShapeToQueue(RadialGradientShape radialGradientShape) {
+    addLastActionToStack(RADIAL_GRADIENT_SHAPE);
+    radialGradientShape.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _radialGradientShapeQueue.append(radialGradientShape);
+}
+
+void ToolSetHandling::removeLastRadialGradientShape() {
+    _radialGradientShapeQueue.pop_back();
+}
+
+QQueue<RadialGradientShape> ToolSetHandling::getQueueOfRadialGradientShapes() {
+    return _radialGradientShapeQueue;
+}
+
+void ToolSetHandling::updateRadialGradient(QRadialGradient radialGradient) {
+    int indexLastElement = (_radialGradientShapeQueue.size() - 1);
+    RadialGradientShape radialGradientShape = _radialGradientShapeQueue.at(indexLastElement);
+    _radialGradientShapeQueue.pop_back();
+    radialGradientShape.setRadialGradient(radialGradient);
+    _radialGradientShapeQueue.append(radialGradientShape);
 }
 
 
