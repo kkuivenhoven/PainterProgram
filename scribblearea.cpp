@@ -181,6 +181,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::RADIAL_GRADIENT_SHAPE) {
                 _toolSetHandling.removeLastRadialGradientShape();
             }
+            if(action == ToolSetHandling::TEXT_BOX) {
+                _toolSetHandling.removeLastTextBox();
+            }
             _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             _toolSetHandling.removeLastActionFromStack();
         }
@@ -194,6 +197,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<LinearGradientShape> linearGradientShapeQueue = _toolSetHandling.getQueueOfLinearGradientShapes();
     QQueue<ConicalGradientShape> conicalGradientShapeQueue = _toolSetHandling.getQueueOfConicalGradientShapes();
     QQueue<RadialGradientShape> radialGradientShapeQueue = _toolSetHandling.getQueueOfRadialGradientShapes();
+    QQueue<TextBox> textBoxQueue = _toolSetHandling.getQueueOfTextBoxes();
 
     QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
@@ -268,6 +272,29 @@ void ScribbleArea::setUpUndoFunctionality() {
                 QRect rectLinear(radialGradientShape.getX1(), radialGradientShape.getY1(), width, height);
                 painter.fillRect(rectLinear, radialGradientShape.getRadialGradient());
             }
+            if(action == ToolSetHandling::TEXT_BOX) {
+                TextBox textBox = textBoxQueue.at(shapePos);
+                int width = (textBox.getX2() - textBox.getX1());
+                int height = (textBox.getY2() - textBox.getY1());
+                /* qDebug() << "width: " << QString::number(width);
+                qDebug() << "height: " << QString::number(height);
+                const QRect rect(textBox.getX1(), textBox.getY1(), width, height);
+                QRect boundingRect;
+                QFont serifFont("Times", 12, QFont::Bold);
+                painter.setFont(serifFont);
+                painter.drawText(rect, Qt::TextWordWrap, tr(textBox.getTextWritten().toUtf8().data()), &boundingRect);
+                painter.drawRect(boundingRect.adjusted(0, 0, width, height));
+                painter.drawRect(rect.adjusted(0, 0, width, height));
+                */
+                QTextEdit *textEdit = new QTextEdit(this);
+                textEdit->setFrameStyle(QFrame::NoFrame);
+                textEdit->viewport()->setAutoFillBackground(false);
+
+                textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
+                textEdit->setText(textBox.getTextWritten());
+                textEdit->show();
+                textEditList.append(textEdit);
+            }
         }
     }
     update();
@@ -291,13 +318,21 @@ void ScribbleArea::clearImage() {
     }
     image.fill(qRgb(255,255,255));
     modified = true;
-    delete textEdit;
+    /* if(textEdit != nullptr) {
+        delete textEdit;
+        textEdit = nullptr;
+    } */
+    while(!textEditList.isEmpty()) {
+        QTextEdit *textEdit = textEditList.dequeue();
+        delete textEdit;
+    }
     update();
 }
 
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
     if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
+        QTextEdit *textEdit = textEditList.last();
         QString tmpCurText = textEdit->toPlainText();
         tmpCurText += event->text();
         textEdit->setText(tmpCurText);
@@ -305,6 +340,7 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
         update();
     }
     if(currentlyTyping && (event->key() == Qt::Key_Backspace)) {
+        QTextEdit *textEdit = textEditList.last();
         QString tmpCurText = textEdit->toPlainText();
         tmpCurText.remove(tmpCurText.length()-2, 2);
         textEdit->setText(tmpCurText);
@@ -312,8 +348,10 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
         update();
     }
     if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
+        QTextEdit *textEdit = textEditList.last();
         currentlyTyping = false;
         textEdit->setReadOnly(true);
+        _toolSetHandling.updateTextBox(textEdit->toPlainText());
     }
 }
 
@@ -589,13 +627,25 @@ void ScribbleArea::drawLine() {
 
 void ScribbleArea::createTextBlurb() {
     currentlyTyping = true;
-    textEdit = new QTextEdit(this);
+
+    QTextEdit *textEdit = new QTextEdit(this);
     textEdit->setFrameStyle(QFrame::NoFrame);
     textEdit->viewport()->setAutoFillBackground(false);
     int diff_x = (m_x2 - m_x1);
     int diff_y = (m_y2 - m_y1);
+
+    TextBox textBox;
+    textBox.setCoords(m_x1, m_x2, m_y1, m_y2);
+
+    _toolSetHandling.addTextBoxToQueue(textBox);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfTextBoxQueue = _toolSetHandling.getQueueOfTextBoxes().size();
+    int posTextBoxInQueue = (sizeOfTextBoxQueue - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posTextBoxInQueue);
+
     textEdit->setGeometry(m_x1, m_y1, diff_x, diff_y);
     textEdit->show();
+    textEditList.append(textEdit);
 }
 
 

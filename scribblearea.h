@@ -127,7 +127,9 @@ private:
     bool fontSizeSet;
     QFont curFont;
 
-    QTextEdit *textEdit;
+    QQueue<QTextEdit *> textEditList;
+
+    // QTextEdit *textEdit;
     bool textBool;
     bool currentlyTyping;
 

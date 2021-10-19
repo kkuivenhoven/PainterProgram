@@ -10,6 +10,7 @@ const QString ToolSetHandling::STRAIGHT_LINE("STRAIGHT_LINE");
 const QString ToolSetHandling::LINEAR_GRADIENT_SHAPE("LINEAR_GRADIENT_SHAPE");
 const QString ToolSetHandling::CONICAL_GRADIENT_SHAPE("CONICAL_GRADIENT_SHAPE");
 const QString ToolSetHandling::RADIAL_GRADIENT_SHAPE("RADIAL_GRADIENT_SHAPE");
+const QString ToolSetHandling::TEXT_BOX("TEXT_BOX");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -229,3 +230,24 @@ void ToolSetHandling::updateRadialGradient(QRadialGradient radialGradient) {
 }
 
 
+void ToolSetHandling::addTextBoxToQueue(TextBox textBox) {
+    addLastActionToStack(TEXT_BOX);
+    textBox.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    _textBoxQueue.append(textBox);
+}
+
+void ToolSetHandling::removeLastTextBox() {
+    _textBoxQueue.pop_back();
+}
+
+QQueue<TextBox> ToolSetHandling::getQueueOfTextBoxes() {
+    return _textBoxQueue;
+}
+
+void ToolSetHandling::updateTextBox(QString textWritten) {
+    int indexLastElement = (_textBoxQueue.size() - 1);
+    TextBox textBox = _textBoxQueue.at(indexLastElement);
+    _textBoxQueue.pop_back();
+    textBox.setWrittenText(textWritten);
+    _textBoxQueue.append(textBox);
+}

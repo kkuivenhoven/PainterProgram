@@ -38,7 +38,8 @@ SOURCES += \
     shapes/straightline.cpp \
     shapes/lineargradientshape.cpp \
     shapes/conicalgradientshape.cpp \
-    shapes/radialgradientshape.cpp
+    shapes/radialgradientshape.cpp \
+    shapes/textbox.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -54,7 +55,8 @@ HEADERS += \
     shapes/straightline.h \
     shapes/lineargradientshape.h \
     shapes/conicalgradientshape.h \
-    shapes/radialgradientshape.h
+    shapes/radialgradientshape.h \
+    shapes/textbox.h
 
 FORMS += \
         mainwindow.ui

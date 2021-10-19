@@ -15,6 +15,7 @@
 #include "shapes/lineargradientshape.h"
 #include "shapes/conicalgradientshape.h"
 #include "shapes/radialgradientshape.h"
+#include "shapes/textbox.h"
 
 class ToolSetHandling {
     QStack<QString> _orderOfActions;
@@ -28,6 +29,7 @@ class ToolSetHandling {
     QQueue<LinearGradientShape> _linearGradientShapeQueue;
     QQueue<ConicalGradientShape> _conicalGradientShapeQueue;
     QQueue<RadialGradientShape> _radialGradientShapeQueue;
+    QQueue<TextBox> _textBoxQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> _posMap;
@@ -96,6 +98,12 @@ public:
     void removeLastRadialGradientShape();
     QQueue<RadialGradientShape> getQueueOfRadialGradientShapes();
     void updateRadialGradient(QRadialGradient radialGradient);
+
+    static const QString TEXT_BOX;
+    void addTextBoxToQueue(TextBox textBox);
+    void removeLastTextBox();
+    QQueue<TextBox> getQueueOfTextBoxes();
+    void updateTextBox(QString textWritten);
 
 };
 
