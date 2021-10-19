@@ -291,6 +291,7 @@ void ScribbleArea::clearImage() {
     }
     image.fill(qRgb(255,255,255));
     modified = true;
+    delete textEdit;
     update();
 }
 
@@ -309,6 +310,10 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
         textEdit->setText(tmpCurText);
         textEdit->show();
         update();
+    }
+    if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
+        currentlyTyping = false;
+        textEdit->setReadOnly(true);
     }
 }
 
