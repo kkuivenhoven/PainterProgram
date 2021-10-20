@@ -5,7 +5,7 @@ FreeHandLine::FreeHandLine() {
 }
 
 void FreeHandLine::setNewPoint(QPoint curPoint) {
-    _allPoints.append(curPoint);
+    m_allPoints.append(curPoint);
 }
 
 void FreeHandLine::setPenWidth(int penWidth) {
@@ -29,6 +29,6 @@ int FreeHandLine::getPenWidth() {
 }
 
 QQueue<QPoint> FreeHandLine::getAllSetPoints() {
-    return _allPoints;
+    return m_allPoints;
 }
 

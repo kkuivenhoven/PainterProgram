@@ -6,7 +6,7 @@
 #include <QQueue>
 
 class FreeHandLine {
-    QQueue<QPoint> _allPoints;
+    QQueue<QPoint> m_allPoints;
     int m_penWidth;
     QColor m_penColor;
     int m_posInOrderOfActions;

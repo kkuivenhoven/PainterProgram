@@ -7,13 +7,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    scribblearea = new ScribbleArea;
-    setCentralWidget(scribblearea);
+    m_scribblearea = new ScribbleArea;
+    setCentralWidget(m_scribblearea);
     createActions();
     createMenus();
     setWindowTitle(tr("Scribble"));
 
-    subMenu = new SubMenu(*scribblearea);
+    m_subMenu = new SubMenu(*m_scribblearea);
 
     resize(500, 500);
 }
@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
-    delete subMenu;
+    delete m_subMenu;
 }
 
 
@@ -44,7 +44,7 @@ void MainWindow::open() {
         QString fileName = QFileDialog::getOpenFileName(this,
                         tr("Open File"), QDir::currentPath());
         if(!fileName.isEmpty()) {
-            scribblearea->openImage(fileName);
+            m_scribblearea->openImage(fileName);
         }
     }
 }
@@ -56,24 +56,24 @@ void MainWindow::save() {
 }
 
 void MainWindow::penColor() {
-    QColor newColor = QColorDialog::getColor(scribblearea->penColor());
+    QColor newColor = QColorDialog::getColor(m_scribblearea->penColor());
     if(newColor.isValid()) {
-        scribblearea->setPenColor(newColor);
+        m_scribblearea->setPenColor(newColor);
     }
 }
 
 void MainWindow::fillEasel() {
-    scribblearea->setEasel(scribblearea->penColor());
+    m_scribblearea->setEasel(m_scribblearea->penColor());
 }
 
 void MainWindow::penWidth() {
     bool ok;
     int newWidth = QInputDialog::getInt(this, tr("Scribble"),
                                         tr("Select pen width : "),
-                                        scribblearea->penWidth(),
+                                        m_scribblearea->penWidth(),
                                         1, 50, 1, &ok);
     if(ok) {
-        scribblearea->setPenWidth(newWidth);
+        m_scribblearea->setPenWidth(newWidth);
     }
 }
 
@@ -83,11 +83,11 @@ void MainWindow::about() {
 }
 
 void MainWindow::createActions() {
-    openAction = new QAction(tr("&Open"), this);
+    m_openAction = new QAction(tr("&Open"), this);
 
-    openAction->setShortcuts(QKeySequence::Open);
+    m_openAction->setShortcuts(QKeySequence::Open);
 
-    connect(openAction, SIGNAL(triggered(bool)), this, SLOT(open()));
+    connect(m_openAction, SIGNAL(triggered(bool)), this, SLOT(open()));
 
     foreach(QByteArray format, QImageWriter::supportedImageFormats()) {
         QString text = tr("%1...").arg(QString(format).toUpper());
@@ -98,57 +98,57 @@ void MainWindow::createActions() {
 
         connect(action, SIGNAL(triggered()), this, SLOT(save()));
 
-        saveAsActs.append(action);
+        m_saveAsActs.append(action);
     }
-    printAct = new QAction(tr("&Print..."), this);
-    connect(printAct, SIGNAL(triggered()), scribblearea, SLOT(print()));
+    m_printAct = new QAction(tr("&Print..."), this);
+    connect(m_printAct, SIGNAL(triggered()), m_scribblearea, SLOT(print()));
 
-    exitAction = new QAction(tr("&Exit"), this);
-    exitAction->setShortcuts(QKeySequence::Quit);
-    connect(exitAction, SIGNAL(triggered()), this, SLOT(close()));
+    m_exitAction = new QAction(tr("&Exit"), this);
+    m_exitAction->setShortcuts(QKeySequence::Quit);
+    connect(m_exitAction, SIGNAL(triggered()), this, SLOT(close()));
 
-    penColorAct = new QAction(tr("&Pen color..."), this);
-    connect(penColorAct, SIGNAL(triggered()), this, SLOT(penColor()));
+    m_penColorAct = new QAction(tr("&Pen color..."), this);
+    connect(m_penColorAct, SIGNAL(triggered()), this, SLOT(penColor()));
 
-    penWidthAct = new QAction(tr("Pen &Width..."), this);
-    connect(penColorAct, SIGNAL(triggered()), this, SLOT(penWidth()));
+    m_penWidthAct = new QAction(tr("Pen &Width..."), this);
+    connect(m_penColorAct, SIGNAL(triggered()), this, SLOT(penWidth()));
 
-    clearScreenAct = new QAction(tr("&Clear Screen..."), this);
-    clearScreenAct->setShortcut(tr("Ctrl+L"));
-    connect(clearScreenAct, SIGNAL(triggered()), scribblearea, SLOT(clearImage()));
+    m_clearScreenAct = new QAction(tr("&Clear Screen..."), this);
+    m_clearScreenAct->setShortcut(tr("Ctrl+L"));
+    connect(m_clearScreenAct, SIGNAL(triggered()), m_scribblearea, SLOT(clearImage()));
 
-    aboutAct = new QAction(tr("&About..."), this);
-    connect(aboutAct, SIGNAL(triggered()), scribblearea, SLOT(about()));
+    m_aboutAct = new QAction(tr("&About..."), this);
+    connect(m_aboutAct, SIGNAL(triggered()), m_scribblearea, SLOT(about()));
 
-    aboutQtAct = new QAction(tr("About &Qt..."), this);
-    connect(aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
+    m_aboutQtAct = new QAction(tr("About &Qt..."), this);
+    connect(m_aboutQtAct, SIGNAL(triggered()), qApp, SLOT(aboutQt()));
 }
 
 void MainWindow::createMenus() {
-    saveAsMenu = new QMenu(tr("&Save As"), this);
-    foreach(QAction *action, saveAsActs) {
-        saveAsMenu->addAction(action);
+    m_saveAsMenu = new QMenu(tr("&Save As"), this);
+    foreach(QAction *action, m_saveAsActs) {
+        m_saveAsMenu->addAction(action);
     }
-    fileMenu = new QMenu(tr("&File"), this);
-    fileMenu->addAction(openAct);
-    fileMenu->addMenu(saveAsMenu);
-    fileMenu->addAction(printAct);
-    fileMenu->addSeparator();
-    fileMenu->addAction(exitAction);
+    m_fileMenu = new QMenu(tr("&File"), this);
+    m_fileMenu->addAction(m_openAct);
+    m_fileMenu->addMenu(m_saveAsMenu);
+    m_fileMenu->addAction(m_printAct);
+    m_fileMenu->addSeparator();
+    m_fileMenu->addAction(m_exitAction);
 
-    optionMenu = new QMenu(tr("&Options"), this);
-    optionMenu->addAction(penColorAct);
-    optionMenu->addAction(penWidthAct);
-    optionMenu->addSeparator();
-    optionMenu->addAction(clearScreenAct);
+    m_optionMenu = new QMenu(tr("&Options"), this);
+    m_optionMenu->addAction(m_penColorAct);
+    m_optionMenu->addAction(m_penWidthAct);
+    m_optionMenu->addSeparator();
+    m_optionMenu->addAction(m_clearScreenAct);
 
-    helpMenu = new QMenu(tr("&Help"), this);
-    helpMenu->addAction(aboutAct);
-    helpMenu->addAction(aboutQtAct);
+    m_helpMenu = new QMenu(tr("&Help"), this);
+    m_helpMenu->addAction(m_aboutAct);
+    m_helpMenu->addAction(m_aboutQtAct);
 
-    menuBar()->addMenu(fileMenu);
-    menuBar()->addMenu(optionMenu);
-    menuBar()->addMenu(helpMenu);
+    menuBar()->addMenu(m_fileMenu);
+    menuBar()->addMenu(m_optionMenu);
+    menuBar()->addMenu(m_helpMenu);
 }
 
 bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
@@ -156,7 +156,7 @@ bool MainWindow::eventFilter(QObject *watched, QEvent *event) {
 }
 
 bool MainWindow::maybeSave() {
-    if(scribblearea->isModified()) {
+    if(m_scribblearea->isModified()) {
         QMessageBox::StandardButton ret;
         ret = QMessageBox::warning(this, tr("Scribble"),
                                    tr("The image has been modified.\n"
@@ -182,7 +182,7 @@ bool MainWindow::saveFile(const QByteArray &fileFormat) {
     if(fileName.isEmpty()) {
         return false;
     } else {
-        return scribblearea->saveImage(fileName, fileFormat.constData());
+        return m_scribblearea->saveImage(fileName, fileFormat.constData());
     }
 }
 

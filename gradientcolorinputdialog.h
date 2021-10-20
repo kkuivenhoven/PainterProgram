@@ -61,54 +61,54 @@ public slots:
     void clearOutRadialColorMap();
 
 private:
-    QWidget *_linearWidget;
-    QWidget *_conicalWidget;
-    QWidget *_radialWidget;
+    QWidget *m_linearWidget;
+    QWidget *m_conicalWidget;
+    QWidget *m_radialWidget;
 
-    int _linearNumColors;
-    int _linear_x1;
-    int _linear_y1;
-    int _linear_x2;
-    int _linear_y2;
+    int m_linearNumColors;
+    int m_linear_x1;
+    int m_linear_y1;
+    int m_linear_x2;
+    int m_linear_y2;
 
-    int _conicalNumColors;
-    int _conical_x1;
-    int _conical_y1;
-    int _conical_x2;
-    int _conical_y2;
+    int m_conicalNumColors;
+    int m_conical_x1;
+    int m_conical_y1;
+    int m_conical_x2;
+    int m_conical_y2;
 
-    int _radialNumColors;
-    int _radial_x1;
-    int _radial_y1;
-    int _radial_x2;
-    int _radial_y2;
-    int _widgetHeight;
-    int _widgetWidth;
+    int m_radialNumColors;
+    int m_radial_x1;
+    int m_radial_y1;
+    int m_radial_x2;
+    int m_radial_y2;
+    int m_widgetHeight;
+    int m_widgetWidth;
 
-    QGroupBox *groupBox;
-    QLinearGradient _curLinearGradient;
-    QRadioButton *_radioLinearOne;
-    QRadioButton *_radioLinearTwo;
-    QRadioButton *_radioLinearThree;
-    QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
+    QGroupBox *m_groupBox;
+    QLinearGradient m_curLinearGradient;
+    QRadioButton *m_radioLinearOne;
+    QRadioButton *m_radioLinearTwo;
+    QRadioButton *m_radioLinearThree;
+    QMap<QPushButton*, QMap<int, QColor>> m_mapCurColorChoices;
 
-    QConicalGradient *_curConicalGradient;
-    QSpinBox *_conicalSpinBox;
-    QMap<QPushButton*, QMap<int, QColor>> conicalMapCurColorChoices;
-    QMap<QString, QPushButton*> curConicalGradientStrColorsMap;
-    QMap<QString, QPushButton*> curGradientStrColorsMap;
+    QConicalGradient *m_curConicalGradient;
+    QSpinBox *m_conicalSpinBox;
+    QMap<QPushButton*, QMap<int, QColor>> m_conicalMapCurColorChoices;
+    QMap<QString, QPushButton*> m_curConicalGradientStrColorsMap;
+    QMap<QString, QPushButton*> m_curGradientStrColorsMap;
 
-    QRadialGradient *_curRadialGradient;
-    QMap<QPushButton*, QMap<int, QColor>> radialMapCurColorChoices;
-    QMap<QString, QPushButton*> curRadialGradientStrColorsMap;
+    QRadialGradient *m_curRadialGradient;
+    QMap<QPushButton*, QMap<int, QColor>> m_radialMapCurColorChoices;
+    QMap<QString, QPushButton*> m_curRadialGradientStrColorsMap;
 
-    QGroupBox *_radialGroupBox;
-    QRadioButton *_radioRadialOne;
-    QRadioButton *_radioRadialTwo;
-    QRadioButton *_radioRadialThree;
-    QSpinBox *_radialSpinBox;
-    QSpinBox *_centerXSpinBox;
-    QSpinBox *_centerYSpinBox;
+    QGroupBox *m_radialGroupBox;
+    QRadioButton *m_radioRadialOne;
+    QRadioButton *m_radioRadialTwo;
+    QRadioButton *m_radioRadialThree;
+    QSpinBox *m_radialSpinBox;
+    QSpinBox *m_centerXSpinBox;
+    QSpinBox *m_centerYSpinBox;
 };
 
 #endif // GRADIENTCOLORINPUTDIALOG_H

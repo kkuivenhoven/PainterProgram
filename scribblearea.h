@@ -43,9 +43,9 @@ public:
     void setPenWidth(int newWidth);
     void setEasel(const QColor &fillColor);
 
-    bool isModified() const { return modified; }
-    QColor penColor() const { return myPenColor; }
-    int penWidth() const { return myPenWidth; }
+    bool isModified() const { return m_modified; }
+    QColor penColor() const { return m_myPenColor; }
+    int penWidth() const { return m_myPenWidth; }
 
     void setMx1(int x1);
     void setMy1(int x1);
@@ -104,72 +104,71 @@ private:
     void redrawLineTo(const QPoint &endPoint, QPainter &curPainter);
     void resizeImage(QImage *image, const QSize &newSize);
 
-    bool modified;
-    bool scribbling;
+    bool m_modified;
+    bool m_scribbling;
 
-    int myPenWidth;
-    QColor myPenColor;
-    QImage image;
-    QPoint lastPoint;
-    ToolSetHandling _toolSetHandling;
+    int m_myPenWidth;
+    QColor m_myPenColor;
+    QImage m_image;
+    QPoint m_lastPoint;
+    ToolSetHandling m_toolSetHandling;
 
-    bool drawLineBool;
+    bool m_drawLineBool;
 
     int m_x1;
     int m_x2;
     int m_y1;
     int m_y2;
 
-    QString curText;
-    int inputDiagFontSize;
-    bool textSettingSet;
+    QString m_curText;
+    int m_inputDiagFontSize;
+    bool m_textSettingSet;
 
-    bool fontSizeSet;
-    QFont curFont;
+    bool m_fontSizeSet;
+    QFont m_curFont;
 
-    QQueue<QTextEdit *> textEditList;
+    QQueue<QTextEdit *> m_textEditList;
 
-    // QTextEdit *textEdit;
-    bool textBool;
-    bool currentlyTyping;
+    bool m_textBool;
+    bool m_currentlyTyping;
 
-    bool turnBoolOn;
-    bool setUpSquareBool;
-    bool setUpEllipseBool;
+    bool m_turnBoolOn;
+    bool m_setUpSquareBool;
+    bool m_setUpEllipseBool;
 
-    bool secondConvexReadyToDraw;
-    int secondNumberOfPointsDrawn;
-    int secondTotalNumNeedToDraw;
-    QList<QPointF> secondCoordSet;
+    bool m_secondConvexReadyToDraw;
+    int m_secondNumberOfPointsDrawn;
+    int m_secondTotalNumNeedToDraw;
+    QList<QPointF> m_secondCoordSet;
 
-    QWidget *userInput;
-    int userChoseThisNumColors;
+    QWidget *m_userInput;
+    int m_userChoseThisNumColors;
 
-    QSignalMapper mapper;
-    QMap<QString, QPushButton*> curGradientStrColorsMap;
-    QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
+    QSignalMapper m_mapper;
+    QMap<QString, QPushButton*> m_curGradientStrColorsMap;
+    QMap<QPushButton*, QMap<int, QColor>> m_mapCurColorChoices;
 
-    QGroupBox *groupBox;
-    QList<QCheckBox *> checkBoxBtnsList;
+    QGroupBox *m_groupBox;
+    QList<QCheckBox *> m_checkBoxBtnsList;
 
-    GradientColorInputDialog *_gradientColorInputDialog;
+    GradientColorInputDialog *m_gradientColorInputDialog;
 
-    bool setUpLinearGradientColorsBool;
-    bool setUpConicalGradientColorsBool;
-    bool setUpRadialGradientColorsBool;
+    bool m_setUpLinearGradientColorsBool;
+    bool m_setUpConicalGradientColorsBool;
+    bool m_setUpRadialGradientColorsBool;
 
-    QList<QRectF> drawnRectList;
-    QList<QRectF*> drawnRectPointerList;
+    QList<QRectF> m_drawnRectList;
+    QList<QRectF*> m_drawnRectPointerList;
 
-    QRectF drawingSquare;
-    bool startDrawingSquare;
+    QRectF m_drawingSquare;
+    bool m_startDrawingSquare;
 
-    QRectF drawingRoundedSquare;
-    bool startDrawingRoundedSquare;
+    QRectF m_drawingRoundedSquare;
+    bool m_startDrawingRoundedSquare;
 
-    bool setUpSquircleBool;
-    int initialDiff;
-    int xIncrement;
+    bool m_setUpSquircleBool;
+    int m_initialDiff;
+    int m_xIncrement;
 };
 
 #endif // SCRIBBLEAREA_H

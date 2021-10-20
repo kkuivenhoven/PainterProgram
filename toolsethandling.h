@@ -18,21 +18,21 @@
 #include "shapes/textbox.h"
 
 class ToolSetHandling {
-    QStack<QString> _orderOfActions;
+    QStack<QString> m_orderOfActions;
 
-    QQueue<Rectangle> _rectangleQueue;
-    QQueue<Ellipse> _ellipseQueue;
-    QQueue<Squircle> _squircleQueue;
-    QQueue<FreeHandLine> _freeHandLineQueue;
-    QQueue<ConvexPolygon> _convexPolygonQueue;
-    QQueue<StraightLine> _straightLineQueue;
-    QQueue<LinearGradientShape> _linearGradientShapeQueue;
-    QQueue<ConicalGradientShape> _conicalGradientShapeQueue;
-    QQueue<RadialGradientShape> _radialGradientShapeQueue;
-    QQueue<TextBox> _textBoxQueue;
+    QQueue<Rectangle> m_rectangleQueue;
+    QQueue<Ellipse> m_ellipseQueue;
+    QQueue<Squircle> m_squircleQueue;
+    QQueue<FreeHandLine> m_freeHandLineQueue;
+    QQueue<ConvexPolygon> m_convexPolygonQueue;
+    QQueue<StraightLine> m_straightLineQueue;
+    QQueue<LinearGradientShape> m_linearGradientShapeQueue;
+    QQueue<ConicalGradientShape> m_conicalGradientShapeQueue;
+    QQueue<RadialGradientShape> m_radialGradientShapeQueue;
+    QQueue<TextBox> m_textBoxQueue;
 
     QMap<int /*positionInActions*/,
-         int /*posInShapeStack*/> _posMap;
+         int /*posInShapeStack*/> m_posMap;
 
 public:
     ToolSetHandling();

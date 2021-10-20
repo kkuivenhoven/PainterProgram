@@ -5,7 +5,7 @@
 #include <QPointF>
 
 class ConvexPolygon {
-    QQueue<QPointF> _allPoints;
+    QQueue<QPointF> m_allPoints;
     int m_posInOrderOfActions;
 
 public:
