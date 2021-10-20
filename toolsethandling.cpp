@@ -251,3 +251,25 @@ void ToolSetHandling::updateTextBox(QString textWritten) {
     textBox.setWrittenText(textWritten);
     _textBoxQueue.append(textBox);
 }
+
+void ToolSetHandling::addCoords(int x1, int x2, int y1, int y2) {
+    int indexLastElement = (_textBoxQueue.size() - 1);
+    TextBox textBox = _textBoxQueue.at(indexLastElement);
+    _textBoxQueue.pop_back();
+    textBox.setCoords(x1, x2, y1, y2);
+    _textBoxQueue.append(textBox);
+}
+
+void ToolSetHandling::addFont(QFont font) {
+    int indexLastElement = (_textBoxQueue.size() - 1);
+    TextBox textBox = _textBoxQueue.at(indexLastElement);
+    _textBoxQueue.pop_back();
+    textBox.setFont(font);
+    _textBoxQueue.append(textBox);
+}
+
+QFont ToolSetHandling::getFont() {
+    int indexLastElement = (_textBoxQueue.size() - 1);
+    TextBox textBox = _textBoxQueue.at(indexLastElement);
+    return textBox.getFont();
+}

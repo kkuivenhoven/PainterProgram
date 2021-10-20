@@ -104,6 +104,9 @@ public:
     void removeLastTextBox();
     QQueue<TextBox> getQueueOfTextBoxes();
     void updateTextBox(QString textWritten);
+    void addCoords(int x1, int x2, int y1, int y2);
+    void addFont(QFont font);
+    QFont getFont();
 
 };
 

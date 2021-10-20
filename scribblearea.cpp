@@ -54,7 +54,15 @@ void ScribbleArea::setDrawLineBool() {
 }
 
 
-void ScribbleArea::setTextBlurb() {
+void ScribbleArea::setTextBlurb(QFont font) {
+    TextBox textBox;
+    textBox.setFont(font);
+    _toolSetHandling.addTextBoxToQueue(textBox);
+    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfTextBoxQueue = _toolSetHandling.getQueueOfTextBoxes().size();
+    int posTextBoxInQueue = (sizeOfTextBoxQueue - 1);
+    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posTextBoxInQueue);
+
     textBool = true;
 }
 
@@ -284,11 +292,12 @@ void ScribbleArea::setUpUndoFunctionality() {
                 painter.setFont(serifFont);
                 painter.drawText(rect, Qt::TextWordWrap, tr(textBox.getTextWritten().toUtf8().data()), &boundingRect);
                 painter.drawRect(boundingRect.adjusted(0, 0, width, height));
-                painter.drawRect(rect.adjusted(0, 0, width, height));
-                */
+                painter.drawRect(rect.adjusted(0, 0, width, height)); */
                 QTextEdit *textEdit = new QTextEdit(this);
                 textEdit->setFrameStyle(QFrame::NoFrame);
                 textEdit->viewport()->setAutoFillBackground(false);
+                // QFont serifFont("Times", 12, QFont::Bold);
+                textEdit->setFont(textBox.getFont());
 
                 textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
                 textEdit->setText(textBox.getTextWritten());
@@ -318,10 +327,6 @@ void ScribbleArea::clearImage() {
     }
     image.fill(qRgb(255,255,255));
     modified = true;
-    /* if(textEdit != nullptr) {
-        delete textEdit;
-        textEdit = nullptr;
-    } */
     while(!textEditList.isEmpty()) {
         QTextEdit *textEdit = textEditList.dequeue();
         delete textEdit;
@@ -634,15 +639,10 @@ void ScribbleArea::createTextBlurb() {
     int diff_x = (m_x2 - m_x1);
     int diff_y = (m_y2 - m_y1);
 
-    TextBox textBox;
-    textBox.setCoords(m_x1, m_x2, m_y1, m_y2);
+    _toolSetHandling.updateTextBox(textEdit->toPlainText());
+    _toolSetHandling.addCoords(m_x1, m_x2, m_y1, m_y2);
 
-    _toolSetHandling.addTextBoxToQueue(textBox);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfTextBoxQueue = _toolSetHandling.getQueueOfTextBoxes().size();
-    int posTextBoxInQueue = (sizeOfTextBoxQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posTextBoxInQueue);
-
+    textEdit->setFont(_toolSetHandling.getFont());
     textEdit->setGeometry(m_x1, m_y1, diff_x, diff_y);
     textEdit->show();
     textEditList.append(textEdit);

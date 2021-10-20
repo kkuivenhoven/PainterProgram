@@ -19,6 +19,10 @@ void TextBox::setWrittenText(QString writtenText) {
     m_writtenText = writtenText;
 }
 
+void TextBox::setFont(QFont font) {
+    m_font = font;
+}
+
 int TextBox::getX1() {
     return m_x1;
 }
@@ -39,10 +43,6 @@ QString TextBox::getTextWritten() {
     return m_writtenText;
 }
 
-QFont TextBox::getFontType() {
-    return m_fontType;
-}
-
-int TextBox::getFontSize() {
-    return m_fontSize;
+QFont TextBox::getFont() {
+    return m_font;
 }

@@ -55,7 +55,7 @@ public:
     void setDrawLineBool();
     void drawLine();
 
-    void setTextBlurb();
+    void setTextBlurb(QFont font);
     void createTextBlurb();
 
     void setPenUp();

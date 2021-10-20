@@ -10,6 +10,7 @@
 #include <QInputDialog>
 #include <QStyle>
 #include <QQuickView>
+#include <QFontDialog>
 
 #include "scribblearea.h"
 

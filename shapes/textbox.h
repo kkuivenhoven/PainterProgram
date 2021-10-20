@@ -3,22 +3,21 @@
 
 #include <QFont>
 #include <QString>
+#include <QColor>
 
 class TextBox {
     int m_x1;
     int m_y1;
     int m_x2;
     int m_y2;
+    QFont m_font;
     QString m_writtenText;
-    QFont m_fontType;
-    int m_fontSize;
     int m_posInOrderOfActions;
 
 public:
     TextBox();
     void setCoords(int x1, int x2, int y1, int y2);
-    // void setFontType(QFont fontType);
-    // void setFontSize(int fontSize);
+    void setFont(QFont font);
     void setWrittenText(QString writtenText);
     void setPosInOrderOfActions(int posOfLastAction);
 
@@ -27,9 +26,8 @@ public:
     int getY1();
     int getY2();
 
+    QFont getFont();
     QString getTextWritten();
-    QFont getFontType();
-    int getFontSize();
 };
 
 #endif // TEXTBOX_H
