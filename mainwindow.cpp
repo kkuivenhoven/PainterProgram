@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    scribblearea = new ScribbleArea;
+    scribblearea = new ScribbleArea(this);
     setCentralWidget(scribblearea);
     createActions();
     createMenus();

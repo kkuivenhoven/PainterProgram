@@ -11,8 +11,7 @@
 
 #include "scribblearea.h"
 
-ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
-{
+ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     setAttribute(Qt::WA_StaticContents);
 
     modified = false;
@@ -31,7 +30,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     setUpEllipseBool = false;
     secondConvexReadyToDraw = false;
 
-    _gradientColorInputDialog = new GradientColorInputDialog();
+    _gradientColorInputDialog = new GradientColorInputDialog(this);
     setUpLinearGradientColorsBool = false;
     setUpConicalGradientColorsBool = false;
     setUpRadialGradientColorsBool = false;
@@ -39,6 +38,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
     startDrawingRoundedSquare = false;
     startDrawingSquare = false;
     setUpSquircleBool = false;
+    textBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -46,6 +46,11 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent)
 
 ScribbleArea::~ScribbleArea() {
 
+}
+
+
+void ScribbleArea::about() {
+    qDebug() << " In about!";
 }
 
 
@@ -161,6 +166,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QStack<QString> orderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
     if(orderOfActions.size() >= 1) {
         for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
+            // qDebug() << " -- ScribbleArea::setUpUndoFunctionality() -- ";
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 _toolSetHandling.removeLastRectangle();
@@ -433,8 +439,10 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
         if(turnBoolOn) {
             drawLineTo(event->pos());
-            FreeHandLine &curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
-            curFreeHandLine.setNewPoint(event->pos());
+            if(_toolSetHandling.getQueueOfFreeHandLines().size() > 0) {
+                FreeHandLine &curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
+                curFreeHandLine.setNewPoint(event->pos());
+            }
         }
         if(setUpSquareBool && this->underMouse()) {
             QPainter painter(&image);

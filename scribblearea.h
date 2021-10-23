@@ -27,6 +27,8 @@
 #include <QCheckBox>
 #include <QPainterPath>
 
+#include <assert.h>
+
 #include "gradientcolorinputdialog.h"
 #include "toolsethandling.h"
 
@@ -84,6 +86,7 @@ public:
     void setUpUndoFunctionality();
 
 public slots:
+    void about();
     void clearImage();
     void print();
     void readyToDrawLinearGradient();
@@ -150,7 +153,7 @@ private:
     QMap<QPushButton*, QMap<int, QColor>> mapCurColorChoices;
 
     QGroupBox *groupBox;
-    QList<QCheckBox *> checkBoxBtnsList;
+    // QList<QCheckBox *> checkBoxBtnsList;
 
     GradientColorInputDialog *_gradientColorInputDialog;
 
