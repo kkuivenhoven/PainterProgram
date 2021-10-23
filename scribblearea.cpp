@@ -166,7 +166,6 @@ void ScribbleArea::setUpUndoFunctionality() {
     QStack<QString> orderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
     if(orderOfActions.size() >= 1) {
         for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
-            // qDebug() << " -- ScribbleArea::setUpUndoFunctionality() -- ";
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 m_toolSetHandling.removeLastRectangle();
