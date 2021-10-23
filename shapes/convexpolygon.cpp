@@ -5,7 +5,7 @@ ConvexPolygon::ConvexPolygon() {
 }
 
 void ConvexPolygon::addPointToQueue(QPointF pointF) {
-    _allPoints.append(pointF);
+    m_allPoints.append(pointF);
 }
 
 void ConvexPolygon::setPosInOrderOfActions(int posOfLastAction) {
@@ -13,5 +13,5 @@ void ConvexPolygon::setPosInOrderOfActions(int posOfLastAction) {
 }
 
 QQueue<QPointF> ConvexPolygon::getAllPoints() {
-    return _allPoints;
+    return m_allPoints;
 }

@@ -159,8 +159,6 @@ void SubMenu::createTextBlurb() {
     } else {
         _scribbleArea.setTextBlurb(QFont("Helvetica [Cronyx]", 12));
     }
-    // textEdit->setFont(font);
-    // _scribbleArea.setTextBlurb(font);
 }
 
 void SubMenu::setUpPaintBrush() {

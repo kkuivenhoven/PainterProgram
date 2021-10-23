@@ -14,31 +14,31 @@
 ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     setAttribute(Qt::WA_StaticContents);
 
-    modified = false;
-    scribbling = false;
-    myPenWidth = 1;
-    myPenColor = Qt::black;
+    m_modified = false;
+    m_scribbling = false;
+    m_myPenWidth = 1;
+    m_myPenColor = Qt::black;
     m_x1 = 0;
     m_x2 = 0;
     m_y1 = 0;
     m_y2 = 0;
-    drawLineBool = false;
-    textSettingSet = false;
-    fontSizeSet = false;
-    turnBoolOn = false;
-    setUpSquareBool = false;
-    setUpEllipseBool = false;
-    secondConvexReadyToDraw = false;
+    m_drawLineBool = false;
+    m_textSettingSet = false;
+    m_fontSizeSet = false;
+    m_turnBoolOn = false;
+    m_setUpSquareBool = false;
+    m_setUpEllipseBool = false;
+    m_secondConvexReadyToDraw = false;
+    m_textBool = false;
 
-    _gradientColorInputDialog = new GradientColorInputDialog(this);
-    setUpLinearGradientColorsBool = false;
-    setUpConicalGradientColorsBool = false;
-    setUpRadialGradientColorsBool = false;
+    m_gradientColorInputDialog = new GradientColorInputDialog();
+    m_setUpLinearGradientColorsBool = false;
+    m_setUpConicalGradientColorsBool = false;
+    m_setUpRadialGradientColorsBool = false;
 
-    startDrawingRoundedSquare = false;
-    startDrawingSquare = false;
-    setUpSquircleBool = false;
-    textBool = false;
+    m_startDrawingRoundedSquare = false;
+    m_startDrawingSquare = false;
+    m_setUpSquircleBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -55,32 +55,32 @@ void ScribbleArea::about() {
 
 
 void ScribbleArea::setDrawLineBool() {
-    drawLineBool = true;
+    m_drawLineBool = true;
 }
 
 
 void ScribbleArea::setTextBlurb(QFont font) {
     TextBox textBox;
     textBox.setFont(font);
-    _toolSetHandling.addTextBoxToQueue(textBox);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfTextBoxQueue = _toolSetHandling.getQueueOfTextBoxes().size();
+    m_toolSetHandling.addTextBoxToQueue(textBox);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfTextBoxQueue = m_toolSetHandling.getQueueOfTextBoxes().size();
     int posTextBoxInQueue = (sizeOfTextBoxQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posTextBoxInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posTextBoxInQueue);
 
-    textBool = true;
+    m_textBool = true;
 }
 
 void ScribbleArea::setPenUp() {
-    turnBoolOn = true;
+    m_turnBoolOn = true;
 }
 
 void ScribbleArea::setUpSquare() {
-    setUpSquareBool = true;
+    m_setUpSquareBool = true;
 }
 
 void ScribbleArea::setUpEllipse() {
-    setUpEllipseBool = true;
+    m_setUpEllipseBool = true;
 }
 
 void ScribbleArea::setReadyToDrawConvexPolygonBool() {
@@ -88,32 +88,32 @@ void ScribbleArea::setReadyToDrawConvexPolygonBool() {
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                           tr("Polygon points:"), QLineEdit::Normal,
                                           "enter", &okay);
-    secondConvexReadyToDraw = true;
-    secondNumberOfPointsDrawn = 0;
-    secondTotalNumNeedToDraw = text.toInt();
+    m_secondConvexReadyToDraw = true;
+    m_secondNumberOfPointsDrawn = 0;
+    m_secondTotalNumNeedToDraw = text.toInt();
 }
 
 
 void ScribbleArea::setUpLinearGradientPaints(int numColors) {
-    userChoseThisNumColors = numColors;
-    setUpLinearGradientColorsBool = true;
+    m_userChoseThisNumColors = numColors;
+    m_setUpLinearGradientColorsBool = true;
 }
 
 
 void ScribbleArea::setUpConicalGradientPaints(int numColors) {
-    userChoseThisNumColors = numColors;
-    setUpConicalGradientColorsBool = true;
+    m_userChoseThisNumColors = numColors;
+    m_setUpConicalGradientColorsBool = true;
 }
 
 
 void ScribbleArea::setUpRadialGradientPaints(int numColors) {
-    userChoseThisNumColors = numColors;
-    setUpRadialGradientColorsBool = true;
+    m_userChoseThisNumColors = numColors;
+    m_setUpRadialGradientColorsBool = true;
 }
 
 
 void ScribbleArea::setUpDrawSquircle() {
-    setUpSquircleBool = true;
+    m_setUpSquircleBool = true;
 }
 
 
@@ -124,19 +124,19 @@ bool ScribbleArea::openImage(const QString &fileName) {
     }
     QSize newSize = loadedImage.size().expandedTo(size());
     resizeImage(&loadedImage, newSize);
-    image = loadedImage;
-    modified = false;
+    m_image = loadedImage;
+    m_modified = false;
     update();
     return true;
 }
 
 
 bool ScribbleArea::saveImage(const QString &fileName, const char *fileFormat) {
-    QImage visibleImage = image;
+    QImage visibleImage = m_image;
     resizeImage(&visibleImage, size());
 
     if(visibleImage.save(fileName, fileFormat)) {
-        modified = false;
+        m_modified = false;
         return true;
     } else {
         return false;
@@ -145,79 +145,79 @@ bool ScribbleArea::saveImage(const QString &fileName, const char *fileFormat) {
 
 
 void ScribbleArea::setPenColor(const QColor &newColor) {
-    myPenColor = newColor;
+    m_myPenColor = newColor;
 }
 
 
 void ScribbleArea::setPenWidth(int newWidth) {
-    myPenWidth = newWidth;
+    m_myPenWidth = newWidth;
 }
 
 
 void ScribbleArea::setEasel(const QColor &fillColor) {
-    image.fill(fillColor);
-    modified = true;
+    m_image.fill(fillColor);
+    m_modified = true;
     update();
 }
 
 
 void ScribbleArea::setUpUndoFunctionality() {
     clearImage();
-    QStack<QString> orderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
+    QStack<QString> orderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
     if(orderOfActions.size() >= 1) {
         for(int i = (orderOfActions.size()-1); i < orderOfActions.size(); i++) {
             // qDebug() << " -- ScribbleArea::setUpUndoFunctionality() -- ";
             QString action = orderOfActions.at(i);
             if(action == ToolSetHandling::RECTANGLE) {
-                _toolSetHandling.removeLastRectangle();
+                m_toolSetHandling.removeLastRectangle();
             }
             if(action == ToolSetHandling::ELLIPSE) {
-                _toolSetHandling.removeLastEllipse();
+                m_toolSetHandling.removeLastEllipse();
             }
             if(action == ToolSetHandling::SQUIRCLE) {
-                _toolSetHandling.removeLastSquircle();
+                m_toolSetHandling.removeLastSquircle();
             }
             if(action == ToolSetHandling::FREE_HAND_LINE) {
-                _toolSetHandling.removeLastFreeHandLine();
+                m_toolSetHandling.removeLastFreeHandLine();
             }
             if(action == ToolSetHandling::CONVEX_POLYGON) {
-                _toolSetHandling.removeLastConvexPolygon();
+                m_toolSetHandling.removeLastConvexPolygon();
             }
             if(action == ToolSetHandling::STRAIGHT_LINE) {
-                _toolSetHandling.removeLastStraightLine();
+                m_toolSetHandling.removeLastStraightLine();
             }
             if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
-                _toolSetHandling.removeLastLinearGradientShape();
+                m_toolSetHandling.removeLastLinearGradientShape();
             }
             if(action == ToolSetHandling::CONICAL_GRADIENT_SHAPE) {
-                _toolSetHandling.removeLastConicalGradientShape();
+                m_toolSetHandling.removeLastConicalGradientShape();
             }
             if(action == ToolSetHandling::RADIAL_GRADIENT_SHAPE) {
-                _toolSetHandling.removeLastRadialGradientShape();
+                m_toolSetHandling.removeLastRadialGradientShape();
             }
             if(action == ToolSetHandling::TEXT_BOX) {
-                _toolSetHandling.removeLastTextBox();
+                m_toolSetHandling.removeLastTextBox();
             }
-            _toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
-            _toolSetHandling.removeLastActionFromStack();
+            m_toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
+            m_toolSetHandling.removeLastActionFromStack();
         }
     }
-    QQueue<Rectangle> rectangleQueue = _toolSetHandling.getQueueOfRectangles();
-    QQueue<Ellipse> ellipseQueue = _toolSetHandling.getQueueOfEllipses();
-    QQueue<Squircle> squircleQueue = _toolSetHandling.getQueueOfSquircles();
-    QQueue<FreeHandLine> freeHandLineQueue = _toolSetHandling.getQueueOfFreeHandLines();
-    QQueue<ConvexPolygon> convexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons();
-    QQueue<StraightLine> straightLineQueue = _toolSetHandling.getQueueOfStraightLines();
-    QQueue<LinearGradientShape> linearGradientShapeQueue = _toolSetHandling.getQueueOfLinearGradientShapes();
-    QQueue<ConicalGradientShape> conicalGradientShapeQueue = _toolSetHandling.getQueueOfConicalGradientShapes();
-    QQueue<RadialGradientShape> radialGradientShapeQueue = _toolSetHandling.getQueueOfRadialGradientShapes();
-    QQueue<TextBox> textBoxQueue = _toolSetHandling.getQueueOfTextBoxes();
+    QQueue<Rectangle> rectangleQueue = m_toolSetHandling.getQueueOfRectangles();
+    QQueue<Ellipse> ellipseQueue = m_toolSetHandling.getQueueOfEllipses();
+    QQueue<Squircle> squircleQueue = m_toolSetHandling.getQueueOfSquircles();
+    QQueue<FreeHandLine> freeHandLineQueue = m_toolSetHandling.getQueueOfFreeHandLines();
+    QQueue<ConvexPolygon> convexPolygonQueue = m_toolSetHandling.getQueueOfConvexPolygons();
+    QQueue<StraightLine> straightLineQueue = m_toolSetHandling.getQueueOfStraightLines();
+    QQueue<LinearGradientShape> linearGradientShapeQueue = m_toolSetHandling.getQueueOfLinearGradientShapes();
+    QQueue<ConicalGradientShape> conicalGradientShapeQueue = m_toolSetHandling.getQueueOfConicalGradientShapes();
+    QQueue<RadialGradientShape> radialGradientShapeQueue = m_toolSetHandling.getQueueOfRadialGradientShapes();
+    QQueue<TextBox> textBoxQueue = m_toolSetHandling.getQueueOfTextBoxes();
 
-    QStack<QString> newOrderOfActions = _toolSetHandling.getOrderOfObjectsDrawn();
+    QStack<QString> newOrderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
-         int /*posInShapeStack*/> posMap = _toolSetHandling.getPosMap();
+         int /*posInShapeStack*/> posMap = m_toolSetHandling.getPosMap();
 
-    QPainter painter(&image);
+    QPainter painter(&m_image);
     if(newOrderOfActions.size() >= 1) {
         for(int i = 0; i < newOrderOfActions.size(); i++) {
             QString action = newOrderOfActions.at(i);
@@ -243,7 +243,7 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::FREE_HAND_LINE) {
                 FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
                 QQueue<QPoint> allPoints = freeHandLine.getAllSetPoints();
-                lastPoint = allPoints.first();
+                m_lastPoint = allPoints.first();
                 for(int i = 1; i < allPoints.size(); i++) {
                     redrawLineTo(allPoints.at(i), painter);
                 }
@@ -308,7 +308,7 @@ void ScribbleArea::setUpUndoFunctionality() {
                 textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
                 textEdit->setText(textBox.getTextWritten());
                 textEdit->show();
-                textEditList.append(textEdit);
+                m_textEditList.append(textEdit);
             }
         }
     }
@@ -321,20 +321,20 @@ void ScribbleArea::clearImage() {
     /* QImage newImage;
     image = newImage;
     image.fill(qRgb(255,255,255)); */
-    QPainter painter(&image);
-    for(int i = 0; i < drawnRectList.size(); i++) {
-        painter.eraseRect(drawnRectList.at(i));
-        drawnRectList.takeAt(i);
+    QPainter painter(&m_image);
+    for(int i = 0; i < m_drawnRectList.size(); i++) {
+        painter.eraseRect(m_drawnRectList.at(i));
+        m_drawnRectList.takeAt(i);
     }
-    for(int i = 0; i < drawnRectPointerList.size(); i++) {
-        painter.eraseRect(*drawnRectPointerList.at(i));
-        delete drawnRectPointerList.at(i);
-        drawnRectPointerList.removeAt(i);
+    for(int i = 0; i < m_drawnRectPointerList.size(); i++) {
+        painter.eraseRect(*m_drawnRectPointerList.at(i));
+        delete m_drawnRectPointerList.at(i);
+        m_drawnRectPointerList.removeAt(i);
     }
-    image.fill(qRgb(255,255,255));
-    modified = true;
-    while(!textEditList.isEmpty()) {
-        QTextEdit *textEdit = textEditList.dequeue();
+    m_image.fill(qRgb(255,255,255));
+    m_modified = true;
+    while(!m_textEditList.isEmpty()) {
+        QTextEdit *textEdit = m_textEditList.dequeue();
         delete textEdit;
     }
     update();
@@ -342,92 +342,92 @@ void ScribbleArea::clearImage() {
 
 
 void ScribbleArea::keyPressEvent(QKeyEvent *event) {
-    if(currentlyTyping && (event->key() != Qt::Key_Escape)) {
-        QTextEdit *textEdit = textEditList.last();
+    if(m_currentlyTyping && (event->key() != Qt::Key_Escape)) {
+        QTextEdit *textEdit = m_textEditList.last();
         QString tmpCurText = textEdit->toPlainText();
         tmpCurText += event->text();
         textEdit->setText(tmpCurText);
         textEdit->show();
         update();
     }
-    if(currentlyTyping && (event->key() == Qt::Key_Backspace)) {
-        QTextEdit *textEdit = textEditList.last();
+    if(m_currentlyTyping && (event->key() == Qt::Key_Backspace)) {
+        QTextEdit *textEdit = m_textEditList.last();
         QString tmpCurText = textEdit->toPlainText();
         tmpCurText.remove(tmpCurText.length()-2, 2);
         textEdit->setText(tmpCurText);
         textEdit->show();
         update();
     }
-    if(currentlyTyping && (event->key() == Qt::Key_Escape)) {
-        QTextEdit *textEdit = textEditList.last();
-        currentlyTyping = false;
+    if(m_currentlyTyping && (event->key() == Qt::Key_Escape)) {
+        QTextEdit *textEdit = m_textEditList.last();
+        m_currentlyTyping = false;
         textEdit->setReadOnly(true);
-        _toolSetHandling.updateTextBox(textEdit->toPlainText());
+        m_toolSetHandling.updateTextBox(textEdit->toPlainText());
     }
 }
 
 
 void ScribbleArea::mousePressEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(turnBoolOn) {
-            lastPoint = event->pos();
+        if(m_turnBoolOn) {
+            m_lastPoint = event->pos();
             FreeHandLine freeHandLine;
-            freeHandLine.setNewPoint(lastPoint);
-            freeHandLine.setPenColor(myPenColor);
-            freeHandLine.setPenWidth(myPenWidth);
-            _toolSetHandling.addFreeHandLineToQueue(freeHandLine);
-            int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-            int sizeOfFreeHandLineQueue = _toolSetHandling.getQueueOfFreeHandLines().size();
+            freeHandLine.setNewPoint(m_lastPoint);
+            freeHandLine.setPenColor(m_myPenColor);
+            freeHandLine.setPenWidth(m_myPenWidth);
+            m_toolSetHandling.addFreeHandLineToQueue(freeHandLine);
+            int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+            int sizeOfFreeHandLineQueue = m_toolSetHandling.getQueueOfFreeHandLines().size();
             int posFreeHandLineInQueue = (sizeOfFreeHandLineQueue -1);
-            _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posFreeHandLineInQueue);
+            m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posFreeHandLineInQueue);
         }
-        if(drawLineBool && this->underMouse()) {
+        if(m_drawLineBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(textBool && this->underMouse()) {
+        if(m_textBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpSquareBool && this->underMouse()) {
+        if(m_setUpSquareBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
-            drawingSquare.setX(m_x1);
-            drawingSquare.setY(m_y1);
-            startDrawingSquare = true;
+            m_drawingSquare.setX(m_x1);
+            m_drawingSquare.setY(m_y1);
+            m_startDrawingSquare = true;
         }
-        if(setUpEllipseBool && this->underMouse()) {
+        if(m_setUpEllipseBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(secondConvexReadyToDraw && this->underMouse()) {
-            if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
+        if(m_secondConvexReadyToDraw && this->underMouse()) {
+            if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
                 m_x1 = event->x();
                 m_y1 = event->y();
                 QPointF tmpPoint(m_x1, m_y1);
-                secondCoordSet.append(tmpPoint);
-                secondNumberOfPointsDrawn++;
-                if(secondNumberOfPointsDrawn < secondTotalNumNeedToDraw) {
+                m_secondCoordSet.append(tmpPoint);
+                m_secondNumberOfPointsDrawn++;
+                if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
                     return;
                 }
             }
-            if(secondNumberOfPointsDrawn >= secondTotalNumNeedToDraw) {
+            if(m_secondNumberOfPointsDrawn >= m_secondTotalNumNeedToDraw) {
                 secondDrawConvexPolygon();
             }
         }
-        if(setUpLinearGradientColorsBool && this->underMouse()) {
+        if(m_setUpLinearGradientColorsBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpConicalGradientColorsBool && this->underMouse()) {
+        if(m_setUpConicalGradientColorsBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpRadialGradientColorsBool && this->underMouse()) {
+        if(m_setUpRadialGradientColorsBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(setUpSquircleBool && this->underMouse()) {
+        if(m_setUpSquircleBool && this->underMouse()) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
@@ -437,32 +437,30 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->buttons() & Qt::LeftButton) {
-        if(turnBoolOn) {
+        if(m_turnBoolOn) {
             drawLineTo(event->pos());
-            if(_toolSetHandling.getQueueOfFreeHandLines().size() > 0) {
-                FreeHandLine &curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
-                curFreeHandLine.setNewPoint(event->pos());
-            }
+            FreeHandLine &curFreeHandLine = m_toolSetHandling.obtainCurFreeHandLineInstance();
+            curFreeHandLine.setNewPoint(event->pos());
         }
-        if(setUpSquareBool && this->underMouse()) {
-            QPainter painter(&image);
-            if(startDrawingSquare == false) {
-                painter.eraseRect(drawingSquare);
+        if(m_setUpSquareBool && this->underMouse()) {
+            QPainter painter(&m_image);
+            if(m_startDrawingSquare == false) {
+                painter.eraseRect(m_drawingSquare);
             }
-            startDrawingSquare = false;
+            m_startDrawingSquare = false;
             int dx = event->x();
             int dy = event->y();
             int width = (dx - m_x1);
             int height = (dy - m_y1);
 
-            drawingSquare.setWidth(width);
-            drawingSquare.setHeight(height);
-            painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+            m_drawingSquare.setWidth(width);
+            m_drawingSquare.setHeight(height);
+            painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-            painter.drawRect(drawingSquare);
+            painter.drawRect(m_drawingSquare);
             update();
         }
-        if(setUpSquircleBool && this->underMouse()) {
+        if(m_setUpSquircleBool && this->underMouse()) {
             int dx = event->x();
             int dy = event->y();
             int width = (dx - m_x1);
@@ -477,7 +475,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
                 squareWidth = 20;
             }
 
-            QPainter painter(&image);
+            QPainter painter(&m_image);
             QPainterPath path;
 
             path.moveTo(m_x1 + squareWidth, m_y1);
@@ -491,9 +489,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             path.arcTo(m_x1, m_y1, squareWidth, squareWidth, 180.0, -90.0);
             path.closeSubpath();
 
-
             painter.setBrush(Qt::white);
-            painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+            painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
             Qt::RoundCap, Qt::RoundJoin));
             painter.drawPath(path);
             update();
@@ -504,52 +501,52 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
 
 void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
     if(event->button() == Qt::LeftButton) {
-        if(turnBoolOn) {
+        if(m_turnBoolOn) {
             drawLineTo(event->pos());
-            FreeHandLine curFreeHandLine = _toolSetHandling.obtainCurFreeHandLineInstance();
+            FreeHandLine curFreeHandLine = m_toolSetHandling.obtainCurFreeHandLineInstance();
             curFreeHandLine.setNewPoint(event->pos());
-            turnBoolOn = false;
+            m_turnBoolOn = false;
         }
-        if(drawLineBool) {
-            drawLineBool = false;
+        if(m_drawLineBool) {
+            m_drawLineBool = false;
             m_x2 = event->x();
             m_y2 = event->y();
             drawLine();
         }
-        if(textBool) {
+        if(m_textBool) {
             m_x2 = event->x();
             m_y2 = event->y();
             createTextBlurb();
         }
-        if(setUpSquareBool && this->underMouse()) {
-            QPainter painter(&image);
-            painter.eraseRect(drawingSquare);
+        if(m_setUpSquareBool && this->underMouse()) {
+            QPainter painter(&m_image);
+            painter.eraseRect(m_drawingSquare);
             painter.end();
             m_x2 = event->x();
             m_y2 = event->y();
             createSquare();
         }
-        if(setUpEllipseBool && this->underMouse()) {
+        if(m_setUpEllipseBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
             createEllipse();
         }
-        if(setUpLinearGradientColorsBool && this->underMouse()) {
+        if(m_setUpLinearGradientColorsBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
-            linearGradientColorSelection(userChoseThisNumColors);
+            linearGradientColorSelection(m_userChoseThisNumColors);
         }
-        if(setUpConicalGradientColorsBool && this->underMouse()) {
+        if(m_setUpConicalGradientColorsBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
-            conicalGradientColorSelection(userChoseThisNumColors);
+            conicalGradientColorSelection(m_userChoseThisNumColors);
         }
-        if(setUpRadialGradientColorsBool && this->underMouse()) {
+        if(m_setUpRadialGradientColorsBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
-            radialGradientColorSelection(userChoseThisNumColors);
+            radialGradientColorSelection(m_userChoseThisNumColors);
         }
-        if(setUpSquircleBool && this->underMouse()) {
+        if(m_setUpSquircleBool && this->underMouse()) {
             m_x2 = event->x();
             m_y2 = event->y();
             drawSquircle();
@@ -561,15 +558,15 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
 void ScribbleArea::paintEvent(QPaintEvent *event) {
     QPainter painter(this);
     QRect dirtyRect = event->rect();
-    painter.drawImage(dirtyRect, image, dirtyRect);
+    painter.drawImage(dirtyRect, m_image, dirtyRect);
 }
 
 
 void ScribbleArea::resizeEvent(QResizeEvent *event) {
-    if(width() > image.width() || height() > image.height()) {
-        int newWidth = qMax(width() + 128, image.width());
-        int newHeight = qMax(height() + 128, image.height());
-        resizeImage(&image, QSize(newWidth, newHeight));
+    if(width() > m_image.width() || height() > m_image.height()) {
+        int newWidth = qMax(width() + 128, m_image.width());
+        int newHeight = qMax(height() + 128, m_image.height());
+        resizeImage(&m_image, QSize(newWidth, newHeight));
         update();
     }
     QWidget::resizeEvent(event);
@@ -577,23 +574,23 @@ void ScribbleArea::resizeEvent(QResizeEvent *event) {
 
 
 void ScribbleArea::drawLineTo(const QPoint &endPoint) {
-    QPainter painter(&image);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    QPainter painter(&m_image);
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    painter.drawLine(lastPoint, endPoint);
-    modified = true;
-    int rad = (myPenWidth / 2) + 2;
-    update(QRect(lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
-    lastPoint = endPoint;
+    painter.drawLine(m_lastPoint, endPoint);
+    m_modified = true;
+    int rad = (m_myPenWidth / 2) + 2;
+    update(QRect(m_lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
+    m_lastPoint = endPoint;
 }
 
 
 void ScribbleArea::redrawLineTo(const QPoint &endPoint, QPainter &curPainter) {
-    curPainter.drawLine(lastPoint, endPoint);
-    modified = true;
-    int rad = (myPenWidth / 2) + 2;
-    update(QRect(lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
-    lastPoint = endPoint;
+    curPainter.drawLine(m_lastPoint, endPoint);
+    m_modified = true;
+    int rad = (m_myPenWidth / 2) + 2;
+    update(QRect(m_lastPoint, endPoint).normalized().adjusted(-rad, -rad, +rad, +rad));
+    m_lastPoint = endPoint;
 }
 
 
@@ -613,23 +610,23 @@ void ScribbleArea::drawLine() {
         return;
     }
 
-    QPainter painter(&image);
+    QPainter painter(&m_image);
     QPoint pointOne(m_x1, m_y1);
     QPoint pointTwo(m_x2, m_y2);
 
     StraightLine straightLine;
     straightLine.setPoints(pointOne, pointTwo);
 
-    _toolSetHandling.addStraightLineToQueue(straightLine);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfStraightLineQueue = _toolSetHandling.getQueueOfStraightLines().size();
+    m_toolSetHandling.addStraightLineToQueue(straightLine);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfStraightLineQueue = m_toolSetHandling.getQueueOfStraightLines().size();
     int posStraightLineInQueue = (sizeOfStraightLineQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posStraightLineInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posStraightLineInQueue);
 
     painter.drawEllipse(pointOne, 1, 1);
     painter.drawEllipse(pointTwo, 1, 1);
 
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
 
     painter.drawLine(pointOne, pointTwo);
@@ -639,7 +636,7 @@ void ScribbleArea::drawLine() {
 
 
 void ScribbleArea::createTextBlurb() {
-    currentlyTyping = true;
+    m_currentlyTyping = true;
 
     QTextEdit *textEdit = new QTextEdit(this);
     textEdit->setFrameStyle(QFrame::NoFrame);
@@ -647,38 +644,38 @@ void ScribbleArea::createTextBlurb() {
     int diff_x = (m_x2 - m_x1);
     int diff_y = (m_y2 - m_y1);
 
-    _toolSetHandling.updateTextBox(textEdit->toPlainText());
-    _toolSetHandling.addCoords(m_x1, m_x2, m_y1, m_y2);
+    m_toolSetHandling.updateTextBox(textEdit->toPlainText());
+    m_toolSetHandling.addCoords(m_x1, m_x2, m_y1, m_y2);
 
-    textEdit->setFont(_toolSetHandling.getFont());
+    textEdit->setFont(m_toolSetHandling.getFont());
     textEdit->setGeometry(m_x1, m_y1, diff_x, diff_y);
     textEdit->show();
-    textEditList.append(textEdit);
+    m_textEditList.append(textEdit);
 }
 
 
 void ScribbleArea::createSquare() {
-    QPainter painter(&image);
+    QPainter painter(&m_image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rect(m_x1, m_y1, width, height);
     Rectangle rectangle;
     rectangle.setCoords(m_x1, m_x2, m_y1, m_y2);
-    rectangle.setPenColor(myPenColor);
-    rectangle.setPenWidth(myPenWidth);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    rectangle.setPenColor(m_myPenColor);
+    rectangle.setPenWidth(m_myPenWidth);
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawRect(rect);
     painter.end();
 
-    _toolSetHandling.addRectangleToQueue(rectangle);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfRectangleQueue = _toolSetHandling.getQueueOfRectangles().size();
+    m_toolSetHandling.addRectangleToQueue(rectangle);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfRectangleQueue = m_toolSetHandling.getQueueOfRectangles().size();
     int posSquareInQueue = (sizeOfRectangleQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
 
-    drawnRectList << rect;
-    setUpSquareBool = false;
+    m_drawnRectList << rect;
+    m_setUpSquareBool = false;
     update();
 }
 
@@ -687,79 +684,79 @@ void ScribbleArea::createEllipse() {
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rect(m_x1, m_y1, width, height);
-    QPainter painter(&image);
+    QPainter painter(&m_image);
     Ellipse ellipse;
     ellipse.setCoords(m_x1, m_x2, m_y1, m_y2);
-    ellipse.setPenColor(myPenColor);
-    ellipse.setPenWidth(myPenWidth);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    ellipse.setPenColor(m_myPenColor);
+    ellipse.setPenWidth(m_myPenWidth);
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawEllipse(rect);
 
-    _toolSetHandling.addEllipseToQueue(ellipse);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfEllipsesQueue = _toolSetHandling.getQueueOfEllipses().size();
+    m_toolSetHandling.addEllipseToQueue(ellipse);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfEllipsesQueue = m_toolSetHandling.getQueueOfEllipses().size();
     int posSquareInQueue = (sizeOfEllipsesQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
 
-    drawnRectList << rect;
-    setUpEllipseBool = false;
+    m_drawnRectList << rect;
+    m_setUpEllipseBool = false;
     update();
 }
 
 
 void ScribbleArea::secondDrawConvexPolygon() {
-    QPainter painter(&image);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    QPainter painter(&m_image);
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    int arrSize = secondCoordSet.size();
+    int arrSize = m_secondCoordSet.size();
     QPointF points[arrSize];
     ConvexPolygon convexPolygon;
-    for(int i = 0; i < secondCoordSet.size(); i++) {
-        points[i] = secondCoordSet.at(i);
-        convexPolygon.addPointToQueue(secondCoordSet.at(i));
+    for(int i = 0; i < m_secondCoordSet.size(); i++) {
+        points[i] = m_secondCoordSet.at(i);
+        convexPolygon.addPointToQueue(m_secondCoordSet.at(i));
     }
     painter.drawConvexPolygon(points, arrSize);
 
-    _toolSetHandling.addConvexPolygonToQueue(convexPolygon);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfConvexPolygonQueue = _toolSetHandling.getQueueOfConvexPolygons().size();
+    m_toolSetHandling.addConvexPolygonToQueue(convexPolygon);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfConvexPolygonQueue = m_toolSetHandling.getQueueOfConvexPolygons().size();
     int posConvexPolygonInQueue = (sizeOfConvexPolygonQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
 
-    secondConvexReadyToDraw = false;
-    secondCoordSet.clear();
+    m_secondConvexReadyToDraw = false;
+    m_secondCoordSet.clear();
     update();
 }
 
 
 void ScribbleArea::linearGradientColorSelection(int numColors) {
-    _gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
-    connect(_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
+    m_gradientColorInputDialog->showLinearGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
+    connect(m_gradientColorInputDialog, SIGNAL(linearGradientToolsSet()), this, SLOT(readyToDrawLinearGradient()));
 
     LinearGradientShape linearGradientShape;
     linearGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
 
-    _toolSetHandling.addLinearGradientShapeToQueue(linearGradientShape);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfLinearGradientShapes = _toolSetHandling.getQueueOfLinearGradientShapes().size();
+    m_toolSetHandling.addLinearGradientShapeToQueue(linearGradientShape);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfLinearGradientShapes = m_toolSetHandling.getQueueOfLinearGradientShapes().size();
     int posLinearGradientShapeInQueue = (sizeOfLinearGradientShapes - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posLinearGradientShapeInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posLinearGradientShapeInQueue);
 }
 
 
 void ScribbleArea::readyToDrawLinearGradient() {
-    QLinearGradient curLinearGradient = _gradientColorInputDialog->getLinearGradientTools();
-    QPainter painter(&image);
+    QLinearGradient curLinearGradient = m_gradientColorInputDialog->getLinearGradientTools();
+    QPainter painter(&m_image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectLinear(m_x1, m_y1, width, height);
 
-    _toolSetHandling.updateLinearGradient(curLinearGradient);
+    m_toolSetHandling.updateLinearGradient(curLinearGradient);
 
     painter.fillRect(rectLinear, curLinearGradient);
-    setUpLinearGradientColorsBool = false;
-    drawnRectList << rectLinear;
+    m_setUpLinearGradientColorsBool = false;
+    m_drawnRectList << rectLinear;
 
     update();
 }
@@ -767,7 +764,7 @@ void ScribbleArea::readyToDrawLinearGradient() {
 
 
 void ScribbleArea::drawSquircle() {
-    QPainter painter(&image);
+    QPainter painter(&m_image);
     QPainterPath path;
 
     path.moveTo(m_x1 + 20, m_y1);
@@ -782,86 +779,86 @@ void ScribbleArea::drawSquircle() {
     path.closeSubpath();
 
     painter.setBrush(Qt::white);
-    painter.setPen(QPen(myPenColor, myPenWidth, Qt::SolidLine,
+    painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
     painter.drawPath(path);
 
     Squircle squircle;
     squircle.setPainterPath(path);
-    squircle.setPenWidth(myPenWidth);
-    squircle.setPenColor(myPenColor);
+    squircle.setPenWidth(m_myPenWidth);
+    squircle.setPenColor(m_myPenColor);
 
-    _toolSetHandling.addSquircleToQueue(squircle);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfSquircleQueue = _toolSetHandling.getQueueOfSquircles().size();
+    m_toolSetHandling.addSquircleToQueue(squircle);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfSquircleQueue = m_toolSetHandling.getQueueOfSquircles().size();
     int posSquircleInQueue = (sizeOfSquircleQueue - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquircleInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquircleInQueue);
 
-    setUpSquircleBool = false;
+    m_setUpSquircleBool = false;
     update();
 }
 
 
 void ScribbleArea::conicalGradientColorSelection(int numColors) {
-    _gradientColorInputDialog->showConicalGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
-    connect(_gradientColorInputDialog, SIGNAL(conicalGradientToolsSet()), this, SLOT(readyToDrawConicalGradient()));
+    m_gradientColorInputDialog->showConicalGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors);
+    connect(m_gradientColorInputDialog, SIGNAL(conicalGradientToolsSet()), this, SLOT(readyToDrawConicalGradient()));
 
     ConicalGradientShape conicalGradientShape;
     conicalGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
 
-    _toolSetHandling.addConicalGradientShapeToQueue(conicalGradientShape);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfConicalGradientShapes = _toolSetHandling.getQueueOfConicalGradientShapes().size();
+    m_toolSetHandling.addConicalGradientShapeToQueue(conicalGradientShape);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfConicalGradientShapes = m_toolSetHandling.getQueueOfConicalGradientShapes().size();
     int posConicalGradientShapeInQueue = (sizeOfConicalGradientShapes - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConicalGradientShapeInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConicalGradientShapeInQueue);
 }
 
 
 void ScribbleArea::readyToDrawConicalGradient() {
-    QConicalGradient* curConicalGradient = _gradientColorInputDialog->getConicalGradientTools();
-    QPainter painter(&image);
+    QConicalGradient* curConicalGradient = m_gradientColorInputDialog->getConicalGradientTools();
+    QPainter painter(&m_image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectConical(m_x1, m_y1, width, height);
 
-    _toolSetHandling.updateConicalGradient(*curConicalGradient);
+    m_toolSetHandling.updateConicalGradient(*curConicalGradient);
 
     painter.fillRect(rectConical, *curConicalGradient);
-    setUpConicalGradientColorsBool = false;
-    drawnRectList << rectConical;
+    m_setUpConicalGradientColorsBool = false;
+    m_drawnRectList << rectConical;
 
     update();
 }
 
 
 void ScribbleArea::radialGradientColorSelection(int numColors) {
-    _gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors,
-                                                        image.width(), image.height());
-    connect(_gradientColorInputDialog, SIGNAL(radialGradientToolsSet()), this, SLOT(readyToDrawRadialGradient()));
+    m_gradientColorInputDialog->showRadialGradientWidget(m_x1, m_y1, m_x2, m_y2, numColors,
+                                                        m_image.width(), m_image.height());
+    connect(m_gradientColorInputDialog, SIGNAL(radialGradientToolsSet()), this, SLOT(readyToDrawRadialGradient()));
 
     RadialGradientShape radialGradientShape;
     radialGradientShape.setCoords(m_x1, m_x2, m_y1, m_y2);
 
-    _toolSetHandling.addRadialGradientShapeToQueue(radialGradientShape);
-    int posLastActionAdded = _toolSetHandling.getPositionOfLastActionAdded();
-    int sizeOfRadialGradientShapes = _toolSetHandling.getQueueOfRadialGradientShapes().size();
+    m_toolSetHandling.addRadialGradientShapeToQueue(radialGradientShape);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfRadialGradientShapes = m_toolSetHandling.getQueueOfRadialGradientShapes().size();
     int posRadialGradientShapeInQueue = (sizeOfRadialGradientShapes - 1);
-    _toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posRadialGradientShapeInQueue);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posRadialGradientShapeInQueue);
 }
 
 
 void ScribbleArea::readyToDrawRadialGradient() {
-    QRadialGradient* curRadialGradient = _gradientColorInputDialog->getRadialGradientTools();
-    QPainter painter(&image);
+    QRadialGradient* curRadialGradient = m_gradientColorInputDialog->getRadialGradientTools();
+    QPainter painter(&m_image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
     QRect rectRadial(m_x1, m_y1, width, height);
 
-    _toolSetHandling.updateRadialGradient(*curRadialGradient);
+    m_toolSetHandling.updateRadialGradient(*curRadialGradient);
 
     painter.fillRect(rectRadial, *curRadialGradient);
-    setUpRadialGradientColorsBool = false;
-    drawnRectList << rectRadial;
+    m_setUpRadialGradientColorsBool = false;
+    m_drawnRectList << rectRadial;
 
     update();
 }
@@ -874,16 +871,12 @@ void ScribbleArea::print() {
     if(printDialog.exec() == QDialog::Accepted) {
         QPainter painter(&printer);
         QRect rect = painter.viewport();
-        QSize size = image.size();
+        QSize size = m_image.size();
         size.scale(rect.size(), Qt::KeepAspectRatio);
         painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-        painter.setWindow(image.rect());
-        painter.drawImage(0,0,image);
+        painter.setWindow(m_image.rect());
+        painter.drawImage(0,0,m_image);
     }
 #endif // QT_CONFIG(printdialog)
 }
 
-// for when want to build "set font" tool
-    // curFont = QFontDialog::getFont(
-                // &ok, QFont("Helvetica [Cronyx]", 10), this);
-    // painter.setFont(curFont);

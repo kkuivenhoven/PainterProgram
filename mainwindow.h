@@ -54,27 +54,27 @@ private:
 
     bool saveFile(const QByteArray &fileFormat);
 
-    ScribbleArea *scribblearea;
-    QMenu *saveAsMenu;
-    QMenu *fileMenu;
-    QMenu *optionMenu;
-    QMenu *helpMenu;
+    ScribbleArea *m_scribblearea;
+    QMenu *m_saveAsMenu;
+    QMenu *m_fileMenu;
+    QMenu *m_optionMenu;
+    QMenu *m_helpMenu;
 
-    QAction *openAction;
+    QAction *m_openAction;
 
-    QList<QAction *> saveAsActs;
-    QAction *penWidthAct;
-    QAction *clearScreenAct;
-    QAction *aboutAct;
-    QAction *aboutQtAct;
-    QAction *exitAction;
-    QAction *printAct;
-    QAction *penColorAct;
-    QAction *filLEaselAct;
-    QAction *openAct;
-    QAction *fillEaselAct;
+    QList<QAction *> m_saveAsActs;
+    QAction *m_penWidthAct;
+    QAction *m_clearScreenAct;
+    QAction *m_aboutAct;
+    QAction *m_aboutQtAct;
+    QAction *m_exitAction;
+    QAction *m_printAct;
+    QAction *m_penColorAct;
+    QAction *m_filLEaselAct;
+    QAction *m_openAct;
+    QAction *m_fillEaselAct;
 
-    SubMenu *subMenu;
+    SubMenu *m_subMenu;
 
 };
 
