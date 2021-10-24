@@ -324,8 +324,6 @@ void ScribbleArea::setUpUndoFunctionality() {
                 painter.setPen(pen);
                 QPoint pointOne = straightLine.getPointOne();
                 QPoint pointTwo = straightLine.getPointTwo();
-                painter.drawEllipse(pointOne, 1, 1);
-                painter.drawEllipse(pointTwo, 1, 1);
                 painter.drawLine(pointOne, pointTwo);
             }
             if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
@@ -480,8 +478,6 @@ void ScribbleArea::restoreImage() {
                 painter.setPen(pen);
                 QPoint pointOne = straightLine.getPointOne();
                 QPoint pointTwo = straightLine.getPointTwo();
-                painter.drawEllipse(pointOne, 1, 1);
-                painter.drawEllipse(pointTwo, 1, 1);
                 painter.drawLine(pointOne, pointTwo);
             }
             if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
@@ -689,6 +685,15 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             drawLineTo(event->pos());
             FreeHandLine &curFreeHandLine = m_toolSetHandling.obtainCurFreeHandLineInstance();
             curFreeHandLine.setNewPoint(event->pos());
+        }
+        if(m_drawLineBool && this->underMouse()) {
+            restoreImage();
+            QPainter painter(&m_image);
+            painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
+                Qt::RoundCap, Qt::RoundJoin));
+            QPoint pointOne(m_x1, m_y1);
+            painter.drawLine(pointOne, event->pos());
+            update();
         }
         if(m_setUpSquareBool && this->underMouse()) {
             QPainter painter(&m_image);
@@ -904,9 +909,6 @@ void ScribbleArea::drawLine() {
     int sizeOfStraightLineQueue = m_toolSetHandling.getQueueOfStraightLines().size();
     int posStraightLineInQueue = (sizeOfStraightLineQueue - 1);
     m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posStraightLineInQueue);
-
-    painter.drawEllipse(pointOne, 1, 1);
-    painter.drawEllipse(pointTwo, 1, 1);
 
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
