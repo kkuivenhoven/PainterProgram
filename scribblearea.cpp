@@ -261,11 +261,17 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::CONVEX_POLYGON) {
                 ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
                 QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
-                QPointF points[allPoints.size()];
+                QPainterPath path;
                 for(int i = 0; i < allPoints.size(); i++) {
-                    points[i] = allPoints.at(i);
+                    if(i == 0) {
+                        path.moveTo(allPoints.at(i));
+                    } else {
+                        path.lineTo(allPoints.at(i));
+                    }
                 }
-                painter.drawConvexPolygon(points, allPoints.size());
+                path.closeSubpath();
+                painter.fillPath(path, Qt::white);
+                painter.drawPath(path);
             }
             if(action == ToolSetHandling::STRAIGHT_LINE) {
                 StraightLine straightLine = straightLineQueue.at(shapePos);
@@ -376,11 +382,17 @@ void ScribbleArea::restoreImage() {
             if(action == ToolSetHandling::CONVEX_POLYGON) {
                 ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
                 QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
-                QPointF points[allPoints.size()];
+                QPainterPath path;
                 for(int i = 0; i < allPoints.size(); i++) {
-                    points[i] = allPoints.at(i);
+                    if(i == 0) {
+                        path.moveTo(allPoints.at(i));
+                    } else {
+                        path.lineTo(allPoints.at(i));
+                    }
                 }
-                painter.drawConvexPolygon(points, allPoints.size());
+                path.closeSubpath();
+                painter.fillPath(path, Qt::white);
+                painter.drawPath(path);
             }
             if(action == ToolSetHandling::STRAIGHT_LINE) {
                 StraightLine straightLine = straightLineQueue.at(shapePos);
@@ -910,7 +922,18 @@ void ScribbleArea::drawConvexPolygon() {
         points[i] = m_coordSet.at(i);
         convexPolygon.addPointToQueue(m_coordSet.at(i));
     }
-    painter.drawConvexPolygon(points, arrSize);
+    // painter.drawConvexPolygon(points, arrSize);
+    QPainterPath path;
+    for(int i = 0; i < m_coordSet.size(); i++) {
+        if(i == 0) {
+            path.moveTo(m_coordSet.at(i));
+        } else {
+            path.lineTo(m_coordSet.at(i));
+        }
+    }
+    path.closeSubpath();
+    painter.fillPath(path, Qt::white);
+    painter.drawPath(path);
 
     m_toolSetHandling.addConvexPolygonToQueue(convexPolygon);
     int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
