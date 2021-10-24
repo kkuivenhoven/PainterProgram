@@ -568,7 +568,6 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             if(m_coordSet.size() > 0) {
                 restoreImage();
                 QPainter painter(&m_image);
-                // painter.fillPath(path, Qt::white);
                 QPainterPath path;
                 if(m_coordSet.size() > 1) {
                     path.moveTo(m_coordSet.at(0));
@@ -585,7 +584,6 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
                 painter.drawLine(pointOne, event->pos());
 
                 path.lineTo(pointOne);
-                // path.closeSubpath();
                 painter.fillPath(path, Qt::white);
                 if(m_coordSet.size() > 1) {
                     painter.drawPath(path);
