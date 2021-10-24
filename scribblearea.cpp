@@ -646,8 +646,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             if(m_coordSet.size() > 0) {
                 restoreImage();
                 QPainter painter(&m_image);
-                painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
-                    Qt::RoundCap, Qt::RoundJoin));
+                // painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
+                    // Qt::RoundCap, Qt::RoundJoin));
                 QPainterPath path;
                 if(m_coordSet.size() > 1) {
                     path.moveTo(m_coordSet.at(0));
@@ -660,20 +660,21 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
                         }
                     }
                 }
-                QPointF pointOne = m_coordSet.last();
-                painter.drawLine(pointOne, event->pos());
+                QPointF lastPointRecorded = m_coordSet.last();
+                painter.drawLine(lastPointRecorded, event->pos());
 
-                path.lineTo(pointOne);
+                path.lineTo(lastPointRecorded);
                 painter.fillPath(path, Qt::white);
                 if(m_coordSet.size() > 1) {
                     painter.drawPath(path);
 
-                    QPen pen;
+                    /* QPen pen;
                     pen.setColor(Qt::white);
                     painter.setPen(pen);
                     QPainterPath pathTwo;
-                    pathTwo.moveTo(pointOne);
+                    pathTwo.moveTo(lastPointRecorded);
                     pathTwo.lineTo(m_coordSet.at(0));
+                    painter.drawPath(pathTwo); */
                 }
 
                 update();
@@ -912,7 +913,6 @@ void ScribbleArea::drawLine() {
 
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-
     painter.drawLine(pointOne, pointTwo);
 
     update();
@@ -1018,7 +1018,6 @@ void ScribbleArea::drawConvexPolygon() {
         points[i] = m_coordSet.at(i);
         convexPolygon.addPointToQueue(m_coordSet.at(i));
     }
-    // painter.drawConvexPolygon(points, arrSize);
     QPainterPath path;
     for(int i = 0; i < m_coordSet.size(); i++) {
         if(i == 0) {
