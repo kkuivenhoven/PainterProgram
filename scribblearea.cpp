@@ -568,17 +568,36 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             if(m_coordSet.size() > 0) {
                 restoreImage();
                 QPainter painter(&m_image);
+                // painter.fillPath(path, Qt::white);
+                QPainterPath path;
                 if(m_coordSet.size() > 1) {
+                    path.moveTo(m_coordSet.at(0));
                     for(int i = 0; i <= (m_coordSet.size()-1); i++) {
                         if(i == 0) {
                             painter.drawLine(m_coordSet.at(i), m_coordSet.at(i+1));
                         } else {
                             painter.drawLine(m_coordSet.at(i-1), m_coordSet.at(i));
+                            path.lineTo(m_coordSet.at(i));
                         }
                     }
                 }
                 QPointF pointOne = m_coordSet.last();
                 painter.drawLine(pointOne, event->pos());
+
+                path.lineTo(pointOne);
+                // path.closeSubpath();
+                painter.fillPath(path, Qt::white);
+                if(m_coordSet.size() > 1) {
+                    painter.drawPath(path);
+
+                    QPen pen;
+                    pen.setColor(Qt::white);
+                    painter.setPen(pen);
+                    QPainterPath pathTwo;
+                    pathTwo.moveTo(pointOne);
+                    pathTwo.lineTo(m_coordSet.at(0));
+                }
+
                 update();
             }
         }
