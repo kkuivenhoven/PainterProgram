@@ -27,7 +27,6 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     m_fontSizeSet = false;
     m_turnBoolOn = false;
     m_setUpSquareBool = false;
-    m_setUpEllipseBool = false;
     m_secondConvexReadyToDraw = false;
     m_textBool = false;
 
@@ -39,6 +38,8 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     m_startDrawingRoundedSquare = false;
     m_startDrawingSquare = false;
     m_setUpSquircleBool = false;
+
+    m_setUpEllipseBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
 }
@@ -223,21 +224,30 @@ void ScribbleArea::setUpUndoFunctionality() {
             int shapePos = posMap.value(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 Rectangle rectangle = rectangleQueue.at(shapePos);
-                int width = (rectangle.getX2() - rectangle.getX1());
-                int height = (rectangle.getY2() - rectangle.getY1());
-                QRect rectToDraw(rectangle.getX1(), rectangle.getY1(), width, height);
-                painter.drawRect(rectToDraw);
+                QPainterPath rectPath;
+                rectPath.moveTo(rectangle.getX1(), rectangle.getY1());
+                rectPath.lineTo(rectangle.getX2(), rectangle.getY1());
+                rectPath.lineTo(rectangle.getX2(), rectangle.getY2());
+                rectPath.lineTo(rectangle.getX1(), rectangle.getY2());
+                rectPath.closeSubpath();
+                painter.fillPath(rectPath, Qt::white);
+                painter.drawPath(rectPath);
             }
             if(action == ToolSetHandling::ELLIPSE) {
                 Ellipse ellipse = ellipseQueue.at(shapePos);
                 int width = (ellipse.getX2() - ellipse.getX1());
                 int height = (ellipse.getY2() - ellipse.getY1());
-                QRect ellipseToDraw(ellipse.getX1(), ellipse.getY1(), width, height);
-                painter.drawEllipse(ellipseToDraw);
+                QPainterPath path;
+                path.moveTo(ellipse.getX2(), ellipse.getY1() + (height/2));
+                path.arcTo(ellipse.getX1(), ellipse.getY1(), width, height, 0.0, 360.0);
+                painter.fillPath(path, Qt::white);
+                painter.drawPath(path);
             }
             if(action == ToolSetHandling::SQUIRCLE) {
                 Squircle squircle = squircleQueue.at(shapePos);
-                painter.drawPath(squircle.getPainterPath());
+                QPainterPath squirclePainterPath = squircle.getPainterPath();
+                painter.fillPath(squirclePainterPath, Qt::white);
+                painter.drawPath(squirclePainterPath);
             }
             if(action == ToolSetHandling::FREE_HAND_LINE) {
                 FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
@@ -289,19 +299,124 @@ void ScribbleArea::setUpUndoFunctionality() {
                 TextBox textBox = textBoxQueue.at(shapePos);
                 int width = (textBox.getX2() - textBox.getX1());
                 int height = (textBox.getY2() - textBox.getY1());
-                /* qDebug() << "width: " << QString::number(width);
-                qDebug() << "height: " << QString::number(height);
-                const QRect rect(textBox.getX1(), textBox.getY1(), width, height);
-                QRect boundingRect;
-                QFont serifFont("Times", 12, QFont::Bold);
-                painter.setFont(serifFont);
-                painter.drawText(rect, Qt::TextWordWrap, tr(textBox.getTextWritten().toUtf8().data()), &boundingRect);
-                painter.drawRect(boundingRect.adjusted(0, 0, width, height));
-                painter.drawRect(rect.adjusted(0, 0, width, height)); */
                 QTextEdit *textEdit = new QTextEdit(this);
                 textEdit->setFrameStyle(QFrame::NoFrame);
                 textEdit->viewport()->setAutoFillBackground(false);
-                // QFont serifFont("Times", 12, QFont::Bold);
+                textEdit->setFont(textBox.getFont());
+
+                textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
+                textEdit->setText(textBox.getTextWritten());
+                textEdit->show();
+                m_textEditList.append(textEdit);
+            }
+        }
+    }
+    update();
+}
+
+
+void ScribbleArea::mouseMovementRedrawImageForEllipse() {
+    clearImage();
+    QQueue<Rectangle> rectangleQueue = m_toolSetHandling.getQueueOfRectangles();
+    QQueue<Ellipse> ellipseQueue = m_toolSetHandling.getQueueOfEllipses();
+    QQueue<Squircle> squircleQueue = m_toolSetHandling.getQueueOfSquircles();
+    QQueue<FreeHandLine> freeHandLineQueue = m_toolSetHandling.getQueueOfFreeHandLines();
+    QQueue<ConvexPolygon> convexPolygonQueue = m_toolSetHandling.getQueueOfConvexPolygons();
+    QQueue<StraightLine> straightLineQueue = m_toolSetHandling.getQueueOfStraightLines();
+    QQueue<LinearGradientShape> linearGradientShapeQueue = m_toolSetHandling.getQueueOfLinearGradientShapes();
+    QQueue<ConicalGradientShape> conicalGradientShapeQueue = m_toolSetHandling.getQueueOfConicalGradientShapes();
+    QQueue<RadialGradientShape> radialGradientShapeQueue = m_toolSetHandling.getQueueOfRadialGradientShapes();
+    QQueue<TextBox> textBoxQueue = m_toolSetHandling.getQueueOfTextBoxes();
+
+    QStack<QString> newOrderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
+    QMap<int /*posInActionStack*/,
+         int /*posInShapeStack*/> posMap = m_toolSetHandling.getPosMap();
+
+    QPainter painter(&m_image);
+    if(newOrderOfActions.size() >= 1) {
+        for(int i = 0; i < newOrderOfActions.size(); i++) {
+            QString action = newOrderOfActions.at(i);
+            int shapePos = posMap.value(i);
+            if(action == ToolSetHandling::RECTANGLE) {
+                Rectangle rectangle = rectangleQueue.at(shapePos);
+                QPainterPath rectPath;
+                rectPath.moveTo(rectangle.getX1(), rectangle.getY1());
+                rectPath.lineTo(rectangle.getX2(), rectangle.getY1());
+                rectPath.lineTo(rectangle.getX2(), rectangle.getY2());
+                rectPath.lineTo(rectangle.getX1(), rectangle.getY2());
+                rectPath.closeSubpath();
+                painter.fillPath(rectPath, Qt::white);
+                painter.drawPath(rectPath);
+            }
+            if(action == ToolSetHandling::ELLIPSE) {
+                Ellipse ellipse = ellipseQueue.at(shapePos);
+                int width = (ellipse.getX2() - ellipse.getX1());
+                int height = (ellipse.getY2() - ellipse.getY1());
+                QPainterPath path;
+                path.moveTo(ellipse.getX2(), ellipse.getY1() + (height/2));
+                path.arcTo(ellipse.getX1(), ellipse.getY1(), width, height, 0.0, 360.0);
+                painter.fillPath(path, Qt::white);
+                painter.drawPath(path);
+            }
+            if(action == ToolSetHandling::SQUIRCLE) {
+                Squircle squircle = squircleQueue.at(shapePos);
+                QPainterPath squirclePainterPath = squircle.getPainterPath();
+                painter.fillPath(squirclePainterPath, Qt::white);
+                painter.drawPath(squirclePainterPath);
+            }
+            if(action == ToolSetHandling::FREE_HAND_LINE) {
+                FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
+                QQueue<QPoint> allPoints = freeHandLine.getAllSetPoints();
+                m_lastPoint = allPoints.first();
+                for(int i = 1; i < allPoints.size(); i++) {
+                    redrawLineTo(allPoints.at(i), painter);
+                }
+            }
+            if(action == ToolSetHandling::CONVEX_POLYGON) {
+                ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
+                QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
+                QPointF points[allPoints.size()];
+                for(int i = 0; i < allPoints.size(); i++) {
+                    points[i] = allPoints.at(i);
+                }
+                painter.drawConvexPolygon(points, allPoints.size());
+            }
+            if(action == ToolSetHandling::STRAIGHT_LINE) {
+                StraightLine straightLine = straightLineQueue.at(shapePos);
+                QPoint pointOne = straightLine.getPointOne();
+                QPoint pointTwo = straightLine.getPointTwo();
+                painter.drawEllipse(pointOne, 1, 1);
+                painter.drawEllipse(pointTwo, 1, 1);
+                painter.drawLine(pointOne, pointTwo);
+            }
+            if(action == ToolSetHandling::LINEAR_GRADIENT_SHAPE) {
+                LinearGradientShape linearGradientShape = linearGradientShapeQueue.at(shapePos);
+                int width = (linearGradientShape.getX2() - linearGradientShape.getX1());
+                int height = (linearGradientShape.getY2() - linearGradientShape.getY1());
+                QRect rectLinear(linearGradientShape.getX1(), linearGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, linearGradientShape.getLinearGradient());
+            }
+            if(action == ToolSetHandling::CONICAL_GRADIENT_SHAPE) {
+                ConicalGradientShape conicalGradientShape = conicalGradientShapeQueue.at(shapePos);
+                int width = (conicalGradientShape.getX2() - conicalGradientShape.getX1());
+                int height = (conicalGradientShape.getY2() - conicalGradientShape.getY1());
+                QRect rectLinear(conicalGradientShape.getX1(), conicalGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, conicalGradientShape.getConicalGradient());
+            }
+            if(action == ToolSetHandling::RADIAL_GRADIENT_SHAPE) {
+                RadialGradientShape radialGradientShape = radialGradientShapeQueue.at(shapePos);
+                int width = (radialGradientShape.getX2() - radialGradientShape.getX1());
+                int height = (radialGradientShape.getY2() - radialGradientShape.getY1());
+                QRect rectLinear(radialGradientShape.getX1(), radialGradientShape.getY1(), width, height);
+                painter.fillRect(rectLinear, radialGradientShape.getRadialGradient());
+            }
+            if(action == ToolSetHandling::TEXT_BOX) {
+                TextBox textBox = textBoxQueue.at(shapePos);
+                int width = (textBox.getX2() - textBox.getX1());
+                int height = (textBox.getY2() - textBox.getY1());
+                QTextEdit *textEdit = new QTextEdit(this);
+                textEdit->setFrameStyle(QFrame::NoFrame);
+                textEdit->viewport()->setAutoFillBackground(false);
                 textEdit->setFont(textBox.getFont());
 
                 textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
@@ -456,8 +571,23 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             m_drawingSquare.setHeight(height);
             painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
+            // painter.setBrush(QColor(0, 0, 255, 127));
             painter.drawRect(m_drawingSquare);
             update();
+            /* QPainter painter(&m_image);
+            int dx = event->x();
+            int dy = event->y();
+
+            QPainterPath rectPath;
+            rectPath.moveTo(m_x1, m_y1);
+            rectPath.moveTo(dy, m_y1);
+            rectPath.moveTo(dx, dy);
+            rectPath.moveTo(m_x1, m_y1);
+            rectPath.closeSubpath();
+
+            painter.drawPath(rectPath);
+            painter.end();
+            update(); */
         }
         if(m_setUpSquircleBool && this->underMouse()) {
             int dx = event->x();
@@ -492,6 +622,24 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
             Qt::RoundCap, Qt::RoundJoin));
             painter.drawPath(path);
+            update();
+        }
+        if(m_setUpEllipseBool && this->underMouse()) {
+            mouseMovementRedrawImageForEllipse();
+            QPainter painter(&m_image);
+
+            QPainterPath curEllipse;
+            int dx = event->x();
+            int dy = event->y();
+            int width = (dx - m_x1);
+            int height = (dy - m_y1);
+
+            curEllipse.moveTo(dx, m_y1 + (height/2));
+            curEllipse.arcTo(m_x1, m_y1, width, height, 0.0, 360.0);
+
+            painter.fillPath(curEllipse, Qt::white);
+            painter.drawPath(curEllipse);
+
             update();
         }
     }
@@ -657,14 +805,23 @@ void ScribbleArea::createSquare() {
     QPainter painter(&m_image);
     int width = (m_x2 - m_x1);
     int height = (m_y2 - m_y1);
-    QRect rect(m_x1, m_y1, width, height);
+    // QRect rect(m_x1, m_y1, width, height);
+    QPainterPath rectPath;
+    rectPath.moveTo(m_x1, m_y1);
+    rectPath.lineTo(m_x2, m_y1);
+    rectPath.lineTo(m_x2, m_y2);
+    rectPath.lineTo(m_x1, m_y2);
+    rectPath.closeSubpath();
     Rectangle rectangle;
     rectangle.setCoords(m_x1, m_x2, m_y1, m_y2);
     rectangle.setPenColor(m_myPenColor);
     rectangle.setPenWidth(m_myPenWidth);
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    painter.drawRect(rect);
+    // painter.fillRect(rect, QBrush(QColor(0, 0, 255, 127)));
+    // painter.setBrush(QColor(0, 0, 255, 127));
+    // painter.drawRect(rect);
+    painter.drawPath(rectPath);
     painter.end();
 
     m_toolSetHandling.addRectangleToQueue(rectangle);
@@ -673,7 +830,7 @@ void ScribbleArea::createSquare() {
     int posSquareInQueue = (sizeOfRectangleQueue - 1);
     m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posSquareInQueue);
 
-    m_drawnRectList << rect;
+    // m_drawnRectList << rect;
     m_setUpSquareBool = false;
     update();
 }
@@ -690,7 +847,14 @@ void ScribbleArea::createEllipse() {
     ellipse.setPenWidth(m_myPenWidth);
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    painter.drawEllipse(rect);
+    // painter.fillRect(rect, QBrush(Qt::white, Qt::SolidPattern));
+    // painter.drawEllipse(rect);
+
+    QPainterPath path;
+    path.moveTo(m_x2, m_y1 + (height/2));
+    path.arcTo(m_x1, m_y1, width, height, 0.0, 360.0);
+    painter.fillPath(path, Qt::white);
+    painter.drawPath(path);
 
     m_toolSetHandling.addEllipseToQueue(ellipse);
     int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();

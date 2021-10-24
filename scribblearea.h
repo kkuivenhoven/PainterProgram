@@ -67,6 +67,7 @@ public:
 
     void setUpEllipse();
     void createEllipse();
+    void mouseMovementRedrawImageForEllipse();
 
     void setReadyToDrawConvexPolygonBool();
     void secondDrawConvexPolygon();
@@ -137,7 +138,9 @@ private:
 
     bool m_turnBoolOn;
     bool m_setUpSquareBool;
+
     bool m_setUpEllipseBool;
+    QQueue<QPainterPath *> m_mouseMovingEllipses;
 
     bool m_secondConvexReadyToDraw;
     int m_secondNumberOfPointsDrawn;
@@ -172,6 +175,7 @@ private:
     bool m_setUpSquircleBool;
     int m_initialDiff;
     int m_xIncrement;
+
 };
 
 #endif // SCRIBBLEAREA_H
