@@ -530,10 +530,6 @@ void ScribbleArea::restoreImage() {
 
 
 void ScribbleArea::clearImage() {
-    // image.fill(qRgb(255,255,255));
-    /* QImage newImage;
-    image = newImage;
-    image.fill(qRgb(255,255,255)); */
     QPainter painter(&m_image);
     for(int i = 0; i < m_drawnRectList.size(); i++) {
         painter.eraseRect(m_drawnRectList.at(i));
@@ -654,6 +650,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             if(m_coordSet.size() > 0) {
                 restoreImage();
                 QPainter painter(&m_image);
+                painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
+                    Qt::RoundCap, Qt::RoundJoin));
                 QPainterPath path;
                 if(m_coordSet.size() > 1) {
                     path.moveTo(m_coordSet.at(0));
@@ -707,23 +705,8 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             m_drawingSquare.setHeight(height);
             painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-            // painter.setBrush(QColor(0, 0, 255, 127));
             painter.drawRect(m_drawingSquare);
             update();
-            /* QPainter painter(&m_image);
-            int dx = event->x();
-            int dy = event->y();
-
-            QPainterPath rectPath;
-            rectPath.moveTo(m_x1, m_y1);
-            rectPath.moveTo(dy, m_y1);
-            rectPath.moveTo(dx, dy);
-            rectPath.moveTo(m_x1, m_y1);
-            rectPath.closeSubpath();
-
-            painter.drawPath(rectPath);
-            painter.end();
-            update(); */
         }
         if(m_setUpSquircleBool && this->underMouse()) {
             int dx = event->x();
@@ -756,13 +739,15 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
 
             painter.setBrush(Qt::white);
             painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
-            Qt::RoundCap, Qt::RoundJoin));
+                Qt::RoundCap, Qt::RoundJoin));
             painter.drawPath(path);
             update();
         }
         if(m_setUpEllipseBool && this->underMouse()) {
             restoreImage();
             QPainter painter(&m_image);
+            painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
+                Qt::RoundCap, Qt::RoundJoin));
 
             QPainterPath curEllipse;
             int dx = event->x();
@@ -794,6 +779,8 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             if(m_numberOfPointsDrawn < m_totalNumNeedToDraw) {
                 // just draw straight line from last point to current mouse position
                 QPainter painter(&m_image);
+                painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
+                    Qt::RoundCap, Qt::RoundJoin));
                 QPointF pointOne = m_coordSet.last();
                 QPointF pointTwo(event->x(), event->y());
                 painter.drawLine(pointOne, pointTwo);
