@@ -242,6 +242,11 @@ void ScribbleArea::setUpUndoFunctionality() {
             int shapePos = posMap.value(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 Rectangle rectangle = rectangleQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(rectangle.getPenWidth());
+                pen.setColor(rectangle.getPenColor());
+                painter.setPen(pen);
                 QPainterPath rectPath;
                 rectPath.moveTo(rectangle.getX1(), rectangle.getY1());
                 rectPath.lineTo(rectangle.getX2(), rectangle.getY1());
@@ -253,6 +258,11 @@ void ScribbleArea::setUpUndoFunctionality() {
             }
             if(action == ToolSetHandling::ELLIPSE) {
                 Ellipse ellipse = ellipseQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(ellipse.getPenWidth());
+                pen.setColor(ellipse.getPenColor());
+                painter.setPen(pen);
                 int width = (ellipse.getX2() - ellipse.getX1());
                 int height = (ellipse.getY2() - ellipse.getY1());
                 QPainterPath path;
@@ -263,12 +273,22 @@ void ScribbleArea::setUpUndoFunctionality() {
             }
             if(action == ToolSetHandling::SQUIRCLE) {
                 Squircle squircle = squircleQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(squircle.getPenWidth());
+                pen.setColor(squircle.getPenColor());
+                painter.setPen(pen);
                 QPainterPath squirclePainterPath = squircle.getPainterPath();
                 painter.fillPath(squirclePainterPath, Qt::white);
                 painter.drawPath(squirclePainterPath);
             }
             if(action == ToolSetHandling::FREE_HAND_LINE) {
                 FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(freeHandLine.getPenWidth());
+                pen.setColor(freeHandLine.getPenColor());
+                painter.setPen(pen);
                 QQueue<QPoint> allPoints = freeHandLine.getAllSetPoints();
                 m_lastPoint = allPoints.first();
                 for(int i = 1; i < allPoints.size(); i++) {
@@ -277,6 +297,11 @@ void ScribbleArea::setUpUndoFunctionality() {
             }
             if(action == ToolSetHandling::CONVEX_POLYGON) {
                 ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(convexPolygon.getPenWidth());
+                pen.setColor(convexPolygon.getPenColor());
+                painter.setPen(pen);
                 QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
                 QPainterPath path;
                 for(int i = 0; i < allPoints.size(); i++) {
@@ -292,6 +317,11 @@ void ScribbleArea::setUpUndoFunctionality() {
             }
             if(action == ToolSetHandling::STRAIGHT_LINE) {
                 StraightLine straightLine = straightLineQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(straightLine.getPenWidth());
+                pen.setColor(straightLine.getPenColor());
+                painter.setPen(pen);
                 QPoint pointOne = straightLine.getPointOne();
                 QPoint pointTwo = straightLine.getPointTwo();
                 painter.drawEllipse(pointOne, 1, 1);
@@ -368,6 +398,11 @@ void ScribbleArea::restoreImage() {
             int shapePos = posMap.value(i);
             if(action == ToolSetHandling::RECTANGLE) {
                 Rectangle rectangle = rectangleQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(rectangle.getPenWidth());
+                pen.setColor(rectangle.getPenColor());
+                painter.setPen(pen);
                 QPainterPath rectPath;
                 rectPath.moveTo(rectangle.getX1(), rectangle.getY1());
                 rectPath.lineTo(rectangle.getX2(), rectangle.getY1());
@@ -381,6 +416,11 @@ void ScribbleArea::restoreImage() {
                 Ellipse ellipse = ellipseQueue.at(shapePos);
                 int width = (ellipse.getX2() - ellipse.getX1());
                 int height = (ellipse.getY2() - ellipse.getY1());
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(ellipse.getPenWidth());
+                pen.setColor(ellipse.getPenColor());
+                painter.setPen(pen);
                 QPainterPath path;
                 path.moveTo(ellipse.getX2(), ellipse.getY1() + (height/2));
                 path.arcTo(ellipse.getX1(), ellipse.getY1(), width, height, 0.0, 360.0);
@@ -389,12 +429,22 @@ void ScribbleArea::restoreImage() {
             }
             if(action == ToolSetHandling::SQUIRCLE) {
                 Squircle squircle = squircleQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(squircle.getPenWidth());
+                pen.setColor(squircle.getPenColor());
+                painter.setPen(pen);
                 QPainterPath squirclePainterPath = squircle.getPainterPath();
                 painter.fillPath(squirclePainterPath, Qt::white);
                 painter.drawPath(squirclePainterPath);
             }
             if(action == ToolSetHandling::FREE_HAND_LINE) {
                 FreeHandLine freeHandLine = freeHandLineQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(freeHandLine.getPenWidth());
+                pen.setColor(freeHandLine.getPenColor());
+                painter.setPen(pen);
                 QQueue<QPoint> allPoints = freeHandLine.getAllSetPoints();
                 m_lastPoint = allPoints.first();
                 for(int i = 1; i < allPoints.size(); i++) {
@@ -403,6 +453,11 @@ void ScribbleArea::restoreImage() {
             }
             if(action == ToolSetHandling::CONVEX_POLYGON) {
                 ConvexPolygon convexPolygon = convexPolygonQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(convexPolygon.getPenWidth());
+                pen.setColor(convexPolygon.getPenColor());
+                painter.setPen(pen);
                 QQueue<QPointF> allPoints = convexPolygon.getAllPoints();
                 QPainterPath path;
                 for(int i = 0; i < allPoints.size(); i++) {
@@ -418,6 +473,11 @@ void ScribbleArea::restoreImage() {
             }
             if(action == ToolSetHandling::STRAIGHT_LINE) {
                 StraightLine straightLine = straightLineQueue.at(shapePos);
+                QPen pen;
+                pen.setCosmetic(true);
+                pen.setWidth(straightLine.getPenWidth());
+                pen.setColor(straightLine.getPenColor());
+                painter.setPen(pen);
                 QPoint pointOne = straightLine.getPointOne();
                 QPoint pointTwo = straightLine.getPointTwo();
                 painter.drawEllipse(pointOne, 1, 1);
@@ -849,6 +909,8 @@ void ScribbleArea::drawLine() {
 
     StraightLine straightLine;
     straightLine.setPoints(pointOne, pointTwo);
+    straightLine.setPenColor(m_myPenColor);
+    straightLine.setPenWidth(m_myPenWidth);
 
     m_toolSetHandling.addStraightLineToQueue(straightLine);
     int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
@@ -961,6 +1023,8 @@ void ScribbleArea::drawConvexPolygon() {
     int arrSize = m_coordSet.size();
     QPointF points[arrSize];
     ConvexPolygon convexPolygon;
+    convexPolygon.setPenColor(m_myPenColor);
+    convexPolygon.setPenWidth(m_myPenWidth);
     for(int i = 0; i < m_coordSet.size(); i++) {
         points[i] = m_coordSet.at(i);
         convexPolygon.addPointToQueue(m_coordSet.at(i));
