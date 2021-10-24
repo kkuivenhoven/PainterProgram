@@ -73,17 +73,21 @@ void ScribbleArea::setTextBlurb(QFont font) {
     m_textBool = true;
 }
 
+
 void ScribbleArea::setPenUp() {
     m_turnBoolOn = true;
 }
+
 
 void ScribbleArea::setUpSquare() {
     m_setUpSquareBool = true;
 }
 
+
 void ScribbleArea::setUpEllipse() {
     m_setUpEllipseBool = true;
 }
+
 
 void ScribbleArea::setReadyToDrawConvexPolygonBool() {
     bool okay;
@@ -157,6 +161,15 @@ void ScribbleArea::setPenWidth(int newWidth) {
 
 
 void ScribbleArea::setEasel(const QColor &fillColor) {
+    PaintBucket paintBucket;
+    paintBucket.setPenColor(fillColor);
+
+    m_toolSetHandling.addPaintBucketToQueue(paintBucket);
+    int posLastActionAdded = m_toolSetHandling.getPositionOfLastActionAdded();
+    int sizeOfPaintBucketQueue = m_toolSetHandling.getQueueOfPaintBuckets().size();
+    int posPaintBucketLineInQueue = (sizeOfPaintBucketQueue - 1);
+    m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posPaintBucketLineInQueue);
+
     m_image.fill(fillColor);
     m_modified = true;
     update();
@@ -199,6 +212,9 @@ void ScribbleArea::setUpUndoFunctionality() {
             if(action == ToolSetHandling::TEXT_BOX) {
                 m_toolSetHandling.removeLastTextBox();
             }
+            if(action == ToolSetHandling::PAINT_BUCKET) {
+                m_toolSetHandling.removeLastPaintBucket();
+            }
             m_toolSetHandling.removeLastPosStored(orderOfActions.size()-1);
             m_toolSetHandling.removeLastActionFromStack();
         }
@@ -213,6 +229,7 @@ void ScribbleArea::setUpUndoFunctionality() {
     QQueue<ConicalGradientShape> conicalGradientShapeQueue = m_toolSetHandling.getQueueOfConicalGradientShapes();
     QQueue<RadialGradientShape> radialGradientShapeQueue = m_toolSetHandling.getQueueOfRadialGradientShapes();
     QQueue<TextBox> textBoxQueue = m_toolSetHandling.getQueueOfTextBoxes();
+    QQueue<PaintBucket> paintBucketQueue = m_toolSetHandling.getQueueOfPaintBuckets();
 
     QStack<QString> newOrderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
@@ -315,6 +332,10 @@ void ScribbleArea::setUpUndoFunctionality() {
                 textEdit->setText(textBox.getTextWritten());
                 textEdit->show();
                 m_textEditList.append(textEdit);
+            }
+            if(action == ToolSetHandling::PAINT_BUCKET) {
+                PaintBucket paintBucket = paintBucketQueue.at(shapePos);
+                m_image.fill(paintBucket.getPenColor());
             }
         }
     }
@@ -334,6 +355,7 @@ void ScribbleArea::restoreImage() {
     QQueue<ConicalGradientShape> conicalGradientShapeQueue = m_toolSetHandling.getQueueOfConicalGradientShapes();
     QQueue<RadialGradientShape> radialGradientShapeQueue = m_toolSetHandling.getQueueOfRadialGradientShapes();
     QQueue<TextBox> textBoxQueue = m_toolSetHandling.getQueueOfTextBoxes();
+    QQueue<PaintBucket> paintBucketQueue = m_toolSetHandling.getQueueOfPaintBuckets();
 
     QStack<QString> newOrderOfActions = m_toolSetHandling.getOrderOfObjectsDrawn();
     QMap<int /*posInActionStack*/,
@@ -436,6 +458,10 @@ void ScribbleArea::restoreImage() {
                 textEdit->setText(textBox.getTextWritten());
                 textEdit->show();
                 m_textEditList.append(textEdit);
+            }
+            if(action == ToolSetHandling::PAINT_BUCKET) {
+                PaintBucket paintBucket = paintBucketQueue.at(shapePos);
+                m_image.fill(paintBucket.getPenColor());
             }
         }
     }

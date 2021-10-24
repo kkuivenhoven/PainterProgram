@@ -16,6 +16,7 @@
 #include "shapes/conicalgradientshape.h"
 #include "shapes/radialgradientshape.h"
 #include "shapes/textbox.h"
+#include "shapes/paintbucket.h"
 
 class ToolSetHandling {
     QStack<QString> m_orderOfActions;
@@ -30,6 +31,7 @@ class ToolSetHandling {
     QQueue<ConicalGradientShape> m_conicalGradientShapeQueue;
     QQueue<RadialGradientShape> m_radialGradientShapeQueue;
     QQueue<TextBox> m_textBoxQueue;
+    QQueue<PaintBucket> m_paintBucketQueue;
 
     QMap<int /*positionInActions*/,
          int /*posInShapeStack*/> m_posMap;
@@ -107,6 +109,11 @@ public:
     void addCoords(int x1, int x2, int y1, int y2);
     void addFont(QFont font);
     QFont getFont();
+
+    static const QString PAINT_BUCKET;
+    void addPaintBucketToQueue(PaintBucket paintBucket);
+    void removeLastPaintBucket();
+    QQueue<PaintBucket> getQueueOfPaintBuckets();
 
 };
 

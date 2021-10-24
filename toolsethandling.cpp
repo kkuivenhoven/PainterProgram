@@ -11,6 +11,7 @@ const QString ToolSetHandling::LINEAR_GRADIENT_SHAPE("LINEAR_GRADIENT_SHAPE");
 const QString ToolSetHandling::CONICAL_GRADIENT_SHAPE("CONICAL_GRADIENT_SHAPE");
 const QString ToolSetHandling::RADIAL_GRADIENT_SHAPE("RADIAL_GRADIENT_SHAPE");
 const QString ToolSetHandling::TEXT_BOX("TEXT_BOX");
+const QString ToolSetHandling::PAINT_BUCKET("PAINT_BUCKET");
 
 
 ToolSetHandling::ToolSetHandling() {
@@ -272,4 +273,18 @@ QFont ToolSetHandling::getFont() {
     int indexLastElement = (m_textBoxQueue.size() - 1);
     TextBox textBox = m_textBoxQueue.at(indexLastElement);
     return textBox.getFont();
+}
+
+void ToolSetHandling::addPaintBucketToQueue(PaintBucket paintBucket) {
+    addLastActionToStack(PAINT_BUCKET);
+    paintBucket.setPosInOrderOfActions(getPositionOfLastActionAdded());
+    m_paintBucketQueue.append(paintBucket);
+}
+
+void ToolSetHandling::removeLastPaintBucket() {
+    m_paintBucketQueue.pop_back();
+}
+
+QQueue<PaintBucket> ToolSetHandling::getQueueOfPaintBuckets() {
+    return m_paintBucketQueue;
 }

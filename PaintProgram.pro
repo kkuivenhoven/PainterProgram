@@ -39,7 +39,8 @@ SOURCES += \
     shapes/lineargradientshape.cpp \
     shapes/conicalgradientshape.cpp \
     shapes/radialgradientshape.cpp \
-    shapes/textbox.cpp
+    shapes/textbox.cpp \
+    shapes/paintbucket.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -56,7 +57,8 @@ HEADERS += \
     shapes/lineargradientshape.h \
     shapes/conicalgradientshape.h \
     shapes/radialgradientshape.h \
-    shapes/textbox.h
+    shapes/textbox.h \
+    shapes/paintbucket.h
 
 FORMS += \
         mainwindow.ui
