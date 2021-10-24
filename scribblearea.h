@@ -69,7 +69,7 @@ public:
     void createEllipse();
 
     void setReadyToDrawConvexPolygonBool();
-    void secondDrawConvexPolygon();
+    void drawConvexPolygon();
 
     void setUpLinearGradientPaints(int numColors);
     void linearGradientColorSelection(int numColors);
@@ -142,10 +142,10 @@ private:
     bool m_setUpEllipseBool;
     QQueue<QPainterPath *> m_mouseMovingEllipses;
 
-    bool m_secondConvexReadyToDraw;
-    int m_secondNumberOfPointsDrawn;
-    int m_secondTotalNumNeedToDraw;
-    QList<QPointF> m_secondCoordSet;
+    bool m_convexReadyToDraw;
+    int m_numberOfPointsDrawn;
+    int m_totalNumNeedToDraw;
+    QList<QPointF> m_coordSet;
 
     QWidget *m_userInput;
     int m_userChoseThisNumColors;

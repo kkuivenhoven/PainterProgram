@@ -27,7 +27,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     m_fontSizeSet = false;
     m_turnBoolOn = false;
     m_setUpSquareBool = false;
-    m_secondConvexReadyToDraw = false;
+    m_convexReadyToDraw = false;
     m_textBool = false;
 
     m_gradientColorInputDialog = new GradientColorInputDialog();
@@ -90,9 +90,9 @@ void ScribbleArea::setReadyToDrawConvexPolygonBool() {
     QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
                                           tr("Polygon points:"), QLineEdit::Normal,
                                           "enter", &okay);
-    m_secondConvexReadyToDraw = true;
-    m_secondNumberOfPointsDrawn = 0;
-    m_secondTotalNumNeedToDraw = text.toInt();
+    m_convexReadyToDraw = true;
+    m_numberOfPointsDrawn = 0;
+    m_totalNumNeedToDraw = text.toInt();
 }
 
 
@@ -515,19 +515,19 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
             m_x1 = event->x();
             m_y1 = event->y();
         }
-        if(m_secondConvexReadyToDraw && this->underMouse()) {
-            if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
+        if(m_convexReadyToDraw && this->underMouse()) {
+            if(m_numberOfPointsDrawn < m_totalNumNeedToDraw) {
                 m_x1 = event->x();
                 m_y1 = event->y();
                 QPointF tmpPoint(m_x1, m_y1);
-                m_secondCoordSet.append(tmpPoint);
-                m_secondNumberOfPointsDrawn++;
-                if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
+                m_coordSet.append(tmpPoint);
+                m_numberOfPointsDrawn++;
+                if(m_numberOfPointsDrawn < m_totalNumNeedToDraw) {
                     return;
                 }
             }
-            if(m_secondNumberOfPointsDrawn >= m_secondTotalNumNeedToDraw) {
-                secondDrawConvexPolygon();
+            if(m_numberOfPointsDrawn >= m_totalNumNeedToDraw) {
+                drawConvexPolygon();
             }
         }
         if(m_setUpLinearGradientColorsBool && this->underMouse()) {
@@ -552,20 +552,20 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
     if(event->button() == Qt::NoButton) {
-        if(m_secondConvexReadyToDraw && this->underMouse()) {
-            if(m_secondCoordSet.size() > 0) {
+        if(m_convexReadyToDraw && this->underMouse()) {
+            if(m_coordSet.size() > 0) {
                 restoreImage();
                 QPainter painter(&m_image);
-                if(m_secondCoordSet.size() > 1) {
-                    for(int i = 0; i <= (m_secondCoordSet.size()-1); i++) {
+                if(m_coordSet.size() > 1) {
+                    for(int i = 0; i <= (m_coordSet.size()-1); i++) {
                         if(i == 0) {
-                            painter.drawLine(m_secondCoordSet.at(i), m_secondCoordSet.at(i+1));
+                            painter.drawLine(m_coordSet.at(i), m_coordSet.at(i+1));
                         } else {
-                            painter.drawLine(m_secondCoordSet.at(i-1), m_secondCoordSet.at(i));
+                            painter.drawLine(m_coordSet.at(i-1), m_coordSet.at(i));
                         }
                     }
                 }
-                QPointF pointOne = m_secondCoordSet.last();
+                QPointF pointOne = m_coordSet.last();
                 painter.drawLine(pointOne, event->pos());
                 update();
             }
@@ -675,11 +675,11 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             curFreeHandLine.setNewPoint(event->pos());
             m_turnBoolOn = false;
         }
-        if(m_secondConvexReadyToDraw && this->underMouse()) {
-            if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
+        if(m_convexReadyToDraw && this->underMouse()) {
+            if(m_numberOfPointsDrawn < m_totalNumNeedToDraw) {
                 // just draw straight line from last point to current mouse position
                 QPainter painter(&m_image);
-                QPointF pointOne = m_secondCoordSet.last();
+                QPointF pointOne = m_coordSet.last();
                 QPointF pointTwo(event->x(), event->y());
                 painter.drawLine(pointOne, pointTwo);
                 update();
@@ -899,16 +899,16 @@ void ScribbleArea::createEllipse() {
 }
 
 
-void ScribbleArea::secondDrawConvexPolygon() {
+void ScribbleArea::drawConvexPolygon() {
     QPainter painter(&m_image);
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
                         Qt::RoundCap, Qt::RoundJoin));
-    int arrSize = m_secondCoordSet.size();
+    int arrSize = m_coordSet.size();
     QPointF points[arrSize];
     ConvexPolygon convexPolygon;
-    for(int i = 0; i < m_secondCoordSet.size(); i++) {
-        points[i] = m_secondCoordSet.at(i);
-        convexPolygon.addPointToQueue(m_secondCoordSet.at(i));
+    for(int i = 0; i < m_coordSet.size(); i++) {
+        points[i] = m_coordSet.at(i);
+        convexPolygon.addPointToQueue(m_coordSet.at(i));
     }
     painter.drawConvexPolygon(points, arrSize);
 
@@ -918,8 +918,8 @@ void ScribbleArea::secondDrawConvexPolygon() {
     int posConvexPolygonInQueue = (sizeOfConvexPolygonQueue - 1);
     m_toolSetHandling.setActionPosAndShapePos(posLastActionAdded, posConvexPolygonInQueue);
 
-    m_secondConvexReadyToDraw = false;
-    m_secondCoordSet.clear();
+    m_convexReadyToDraw = false;
+    m_coordSet.clear();
     update();
 }
 
