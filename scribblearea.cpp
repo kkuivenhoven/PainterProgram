@@ -42,6 +42,7 @@ ScribbleArea::ScribbleArea(QWidget *parent) : QWidget(parent) {
     m_setUpEllipseBool = false;
 
     setFocusPolicy(Qt::StrongFocus);
+    setMouseTracking(true);
 }
 
 
@@ -315,7 +316,7 @@ void ScribbleArea::setUpUndoFunctionality() {
 }
 
 
-void ScribbleArea::mouseMovementRedrawImageForEllipse() {
+void ScribbleArea::restoreImage() {
     clearImage();
     QQueue<Rectangle> rectangleQueue = m_toolSetHandling.getQueueOfRectangles();
     QQueue<Ellipse> ellipseQueue = m_toolSetHandling.getQueueOfEllipses();
@@ -550,6 +551,26 @@ void ScribbleArea::mousePressEvent(QMouseEvent *event) {
 
 
 void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
+    if(event->button() == Qt::NoButton) {
+        if(m_secondConvexReadyToDraw && this->underMouse()) {
+            if(m_secondCoordSet.size() > 0) {
+                restoreImage();
+                QPainter painter(&m_image);
+                if(m_secondCoordSet.size() > 1) {
+                    for(int i = 0; i <= (m_secondCoordSet.size()-1); i++) {
+                        if(i == 0) {
+                            painter.drawLine(m_secondCoordSet.at(i), m_secondCoordSet.at(i+1));
+                        } else {
+                            painter.drawLine(m_secondCoordSet.at(i-1), m_secondCoordSet.at(i));
+                        }
+                    }
+                }
+                QPointF pointOne = m_secondCoordSet.last();
+                painter.drawLine(pointOne, event->pos());
+                update();
+            }
+        }
+    }
     if(event->buttons() & Qt::LeftButton) {
         if(m_turnBoolOn) {
             drawLineTo(event->pos());
@@ -625,7 +646,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             update();
         }
         if(m_setUpEllipseBool && this->underMouse()) {
-            mouseMovementRedrawImageForEllipse();
+            restoreImage();
             QPainter painter(&m_image);
 
             QPainterPath curEllipse;
@@ -653,6 +674,16 @@ void ScribbleArea::mouseReleaseEvent(QMouseEvent *event) {
             FreeHandLine curFreeHandLine = m_toolSetHandling.obtainCurFreeHandLineInstance();
             curFreeHandLine.setNewPoint(event->pos());
             m_turnBoolOn = false;
+        }
+        if(m_secondConvexReadyToDraw && this->underMouse()) {
+            if(m_secondNumberOfPointsDrawn < m_secondTotalNumNeedToDraw) {
+                // just draw straight line from last point to current mouse position
+                QPainter painter(&m_image);
+                QPointF pointOne = m_secondCoordSet.last();
+                QPointF pointTwo(event->x(), event->y());
+                painter.drawLine(pointOne, pointTwo);
+                update();
+            }
         }
         if(m_drawLineBool) {
             m_drawLineBool = false;

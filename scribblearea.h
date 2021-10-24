@@ -67,7 +67,6 @@ public:
 
     void setUpEllipse();
     void createEllipse();
-    void mouseMovementRedrawImageForEllipse();
 
     void setReadyToDrawConvexPolygonBool();
     void secondDrawConvexPolygon();
@@ -85,6 +84,7 @@ public:
     void drawSquircle();
 
     void setUpUndoFunctionality();
+    void restoreImage();
 
 public slots:
     void about();
