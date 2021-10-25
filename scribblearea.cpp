@@ -358,6 +358,7 @@ void ScribbleArea::setUpUndoFunctionality() {
 
                 textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
                 textEdit->setText(textBox.getTextWritten());
+                textEdit->setReadOnly(true);
                 textEdit->show();
                 m_textEditList.append(textEdit);
             }
@@ -512,6 +513,7 @@ void ScribbleArea::restoreImage() {
 
                 textEdit->setGeometry(textBox.getX1(), textBox.getY1(), width, height);
                 textEdit->setText(textBox.getTextWritten());
+                textEdit->setReadOnly(true);
                 textEdit->show();
                 m_textEditList.append(textEdit);
             }
@@ -566,8 +568,10 @@ void ScribbleArea::keyPressEvent(QKeyEvent *event) {
     if(m_currentlyTyping && (event->key() == Qt::Key_Escape)) {
         QTextEdit *textEdit = m_textEditList.last();
         m_currentlyTyping = false;
+        m_textBool = false;
         textEdit->setReadOnly(true);
         m_toolSetHandling.updateTextBox(textEdit->toPlainText());
+        restoreImage();
     }
 }
 
@@ -769,6 +773,27 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             painter.drawPath(curEllipse);
 
             update();
+        }
+        if(m_textBool && this->underMouse()) {
+            restoreImage();
+            QPainter painter(&m_image);
+            painter.setPen(QPen(Qt::black, 1, Qt::DashLine,
+                Qt::RoundCap, Qt::RoundJoin));
+
+            QPainterPath tmpRectBox;
+            int dx = event->x();
+            int dy = event->y();
+            tmpRectBox.moveTo(m_x1, m_y1);
+            tmpRectBox.lineTo(dx, m_y1);
+            tmpRectBox.lineTo(dx, dy);
+            tmpRectBox.lineTo(m_x1, dy);
+            tmpRectBox.closeSubpath();
+            painter.drawPath(tmpRectBox);
+
+            QTextEdit *textEdit = m_textEditList.last();
+            QString tmpCurText = textEdit->toPlainText();
+            textEdit->setText(tmpCurText);
+            textEdit->show();
         }
     }
 }
