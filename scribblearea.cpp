@@ -91,12 +91,11 @@ void ScribbleArea::setUpEllipse() {
 
 void ScribbleArea::setReadyToDrawConvexPolygonBool() {
     bool okay;
-    QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                          tr("Polygon points:"), QLineEdit::Normal,
-                                          "enter", &okay);
+    int i = QInputDialog::getInt(this, tr("QInputDialog::getInt()"),
+                                 tr("Number of points:"), 0, 0, 100, 1, &okay);
     m_convexReadyToDraw = true;
     m_numberOfPointsDrawn = 0;
-    m_totalNumNeedToDraw = text.toInt();
+    m_totalNumNeedToDraw = i;
 }
 
 
@@ -720,6 +719,7 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             update();
         }
         if(m_setUpSquircleBool && this->underMouse()) {
+            restoreImage();
             int dx = event->x();
             int dy = event->y();
             int width = (dx - m_x1);
