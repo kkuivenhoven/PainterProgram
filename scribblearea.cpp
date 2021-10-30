@@ -722,31 +722,80 @@ void ScribbleArea::mouseMoveEvent(QMouseEvent *event) {
             restoreImage();
             int dx = event->x();
             int dy = event->y();
-            int width = (dx - m_x1);
+            int width;
+            if(m_x1 > dx) {
+                width = (m_x1 - dx);
+            } else {
+                width = (dx - m_x1);
+            }
             int squareWidth;
             if(width > 25) {
                 dx = event->x();
                 dy = event->y();
                 squareWidth = 20;
             } else {
-                dx = (m_x1 + 25);
-                dy = (m_y1 + 25);
+                if(dx > m_x1) {
+                    dx = (m_x1 - 25);
+                    dy = (m_y1 - 25);
+                } else {
+                    dx = (m_x1 + 25);
+                    dy = (m_y1 + 25);
+                }
                 squareWidth = 20;
             }
 
             QPainter painter(&m_image);
             QPainterPath path;
 
-            path.moveTo(m_x1 + squareWidth, m_y1);
-            path.lineTo(dx - squareWidth, m_y1);
-            path.arcTo(dx - squareWidth, m_y1, squareWidth, squareWidth, 90.0, -90.0);
-            path.lineTo(dx, dy - squareWidth);
-            path.arcTo(dx - squareWidth, dy - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
-            path.lineTo(m_x1 + squareWidth, dy);
-            path.arcTo(m_x1, dy - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
-            path.lineTo(m_x1, m_y1 + squareWidth);
-            path.arcTo(m_x1, m_y1, squareWidth, squareWidth, 180.0, -90.0);
-            path.closeSubpath();
+            if(m_x1 > dx) {
+                if(m_y1 < dy) {
+                    path.moveTo(dx + squareWidth, m_y1);
+                    path.lineTo(m_x1 - squareWidth, m_y1);
+                    path.arcTo(m_x1 - squareWidth, m_y1, squareWidth, squareWidth, 90.0, -90.0);
+                    path.lineTo(m_x1, dy - squareWidth);
+                    path.arcTo(m_x1 - squareWidth, dy - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
+                    path.lineTo(dx + squareWidth, dy);
+                    path.arcTo(dx, dy - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
+                    path.lineTo(dx, m_y1 + squareWidth);
+                    path.arcTo(dx, m_y1, squareWidth, squareWidth, 180.0, -90.0);
+                    path.closeSubpath();
+                } else {
+                    path.moveTo(dx + squareWidth, dy);
+                    path.lineTo(m_x1 - squareWidth, dy);
+                    path.arcTo(m_x1 - squareWidth, dy, squareWidth, squareWidth, 90.0, -90.0);
+                    path.lineTo(m_x1, m_y1 - squareWidth);
+                    path.arcTo(m_x1 - squareWidth, m_y1 - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
+                    path.lineTo(dx + squareWidth, m_y1);
+                    path.arcTo(dx, m_y1 - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
+                    path.lineTo(dx, dy + squareWidth);
+                    path.arcTo(dx, dy, squareWidth, squareWidth, 180.0, -90.0);
+                    path.closeSubpath();
+                }
+            } else {
+                if(m_y1 > dy) {
+                    path.moveTo(m_x1 + squareWidth, dy);
+                    path.lineTo(dx - squareWidth, dy);
+                    path.arcTo(dx - squareWidth, dy, squareWidth, squareWidth, 90.0, -90.0);
+                    path.lineTo(dx, m_y1 - squareWidth);
+                    path.arcTo(dx - squareWidth, m_y1 - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
+                    path.lineTo(m_x1 + squareWidth, m_y1);
+                    path.arcTo(m_x1, m_y1 - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
+                    path.lineTo(m_x1, dy + squareWidth);
+                    path.arcTo(m_x1, dy, squareWidth, squareWidth, 180.0, -90.0);
+                    path.closeSubpath();
+                } else {
+                    path.moveTo(m_x1 + squareWidth, m_y1);
+                    path.lineTo(dx - squareWidth, m_y1);
+                    path.arcTo(dx - squareWidth, m_y1, squareWidth, squareWidth, 90.0, -90.0);
+                    path.lineTo(dx, dy - squareWidth);
+                    path.arcTo(dx - squareWidth, dy - squareWidth, squareWidth, squareWidth, 0.0, -90.0);
+                    path.lineTo(m_x1 + squareWidth, dy);
+                    path.arcTo(m_x1, dy - squareWidth, squareWidth, squareWidth, 270.0, -90.0);
+                    path.lineTo(m_x1, m_y1 + squareWidth);
+                    path.arcTo(m_x1, m_y1, squareWidth, squareWidth, 180.0, -90.0);
+                    path.closeSubpath();
+                }
+            }
 
             painter.setBrush(Qt::white);
             painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
@@ -1105,16 +1154,55 @@ void ScribbleArea::drawSquircle() {
     QPainter painter(&m_image);
     QPainterPath path;
 
-    path.moveTo(m_x1 + 20, m_y1);
-    path.lineTo(m_x2 - 20, m_y1);
-    path.arcTo(m_x2 - 20, m_y1, 20, 20, 90.0, -90.0);
-    path.lineTo(m_x2, m_y2 - 20);
-    path.arcTo(m_x2 - 20, m_y2 - 20, 20, 20, 0.0, -90.0);
-    path.lineTo(m_x1 + 20, m_y2);
-    path.arcTo(m_x1, m_y2 - 20, 20, 20, 270.0, -90.0);
-    path.lineTo(m_x1, m_y1 + 20);
-    path.arcTo(m_x1, m_y1, 20, 20, 180.0, -90.0);
-    path.closeSubpath();
+    if(m_x1 > m_x2) {
+        if(m_y1 < m_y2) {
+            path.moveTo(m_x2 + 20, m_y1);
+            path.lineTo(m_x1 - 20, m_y1);
+            path.arcTo(m_x1 - 20, m_y1, 20, 20, 90.0, -90.0);
+            path.lineTo(m_x1, m_y2 - 20);
+            path.arcTo(m_x1 - 20, m_y2 - 20, 20, 20, 0.0, -90.0);
+            path.lineTo(m_x2 + 20, m_y2);
+            path.arcTo(m_x2, m_y2 - 20, 20, 20, 270.0, -90.0);
+            path.lineTo(m_x2, m_y1 + 20);
+            path.arcTo(m_x2, m_y1, 20, 20, 180.0, -90.0);
+            path.closeSubpath();
+        } else {
+            path.moveTo(m_x2 + 20, m_y2);
+            path.lineTo(m_x1 - 20, m_y2);
+            path.arcTo(m_x1 - 20, m_y2, 20, 20, 90.0, -90.0);
+            path.lineTo(m_x1, m_y1 - 20);
+            path.arcTo(m_x1 - 20, m_y1 - 20, 20, 20, 0.0, -90.0);
+            path.lineTo(m_x2 + 20, m_y1);
+            path.arcTo(m_x2, m_y1 - 20, 20, 20, 270.0, -90.0);
+            path.lineTo(m_x2, m_y2 + 20);
+            path.arcTo(m_x2, m_y2, 20, 20, 180.0, -90.0);
+            path.closeSubpath();
+        }
+    } else {
+        if(m_y1 > m_y2) {
+            path.moveTo(m_x1 + 20, m_y2);
+            path.lineTo(m_x2 - 20, m_y2);
+            path.arcTo(m_x2 - 20, m_y2, 20, 20, 90.0, -90.0);
+            path.lineTo(m_x2, m_y1 - 20);
+            path.arcTo(m_x2 - 20, m_y1 - 20, 20, 20, 0.0, -90.0);
+            path.lineTo(m_x1 + 20, m_y1);
+            path.arcTo(m_x1, m_y1 - 20, 20, 20, 270.0, -90.0);
+            path.lineTo(m_x1, m_y2 + 20);
+            path.arcTo(m_x1, m_y2, 20, 20, 180.0, -90.0);
+            path.closeSubpath();
+        } else {
+            path.moveTo(m_x1 + 20, m_y1);
+            path.lineTo(m_x2 - 20, m_y1);
+            path.arcTo(m_x2 - 20, m_y1, 20, 20, 90.0, -90.0);
+            path.lineTo(m_x2, m_y2 - 20);
+            path.arcTo(m_x2 - 20, m_y2 - 20, 20, 20, 0.0, -90.0);
+            path.lineTo(m_x1 + 20, m_y2);
+            path.arcTo(m_x1, m_y2 - 20, 20, 20, 270.0, -90.0);
+            path.lineTo(m_x1, m_y1 + 20);
+            path.arcTo(m_x1, m_y1, 20, 20, 180.0, -90.0);
+            path.closeSubpath();
+        }
+    }
 
     painter.setBrush(Qt::white);
     painter.setPen(QPen(m_myPenColor, m_myPenWidth, Qt::SolidLine,
