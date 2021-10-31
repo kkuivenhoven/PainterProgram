@@ -3,10 +3,6 @@
 SubMenu::SubMenu(ScribbleArea &scribbleArea, QWidget *parent) : _scribbleArea(scribbleArea), QWidget(parent) {
     QWidget *subMenu = new QWidget();
 
-    // subMenu->setStyleSheet("QWidget { background-color:salmon; border-radius:20%; }");
-    // subMenu->setStyleSheet("QWidget { background-color: #A9ADB4; } ");
-                           // "QPushButton { background-color: #FFFFFF; box-shadow: none; border-radius: 2 px; border-color: #FFFFFF; }");
-
     QGridLayout *gridLayout = new QGridLayout();
 
     QPushButton *fillEaselBtn = new QPushButton();
