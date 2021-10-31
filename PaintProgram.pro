@@ -64,3 +64,8 @@ FORMS += \
         mainwindow.ui
 
 DISTFILES +=
+
+RESOURCES += \
+    tooliconimages.qrc
+
+

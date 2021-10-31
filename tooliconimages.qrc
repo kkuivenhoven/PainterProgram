@@ -1,0 +1,19 @@
+<RCC>
+    <qresource prefix="/ToolIconImages">
+        <file>toolIconImages/3366100-200.png</file>
+        <file>toolIconImages/circleIcon.png</file>
+        <file>toolIconImages/clear-screen.jpg</file>
+        <file>toolIconImages/conicalGradient.png</file>
+        <file>toolIconImages/convexIcon.png</file>
+        <file>toolIconImages/gradientIcon.png.jpeg</file>
+        <file>toolIconImages/letterPhoto.png</file>
+        <file>toolIconImages/lineToolPic.png</file>
+        <file>toolIconImages/paintBrush.png</file>
+        <file>toolIconImages/paintBrushTwo.png</file>
+        <file>toolIconImages/PaintBucket.png</file>
+        <file>toolIconImages/radialIcon.png</file>
+        <file>toolIconImages/roundedSquareIcon.png</file>
+        <file>toolIconImages/squareIcon.png</file>
+        <file>toolIconImages/undoIcon.png</file>
+    </qresource>
+</RCC>
